@@ -1,0 +1,2 @@
+#coding: utf-8
+boats={'Muko_Tena': set(['Ata_Kei', 'Ata_Kei']),
