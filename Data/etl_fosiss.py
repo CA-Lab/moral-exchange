@@ -1,10 +1,12 @@
 # coding: utf-8
 import csv
-import codecs
-import pprint
+from pymongo import MongoClient
 
+
+############################################################
+# read the three csv files to populate projects dictionary #
+############################################################
 projects = {}
-
 with open('fosiss_titulos.csv', 'r') as csvfile:
     title_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
     for row in title_reader:
@@ -12,7 +14,7 @@ with open('fosiss_titulos.csv', 'r') as csvfile:
         projects[titulo] = {'year': row[0]}
 
 
-# "TITULO DEL PROYECTO",INSTITUCIÓN,"RESPONSABLE TÉCNICO","NIVEL S.N.I.",DEMANDA
+
 with open('fosiss_proyectos.csv', 'r') as csvfile:
     projects_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
     for row in projects_reader:
@@ -24,12 +26,11 @@ with open('fosiss_proyectos.csv', 'r') as csvfile:
             projects[titulo]['demanda']     = row[4]
 
 
-# discard duplicated field "institución"
-#"TÍTULO DEL PROYECTO",INSTITUCIÓN,"NOMBRE COLABORADOR","NIVEL S.N.I. COLABORADOR","INSTITUCIÓN COLABORADOR",ESPECIALIDAD
 with open('fosiss_colaboradores.csv', 'r') as csvfile:
     colaboradores_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
     for row in colaboradores_reader:
         titulo = row[0]
+        # discard duplicated field "institucion"
         colaborador = { 'name': row[2],
                         'nivel sni': row[3],
                         'institucion colaborador': row[4],
@@ -41,6 +42,22 @@ with open('fosiss_colaboradores.csv', 'r') as csvfile:
                 else:
                     projects[titulo]['colaboradores'] = [colaborador, ]
             except KeyError:
-                print 'PROYECTO MISTERIO:', titulo
+                # watch out for these! how come they're in the
+                # collaborators file but not in the titles file?
+                print 'title not found:', titulo
                 
-pprint.pprint(projects)
+
+
+##########################################
+# load list of dictionaries into mongodb #
+##########################################
+                
+client  = MongoClient()
+db      = client.fosiss
+fosiss  = db.proyectos
+
+for titulo in projects:
+    r=projects[titulo]
+    r['titulo']=titulo
+    fosiss.save(r)
+
