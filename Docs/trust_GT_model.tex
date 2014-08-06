@@ -1,5 +1,5 @@
 \documentclass[11pt]{article}
-
+\usepackage{amsmath}
 \author{J. Mario Siqueiros-Garc\'ia\\ Rodrigo Garc\'ia-Herrera\\ Jes\'us Espinal\\ Enrique Hern\'andez-Lemus}
 \title{Topological evolution of trust game theory networks}
 \date{\today}
@@ -9,5 +9,30 @@
 
 \section{Model Description}
 
+The purpose of this model is to study the evolution of the topology of
+networks in the context of evolutionary game theory.
+Great amounts of work can be found in bringing together these areas of
+research. Mmost of it has been focused in understading how under different
+topological circumstances and strategies either cooperators or
+defectors populate the network. Our objective is different. We are
+interested in understanding how different strategies adopted by
+players shape the topology of networks. In our proposal,  nodes are
+connected by weigthed links. The weight of the link represents a
+degree of trust among players. Players may choose to cooperate or
+defect and that individual decision may bring them a benefit and/or
+cost and, at the same time will have an impact on the degree of trust
+among players. When trust degree trasspasses below certain threshold
+the link between players will be broken and they will reconnect to
+another node with the initial value of trustness. In such a way, an
+initially Erd\"{o}s-R\'enyi or regular lattice, will evolve to different topologies.
+
+
+
+\subsection{Step one: Setting up the model}
+
+We start from two possible scenarios, a regular lattice in which all nodes have the
+same number of links and neighbors, and a second one in which the
+starting point is an Erd\"{o}s-R\'enyi networks where all nodes have the
+same $\emph{p}$ of connecting with other nodes in the network. $\varphi$
 
 \end{document}
