@@ -1,5 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{amsmath}
+\usepackage{hyperref}
+
 \author{J. Mario Siqueiros-Garc\'ia\\ Rodrigo Garc\'ia-Herrera\\ Jes\'us Espinal\\ Enrique Hern\'andez-Lemus}
 \title{Topological evolution of trust game theory networks}
 \date{\today}
@@ -9,30 +11,83 @@
 
 \section{Model Description}
 
-The purpose of this model is to study the evolution of the topology of
-networks in the context of evolutionary game theory.
-Great amounts of work can be found in bringing together these areas of
-research. Mmost of it has been focused in understading how under different
-topological circumstances and strategies either cooperators or
-defectors populate the network. Our objective is different. We are
-interested in understanding how different strategies adopted by
-players shape the topology of networks. In our proposal,  nodes are
-connected by weigthed links. The weight of the link represents a
-degree of trust among players. Players may choose to cooperate or
-defect and that individual decision may bring them a benefit and/or
-cost and, at the same time will have an impact on the degree of trust
-among players. When trust degree trasspasses below certain threshold
-the link between players will be broken and they will reconnect to
-another node with the initial value of trustness. In such a way, an
-initially Erd\"{o}s-R\'enyi or regular lattice, will evolve to different topologies.
+The purpose of this model is to study the evolution of the topology of networks in the context of evolutionary game theory. Great amounts of work can be found in bringing together these areas of
+research. Most of it has been focused in understading how under different topological circumstances and strategies either cooperators or defectors populate the network \cite{Nowak1992, Hauert2004, Santos2005, Nowak2011}. Our objective is different. We are interested in understanding how different strategies adopted by players shape the topology of networks. In our proposal,  nodes are connected by weigthed links. The weight of the link represents a degree of trust among players. Players may choose to cooperate or defect and that individual decision may produce  a benefit and/or cost and, at the same time will have an impact on the degree of trust among players. When trust degree crosses below certain threshold the link between players will be broken and they will reconnect to another node with the initial value of trustness. In such a way, an initially Erd\"{o}s-R\'enyi or regular grid, will evolve to different topologies. Thus, the evolution of the topology can be seen as the result of the \emph{dependant(?)} dynamics of the opposing parameters of personal (player's) revenues and the persistence of the relationship between players.\footnote{The link between nodes seen as \emph{trust}, can be seen also a some form of symbiosis between organisms.}
 
 
+\section{Minimal model: two players game}
+The model consist of a two nodes and one link network. The nodes will play an iterative version of the Prisoner's Dilemma (IPD). As in the IPD, each player will choose a strategy that can be to cooperate or to defect. The first and most simple model possible is to let players choose their strategy with equal chance, that is being a cooperator or defector as matter of flipping a fair coin. As menitioned before, players are linked. The link represents their relationship. In our model, the link has a weight which stands for the degree of trust among players.\\
 
+Following the traditional PD game, according to the strategy chosen by a player and the strategy chosen by the other will produce a pay-off. Pay-off follows the rule: $T > R > P > S$. $T$ is for temptation to defect. It is the highest pay-off and it takes place when the player defects and the other cooperates. $R$ is for reward for when both players cooperate. $P$ is the punishment for when both players defect. And $S$ is for suckers pay-off.\\
+
+{\bf Prisoner's Dilemma pay-off matrix}\\
+
+\begin{tabular}{| l | l | l |}
+\hline
+          & Cooperate & Defect \\ \hline
+Cooperate &  $R,R$      &  $S,T$   \\ \hline
+Defect    &  $T,S$      &  $P,P$   \\ \hline
+
+\end{tabular}\\ \\
+
+For our model, cooperation and defection have a benefit and a cost (according to the \emph{Donation game} version of the PD). In the Donation Game, the pay-off matrix is: \footnote{$2R > T + S$, that is, $2(b-c) > b-c$.}\\
+
+{\bf Donation Game pay-off matrix}\\
+
+\begin{tabular}{| l | l | l |}
+\hline
+          & Cooperate & Defect \\ \hline
+Cooperate & $b-c, b-c$ & $-c,b$   \\ \hline
+Defect    &  $b,-c$    & $0,0$   \\ \hline
+
+\end{tabular}\\ \\
+
+For our PD model, the player pay-off conditions are: $T = b(b > 1)$, $R = (b * 1/2)$, $P = 0$, $S = -c(c = b/2)$. The trust (link weight) pay-off follows the truth table which is based on the players strategy (C for cooperation, D for defection):\\
+
+\begin{tabular}{| c | c || c |}
+\hline
+
+Node $i$ & Node $j$ & Trust pay-off  \\ \hline
+      C  &       C  &  $2R$ \\ \hline
+      D  &       D  &  $-T$ \\ \hline
+      C  &       D  &  $-S$ \\ \hline
+      D  &       C  &  $-S$ \\ \hline
+
+\end{tabular}\\ \\
+
+According to the rules and conditions above mentioned, we will explore the dynamics of the player's \emph{fitness} and the trust degree represented by the weight of the link. This exploration will be based on different players' strategies that set different scenarios: a) Both players always cooperate; b) Both players always defect; c) One player cooperates and the other defects; and our initial scenario, players randomly choose their strategy every generation.\\
+
+The initial conditions of the model and simulation is a two node network, each node at $t_{0}$ will be defined as cooperator or defector. Every node will have a pre-given $\omega$ fitness budget. The link that unites the nodes will have an initial $\varphi$ amount of trust. With every generation and following the pay-off matrix as well as the \emph{trust pay-off} table, nodes fitness $\omega$ and trust $\varphi$ will increase or descrease their values respectively. Two scenarios will end the game: a) One of the nodes runs out of fitness $\omega$ and it dies; b) The value of trust $\varphi < 0$ and the link of trust gets broken and the game cannot take place any longer.\\
+
+For the first three different determinitic settings of the game the results expected are: a) When both players always cooperate, $\omega$ and $\varphi$ will increase endlessly. b) When both players always defect $\omega$ will not change but $\varphi$ will decrease constantly at a rate of ?, util the link between nodes gets broken. c) When one player always cooperates and the other always defects the cooperator's $\omega$ as well as the value of $\varphi$ will continually decrease. In this scenario, the game will end either because the cooperator dies or the link breaks before that happens. For this situation it could be interesting to play with different $b,c$ ratios, as $r = b/c$ and keeping \emph{trust pay-off} the same, that is as $-S$.\\
+
+Besides the Iterative Prisoner's Dilemma game, it is suggested to explore the dynamics of $\omega$ and $\varphi$ in the context of the Snowdrift Game (SG). The SG differs from the PD in that the pay-offs $P$ and $S$ have a reverse order: $T > R > S > P$ \cite{Hauert2004, Santos2005}.
+
+\section{Three players model}
+\subsection{Open triangle game}
+This game implies a network of three players in which two nodes are connected by one shared node, i.e. there are nodes $h$, $i$, $j$, and they are connected as $m_{h,i}$, $m_{i,j}$.
+
+\subsection{Closed triangle game or the \emph{sexy} threesome game}
+This game implies a full connected network of three players, i.e. there are nodes $h$, $i$, $j$, and they are connected as $m_{h,i}$, $m_{i,j}$, $m_{j,h}$.
+
+\section{Full network model}
 \subsection{Step one: Setting up the model}
 
 We start from two possible scenarios, a regular lattice in which all nodes have the
 same number of links and neighbors, and a second one in which the
 starting point is an Erd\"{o}s-R\'enyi networks where all nodes have the
 same $\emph{p}$ of connecting with other nodes in the network. $\varphi$
+
+\begin{thebibliography}{30}
+
+\bibitem{Nowak1992} Nowak, Martin A. \& May, Robert M. (1992) Evolutionary Games and Spatial Chaos. \textit{Nature}, 359: 826-829.
+
+\bibitem{Hauert2004} Hauert, Christoph \& Doebeli, Michael (2004) Spatial structure often inhibits the evolution of cooperation in the snowdrift game. \textit{Nature}, 428: 643-646.
+
+\bibitem{Santos2005} Santos, F.C. \& Pacheco, J.M. (2005) Scale-Free Networks Provide a Unifying Framework for the Emergence of Cooperation. \textit{PRL}, 95: 098104-1 to 098104-4.
+
+\bibitem{Nowak2011} Nowak, Martin A. \& Highfield, Roger (2011) \textit{Supercooperators. Altruism, Evolution, and Why We Need Each Other to Succeed}. Free Press, New York, NY.
+
+\end{thebibliography}
 
 \end{document}
