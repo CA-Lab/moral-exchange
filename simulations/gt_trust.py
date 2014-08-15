@@ -2,9 +2,9 @@
 
 import networkx as nx
 import random as rd
-import pylab as pl
 import matplotlib
 matplotlib.use('TkAgg')
+import pylab as pl
 import matplotlib.pyplot as plt
 
 nt = nx.Graph()
@@ -95,19 +95,45 @@ import pprint
 
 def step():
     global time, nt, positions
-    
     time += 1
-    pprint.pprint( nt.nodes(True) )
     node_strategy()
     fitness()
-    pprint.pprint( nt.nodes(True) )
     trust()
-    pprint.pprint(nt.get_edge_data('a','b'))
 
 
 
+time_list = []
+trust_list = []
+fitness_a = []
+fitness_b = []
+id_a = []
+id_b = []
+while nt.get_edge_data('a','b')['t']>=0 and (nt.node['a']['w']>=0 or nt.node['b']['w']>=0) and time<100:
+    step()
+    time_list.append(time)
+    trust_list.append(nt.get_edge_data('a','b')['t'])
+    fitness_a.append(nt.node['a']['w'])
+    fitness_b.append(nt.node['b']['w'])
+    if nt.node['b']['id']=='c':
+        id_b.append(-1)
+    else:
+        id_b.append(-2)
 
-step()
+    if nt.node['a']['id']=='c':
+        id_a.append(-3)
+    else:
+        id_a.append(-4)
+
+
+
+plt.plot(time_list,trust_list)
+plt.plot(time_list,fitness_a,color='r')
+plt.plot(time_list,fitness_b,color='g')
+plt.plot(time_list,id_a,color='r')
+plt.plot(time_list,id_b,color='g')
+plt.show()
+
+#step()
 #draw()
 
 #def ploteo():    
