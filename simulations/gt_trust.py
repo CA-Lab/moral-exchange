@@ -60,23 +60,23 @@ def node_strategy(): #players get their strategies randomly
 
 
 def fitness(): #funcion de evaluacion y actualizacion del fitness
-    #de cada competidor
+    #de cada competidor. Prisoner's Dilemma T > R > P > S; Snowdrift game: T > R > S > P. Actual configuration is Prisoner's Dilemma
     for i, j in nt.edges():
         if nt.node[i]['id'] == 'c' and nt.node[j]['id'] == 'd':
-            nt.node[i]['w'] -= 1.0
+            nt.node[i]['w'] -= 2.0
             nt.node[j]['w'] += 2.0
             
         if nt.node[i]['id'] == 'd' and nt.node[j]['id'] == 'c':
             nt.node[i]['w'] += 2.0
-            nt.node[j]['w'] -= 1.0
+            nt.node[j]['w'] -= 2.0
 
         if nt.node[i]['id'] == 'c' and nt.node[j]['id'] == 'c':
-            nt.node[i]['w'] += 0.5
-            nt.node[j]['w'] += 0.5
+            nt.node[i]['w'] += 1
+            nt.node[j]['w'] += 1
 
         if nt.node[i]['id'] == 'd' and nt.node[j]['id'] == 'd':
-            nt.node[i]['w'] -= 2
-            nt.node[j]['w'] -= 2
+            nt.node[i]['w'] -= 1
+            nt.node[j]['w'] -= 1
 
 
 
@@ -126,11 +126,11 @@ while nt.get_edge_data('a','b')['t']>=0 and (nt.node['a']['w']>=0 or nt.node['b'
 
 
 
-plt.plot(time_list,trust_list)
-plt.plot(time_list,fitness_a,color='r')
-plt.plot(time_list,fitness_b,color='g')
-plt.plot(time_list,id_a,color='r')
-plt.plot(time_list,id_b,color='g')
+plt.plot(time_list,trust_list, 'bs-')
+plt.plot(time_list,fitness_a, 'r--')
+plt.plot(time_list,fitness_b,'g+-')
+plt.plot(time_list,id_a,'r--')
+plt.plot(time_list,id_b,'g+-')
 plt.show()
 
 #step()
