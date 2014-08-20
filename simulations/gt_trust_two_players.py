@@ -1,4 +1,8 @@
 import random
+import matplotlib
+import pylab as pl
+import matplotlib.pyplot as plt
+
 
 def random_strategy(): #players get their strategies randomly    
     return random.choice(['d','c'])
@@ -45,13 +49,50 @@ initial_state = {'f_a': 10,
                  's_b': 'c',
                  'trust': 10,}
 
-t = [ initial_state, ]
+T = [ initial_state, ]
 
 n=0
-while t[n]['trust']>0:
-    t.append(step(t[n]))
+while T[n]['trust']>0:
+    T.append(step(T[n]))
     n +=1
 
 
-import pprint
-pprint.pprint(t)
+
+
+
+
+trust_list = []
+fitness_a = []
+fitness_b = []
+id_a = []
+id_b = []
+time_list = []
+n = 0
+for t in T:
+    trust_list.append(t['trust'])
+    fitness_a.append(t['f_a'])
+    fitness_b.append(t['f_b'])
+
+    if t['s_a']=='c':
+        id_a.append(-1)
+    else:
+        id_a.append(-2)
+
+    if t['s_b']=='c':
+        id_b.append(-3)
+    else:
+        id_b.append(-4)
+
+    time_list.append(n)
+    n+=1
+
+
+
+plt.plot(time_list,trust_list, 'bs-')
+plt.plot(time_list,fitness_a, 'r--')
+plt.plot(time_list,fitness_b,'g+-')
+plt.plot(time_list,id_a,'r--')
+plt.plot(time_list,id_b,'g+-')
+plt.show()
+
+
