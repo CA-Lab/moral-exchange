@@ -22,7 +22,7 @@ def proportional_tit_for_tat(player):
     elif player == 'b':
         other_player = 'a'
 
-    # all choices of the other player
+    # past choices of the other player
     choices = []
     for s in T:
         choices += s['s_'+other_player]
