@@ -16,6 +16,23 @@ def tit_for_tat(player):
     return T[t]['s_'+other_player]
 
 
+
+def selfish_memory(player):
+    print player, t, T
+    
+    if T[t-1]['f_'+player] < T[t]['f_'+player]:
+        # fitness increase, same strategy as last iteration
+        print "fitness increase"
+        return T[t]['s_'+player]
+    else:
+        print "fitness decrease"
+        # fitness decrease, switch strategy
+        if T[t]['s_'+player] == 'c':
+            return 'd'
+        else:
+            return 'c'
+
+
 def proportional_tit_for_tat(player):
     if player == 'a':
         other_player = 'b'
@@ -93,11 +110,19 @@ initial_state = {'f_a': 10,
                  's_b': 'd',
                  'trust': 30,}
 
-T = [ initial_state, ]
+initial_state1 = {'f_a': 8,
+                 's_a': 'd',
+                 'f_b': 12,
+                 's_b': 'c',
+                 'trust': 29,}
 
-t=0
+T = [ initial_state, initial_state1,]
+
+t=1
 while T[t]['trust']>0 and t<200:
-    T.append(step(T[t], strategy=memory_tit_for_tat) )
+    state = step(T[t], strategy=selfish_memory)
+    print state
+    T.append( state )
     t +=1
 
 
@@ -130,7 +155,7 @@ for t in T:
     n+=1
 
 
-
+pprint.pprint(T)
 plt.plot(time_list,trust_list, 'bs-')
 plt.plot(time_list,fitness_a, 'r--')
 plt.plot(time_list,fitness_b,'g+-')
