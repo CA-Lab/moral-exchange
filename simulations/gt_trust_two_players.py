@@ -30,6 +30,28 @@ def proportional_tit_for_tat(player):
     return random.choice( choices )
 
 
+
+def memory_tit_for_tat(player):
+
+    if player == 'a':
+        other_player = 'b'
+    elif player == 'b':
+        other_player = 'a'
+
+    # past choices of the other player
+    memory_size = 20
+    choices = []
+    if len(T)<memory_size:
+        for s in T:
+            choices += s['s_'+other_player]
+    else:
+        for n in range(len(T)-1,len(T)-memory_size,-1):
+            choices += T[n]['s_'+other_player]
+
+    return random.choice( choices )
+
+
+
 def step(state, strategy=random_strategy): #funcion de evaluacion y actualizacion del fitness
     #de cada competidor. Prisoner's Dilemma T > R > P > S; Snowdrift game: T > R > S > P. Actual configuration is Prisoner's Dilemma
 
@@ -66,16 +88,16 @@ def step(state, strategy=random_strategy): #funcion de evaluacion y actualizacio
 
 
 initial_state = {'f_a': 10,
-                 's_a': random_strategy('a'),
+                 's_a': 'c',
                  'f_b': 10,
-                 's_b': random_strategy('b'),
-                 'trust': 10,}
+                 's_b': 'd',
+                 'trust': 30,}
 
 T = [ initial_state, ]
 
 t=0
-while T[t]['trust']>0 and t<100:
-    T.append(step(T[t], strategy=proportional_tit_for_tat) )
+while T[t]['trust']>0 and t<200:
+    T.append(step(T[t], strategy=memory_tit_for_tat) )
     t +=1
 
 
