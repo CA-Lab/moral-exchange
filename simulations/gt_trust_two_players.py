@@ -55,6 +55,19 @@ def selfish_perfect_memory(player):
 
 
 
+def selfish_memory_weighted_random(player):
+    
+    if T[t-1]['f_'+player] < T[t]['f_'+player]:
+        # fitness increase, same strategy as last iteration
+        return T[t]['s_'+player]
+    else:
+        # fitness decrease, CHOOSE strategy
+        if random.random() > 0.7:
+            return T[t]['s_'+player]
+        else:
+            return not T[t]['s_'+player]
+    
+
 def proportional_tit_for_tat(player):
     if player == 'a':
         other_player = 'b'
@@ -127,14 +140,14 @@ def step(state, strategy=random_strategy): #funcion de evaluacion y actualizacio
 
 
 state0 = {'f_a': 10,
-          's_a': C,
+          's_a': D,
           'f_b': 10,
           's_b': C,
           'trust': 30,}
 
-state1 = {'f_a': 12,
-          's_a':  D,
-          'f_b': 12,
+state1 = {'f_a': 11,
+          's_a':  C,
+          'f_b': 8,
           's_b':  D,
           'trust': 29,}
 
@@ -142,7 +155,7 @@ T = [ state0, state1,]
 
 t=1
 while T[t]['trust']>0 and t<200:
-    state = step(T[t], strategy=selfish_perfect_memory)
+    state = step(T[t], strategy=selfish_memory_weighted_random)
     T.append( state )
     t +=1
 
@@ -183,6 +196,6 @@ plt.plot(time_list,fitness_b,'g+-')
 plt.plot(time_list,id_a,'r--')
 plt.plot(time_list,id_b,'g+-')
 plt.show()
-plt.savefig('aguas.png')
+#plt.savefig('aguas.png')
 
 
