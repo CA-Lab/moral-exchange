@@ -45,12 +45,13 @@ def selfish_perfect_memory(player):
     else:
         # fitness decrease, CHOOSE strategy
         # build memory of past choices 
-        choices = []
-        for s in T:
-            choices.append(s['s_'+player])
+        choices = [ T[t]['s_'+player], ]
 
-        return not( T[t-1]['s_'+player] \
-                    and random.choice( choices ))
+        for i in range(1, len(T)):
+            if T[i-1]['f_'+player] < T[i]['f_'+player]:
+                choices.append(T[i-1]['s_'+player])
+
+        return random.choice( choices )
 
 
 
@@ -128,13 +129,13 @@ def step(state, strategy=random_strategy): #funcion de evaluacion y actualizacio
 state0 = {'f_a': 10,
           's_a': C,
           'f_b': 10,
-          's_b': D,
+          's_b': C,
           'trust': 30,}
 
-state1 = {'f_a': 8,
+state1 = {'f_a': 12,
           's_a':  D,
           'f_b': 12,
-          's_b':  C,
+          's_b':  D,
           'trust': 29,}
 
 T = [ state0, state1,]
@@ -182,6 +183,6 @@ plt.plot(time_list,fitness_b,'g+-')
 plt.plot(time_list,id_a,'r--')
 plt.plot(time_list,id_b,'g+-')
 plt.show()
-# plt.savefig('aguas.png')
+plt.savefig('aguas.png')
 
 
