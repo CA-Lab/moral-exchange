@@ -146,12 +146,12 @@ def altruist_differential_fitness(player):
             p = 1 - (float(T[t]['f_'+player]+1)/float(T[t]['f_'+other_player]+1))
 
         if random.random() < p:
-            return not T[t]['s_'+player]
+            return True
         else:
-            return T[t]['s_'+player]
+            return T[t]['s_'+other_player]
     else:
-#        return T[t]['s_'+other_player]
-        return True
+        return not T[t]['s_'+player]
+#        return True
 
         
 def step(state, strategy=random_strategy): #funcion de evaluacion y actualizacion del fitness
@@ -195,11 +195,11 @@ state0 = {'f_a': 10,
           's_b': C,
           'trust': 30,}
 
-state1 = {'f_a': 40,
+state1 = {'f_a': 80,
           's_a':  C,
-          'f_b': 39,
+          'f_b': 2,
           's_b':  D,
-          'trust': 30,}
+          'trust': 80,}
 
 T = [ state1, ]
 
