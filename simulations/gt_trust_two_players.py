@@ -10,6 +10,7 @@ D = False
 
 
 def random_strategy(player): #players get their strategies randomly    
+    print player
     return random.choice([ D,C])
 
 def tit_for_tat(player):
@@ -104,6 +105,55 @@ def memory_tit_for_tat(player):
 
 
 
+def selfish_differential_fitness(player):
+    if player == 'a':
+        other_player = 'b'
+    elif player == 'b':
+        other_player = 'a'
+
+    if T[t]['f_'+player] > T[t]['f_'+other_player]:
+        # I'm winning!
+        return T[t]['s_'+player]
+    else:
+        # must change
+
+        if T[t]['f_'+other_player]:
+            p = 1 - (float(T[t]['f_'+player])/float(T[t]['f_'+other_player]))
+        else:
+            p = 1 - (float(T[t]['f_'+player]+1)/float(T[t]['f_'+other_player]+1))
+
+        print player,T[t]['f_'+player],T[t]['f_'+other_player],p
+        
+        if random.random() < p:
+            return T[t]['s_'+other_player]
+        else:
+            return T[t]['s_'+player]
+
+
+
+def altruist_differential_fitness(player):
+    if player == 'a':
+        other_player = 'b'
+    elif player == 'b':
+        other_player = 'a'
+
+    if T[t]['f_'+player] > T[t]['f_'+other_player]:
+        # I'm winning!
+        # too far?
+        if T[t]['f_'+other_player]:
+            p = 1 - (float(T[t]['f_'+other_player])/float(T[t]['f_'+player]))
+        else:
+            p = 1 - (float(T[t]['f_'+player]+1)/float(T[t]['f_'+other_player]+1))
+
+        if random.random() < p:
+            return not T[t]['s_'+player]
+        else:
+            return T[t]['s_'+player]
+    else:
+#        return T[t]['s_'+other_player]
+        return True
+
+        
 def step(state, strategy=random_strategy): #funcion de evaluacion y actualizacion del fitness
     #de cada competidor. Prisoner's Dilemma T > R > P > S; Snowdrift game: T > R > S > P. Actual configuration is Prisoner's Dilemma
 
@@ -145,17 +195,17 @@ state0 = {'f_a': 10,
           's_b': C,
           'trust': 30,}
 
-state1 = {'f_a': 11,
+state1 = {'f_a': 40,
           's_a':  C,
-          'f_b': 8,
+          'f_b': 39,
           's_b':  D,
-          'trust': 29,}
+          'trust': 30,}
 
-T = [ state0, state1,]
+T = [ state1, ]
 
-t=1
+t=0
 while T[t]['trust']>0 and t<200:
-    state = step(T[t], strategy=selfish_memory_weighted_random)
+    state = step(T[t], strategy=altruist_differential_fitness)
     T.append( state )
     t +=1
 
