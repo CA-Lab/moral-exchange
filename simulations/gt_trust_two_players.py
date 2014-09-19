@@ -153,7 +153,18 @@ def altruist_differential_fitness(player):
         return not T[t]['s_'+player]
 #        return True
 
-        
+
+
+def trust_dependant_strategy(player):
+    if T[t-1]['trust'] < T[t]['trust']:
+        # trust increment
+        #return T[t-1]['s_'+player]
+        return random_strategy(player)
+    else:
+        return True
+
+
+
 def step(state, strategy=random_strategy): #funcion de evaluacion y actualizacion del fitness
     #de cada competidor. Prisoner's Dilemma T > R > P > S; Snowdrift game: T > R > S > P. Actual configuration is Prisoner's Dilemma
 
@@ -195,17 +206,17 @@ state0 = {'f_a': 10,
           's_b': C,
           'trust': 30,}
 
-state1 = {'f_a': 80,
+state1 = {'f_a': 12,
           's_a':  C,
-          'f_b': 2,
+          'f_b': 8,
           's_b':  D,
-          'trust': 80,}
+          'trust': 28,}
 
-T = [ state1, ]
+T = [ state0, state1, ]
 
 t=0
 while T[t]['trust']>0 and t<200:
-    state = step(T[t], strategy=altruist_differential_fitness)
+    state = step(T[t], strategy=trust_dependant_strategy)
     T.append( state )
     t +=1
 
