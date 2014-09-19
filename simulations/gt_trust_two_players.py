@@ -10,8 +10,7 @@ D = False
 
 
 def random_strategy(player): #players get their strategies randomly    
-    print player
-    return random.choice([ D,C])
+    return random.choice([D,C, ])
 
 def tit_for_tat(player):
     if player == 'a':
@@ -69,6 +68,7 @@ def selfish_memory_weighted_random(player):
             return not T[t]['s_'+player]
     
 
+# perfect memory tit for tat
 def proportional_tit_for_tat(player):
     if player == 'a':
         other_player = 'b'
@@ -78,7 +78,7 @@ def proportional_tit_for_tat(player):
     # past choices of the other player
     choices = []
     for s in T:
-        choices += s['s_'+other_player]
+        choices.append(s['s_'+other_player])
 
     return random.choice( choices )
 
@@ -92,14 +92,14 @@ def memory_tit_for_tat(player):
         other_player = 'a'
 
     # past choices of the other player
-    memory_size = 20
+    memory_size = 15
     choices = []
     if len(T)<memory_size:
         for s in T:
-            choices += s['s_'+other_player]
+            choices.append(s['s_'+other_player])
     else:
         for n in range(len(T)-1,len(T)-memory_size,-1):
-            choices += T[n]['s_'+other_player]
+            choices.append(T[n]['s_'+other_player])
 
     return random.choice( choices )
 
@@ -156,12 +156,27 @@ def altruist_differential_fitness(player):
 
 
 def trust_dependant_strategy(player):
-    if T[t-1]['trust'] < T[t]['trust']:
+    tmp = 1
+    increments = 0
+    decrements = 0
+    while tmp<len(T):
+        if T[tmp-1]['trust'] < T[tmp]['trust']:
+            increments += T[tmp]['trust'] - T[tmp-1]['trust']
+        else:
+            decrements += T[tmp-1]['trust'] - T[tmp]['trust']
+        tmp += 1
+
+
+    if (increments - decrements) > 0:
         # trust increment
         #return T[t-1]['s_'+player]
-        return random_strategy(player)
+        return memory_tit_for_tat(player)
     else:
-        return True
+        print t, increments, decrements, increments - decrements, float(decrements) / (float(increments) + float(decrements))
+        if random.random() < float(decrements) / (float(increments) + float(decrements)):
+            return True
+        else:
+            return False
 
 
 
@@ -204,17 +219,25 @@ state0 = {'f_a': 10,
           's_a': D,
           'f_b': 10,
           's_b': C,
-          'trust': 30,}
+          'trust': 10,}
 
 state1 = {'f_a': 12,
           's_a':  C,
           'f_b': 8,
           's_b':  D,
-          'trust': 28,}
+          'trust': 9,}
 
-T = [ state0, state1, ]
+T = [ state0,  ]
+state = step(T[0], strategy=memory_tit_for_tat)
+T.append( state )
 
-t=0
+import pprint
+
+
+
+# if there's more than one initial state, iterate from t=1
+# otherwise start on t=0
+t=1
 while T[t]['trust']>0 and t<200:
     state = step(T[t], strategy=trust_dependant_strategy)
     T.append( state )
