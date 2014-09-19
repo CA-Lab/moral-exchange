@@ -105,6 +105,29 @@ def memory_tit_for_tat(player):
 
 
 
+# players have different memory span
+def different_memories_tit_for_tat(player):
+    if player == 'a':
+        other_player = 'b'
+        memory_size = 15
+    elif player == 'b':
+        other_player = 'a'
+        memory_size = 5
+
+    # past choices of the other player
+    choices = []
+    if len(T)<memory_size:
+        for s in T:
+            choices.append(s['s_'+other_player])
+    else:
+        for n in range(len(T)-1,len(T)-memory_size,-1):
+            choices.append(T[n]['s_'+other_player])
+          
+    return random.choice( choices )
+
+
+
+
 def selfish_differential_fitness(player):
     if player == 'a':
         other_player = 'b'
@@ -228,7 +251,7 @@ state1 = {'f_a': 12,
           'trust': 9,}
 
 T = [ state0,  ]
-state = step(T[0], strategy=memory_tit_for_tat)
+state = step(T[0], strategy=different_memories_tit_for_tat)
 T.append( state )
 
 import pprint
