@@ -12,7 +12,7 @@ D = False
 def random_strategy(player, T, t): #players get their strategies randomly    
     return random.choice([D,C, ])
 
-def tit_for_tat(player):
+def tit_for_tat(player, T, t):
     if player == 'a':
         other_player = 'b'
     elif player == 'b':

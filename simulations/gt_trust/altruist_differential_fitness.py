@@ -28,4 +28,4 @@ while T[t]['trust']>0 and t<200:
     t +=1
 
 
-plot(T, 'altruist_differential.png')
+plot(T, 'altruist_differential_fitness.png')
