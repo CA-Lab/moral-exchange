@@ -9,10 +9,10 @@ C = True
 D = False
 
 
-def random_strategy(player): #players get their strategies randomly    
+def random_strategy(player, T, t): #players get their strategies randomly    
     return random.choice([D,C, ])
 
-def tit_for_tat(player):
+def tit_for_tat(player, T, t):
     if player == 'a':
         other_player = 'b'
     elif player == 'b':
@@ -22,7 +22,7 @@ def tit_for_tat(player):
 
 
 
-def selfish_memory(player):
+def selfish_memory(player, T, t):
     
     if T[t-1]['f_'+player] < T[t]['f_'+player]:
         # fitness increase, same strategy as last iteration
@@ -37,7 +37,7 @@ def selfish_memory(player):
 
 
 
-def selfish_perfect_memory(player):
+def selfish_perfect_memory(player, T, t):
     
     if T[t-1]['f_'+player] < T[t]['f_'+player]:
         # fitness increase, same strategy as last iteration
@@ -55,7 +55,7 @@ def selfish_perfect_memory(player):
 
 
 
-def selfish_memory_weighted_random(player):
+def selfish_memory_weighted_random(player, T, t):
     
     if T[t-1]['f_'+player] < T[t]['f_'+player]:
         # fitness increase, same strategy as last iteration
@@ -69,7 +69,7 @@ def selfish_memory_weighted_random(player):
     
 
 # perfect memory tit for tat
-def proportional_tit_for_tat(player):
+def proportional_tit_for_tat(player, T, t):
     if player == 'a':
         other_player = 'b'
     elif player == 'b':
@@ -84,7 +84,7 @@ def proportional_tit_for_tat(player):
 
 
 
-def memory_tit_for_tat(player):
+def memory_tit_for_tat(player, T, t):
 
     if player == 'a':
         other_player = 'b'
@@ -106,7 +106,7 @@ def memory_tit_for_tat(player):
 
 
 # players have different memory span
-def different_memories_tit_for_tat(player):
+def different_memories_tit_for_tat(player, T, t):
     if player == 'a':
         other_player = 'b'
         memory_size = 15
@@ -128,7 +128,7 @@ def different_memories_tit_for_tat(player):
 
 
 
-def selfish_differential_fitness(player):
+def selfish_differential_fitness(player, T, t):
     if player == 'a':
         other_player = 'b'
     elif player == 'b':
@@ -154,7 +154,8 @@ def selfish_differential_fitness(player):
 
 
 
-def altruist_differential_fitness(player):
+def altruist_differential_fitness(player, T, t):
+
     if player == 'a':
         other_player = 'b'
     elif player == 'b':
@@ -178,7 +179,7 @@ def altruist_differential_fitness(player):
 
 
 
-def trust_dependant_strategy(player):
+def trust_dependant_strategy(player, T, t):
     tmp = 1
     increments = 0
     decrements = 0
@@ -193,7 +194,7 @@ def trust_dependant_strategy(player):
     if (increments - decrements) > 0:
         # trust increment
         #return T[t-1]['s_'+player]
-        return memory_tit_for_tat(player)
+        return memory_tit_for_tat(player, T, t)
     else:
         print t, increments, decrements, increments - decrements, float(decrements) / (float(increments) + float(decrements))
         if random.random() < float(decrements) / (float(increments) + float(decrements)):
@@ -203,106 +204,98 @@ def trust_dependant_strategy(player):
 
 
 
-def step(state, strategy=random_strategy): #funcion de evaluacion y actualizacion del fitness
+def step(state, T, t, strategy=random_strategy): #funcion de evaluacion y actualizacion del fitness
     #de cada competidor. Prisoner's Dilemma T > R > P > S; Snowdrift game: T > R > S > P. Actual configuration is Prisoner's Dilemma
 
     if state['s_a'] == C and state['s_b'] ==  D:
         return {'f_a': state['f_a']-2,
-                's_a': strategy('a'),
+                's_a': strategy('a',T,t),
                 'f_b': state['f_b']+2,
-                's_b': strategy('b'),
+                's_b': strategy('b',T,t),
                 'trust': state['trust']-1}
 
             
     if state['s_a'] ==  D and state['s_b'] == C:
         return {'f_a': state['f_a']+2,
-                's_a': strategy('a'),
+                's_a': strategy('a',T,t),
                 'f_b': state['f_b']-2,
-                's_b': strategy('b'),
+                's_b': strategy('b',T,t),
                 'trust': state['trust']-1}
 
 
     if state['s_a'] == C and state['s_b'] == C:
         return {'f_a': state['f_a']+1,
-                's_a': strategy('a'),
+                's_a': strategy('a',T,t),
                 'f_b': state['f_b']+1,
-                's_b': strategy('b'),
+                's_b': strategy('b',T,t),
                 'trust': state['trust']+2}
 
     if state['s_a'] ==  D and state['s_b'] ==  D:
         return {'f_a': state['f_a']-1,
-                's_a': strategy('a'),
+                's_a': strategy('a',T,t),
                 'f_b': state['f_b']-1,
-                's_b': strategy('b'),
+                's_b': strategy('b',T,t),
                 'trust': state['trust']-2}
 
-
-
-state0 = {'f_a': 10,
-          's_a': D,
-          'f_b': 10,
-          's_b': C,
-          'trust': 10,}
-
-state1 = {'f_a': 12,
-          's_a':  C,
-          'f_b': 8,
-          's_b':  D,
-          'trust': 9,}
-
-T = [ state0,  ]
-state = step(T[0], strategy=different_memories_tit_for_tat)
-T.append( state )
-
-import pprint
-
-
-
-# if there's more than one initial state, iterate from t=1
-# otherwise start on t=0
-t=1
-while T[t]['trust']>0 and t<200:
-    state = step(T[t], strategy=trust_dependant_strategy)
-    T.append( state )
-    t +=1
 
 
 
 
 # plot
-trust_list = []
-fitness_a = []
-fitness_b = []
-id_a = []
-id_b = []
-time_list = []
-n = 0
-for t in T:
-    trust_list.append(t['trust'])
-    fitness_a.append(t['f_a'])
-    fitness_b.append(t['f_b'])
+def plot(T, path):
+    trust_list = []
+    fitness_a = []
+    fitness_b = []
+    id_a = []
+    id_b = []
+    time_list = []
+    n = 0
+    for t in T:
+        trust_list.append(t['trust'])
+        fitness_a.append(t['f_a'])
+        fitness_b.append(t['f_b'])
 
-    if t['s_a']== C:
-        id_a.append(-1)
-    else:
-        id_a.append(-2)
+        if t['s_a']== C:
+            id_a.append(-1)
+        else:
+            id_a.append(-2)
 
-    if t['s_b']== C:
-        id_b.append(-3)
-    else:
-        id_b.append(-4)
+        if t['s_b']== C:
+            id_b.append(-3)
+        else:
+            id_b.append(-4)
 
-    time_list.append(n)
-    n+=1
-
-
-
-plt.plot(time_list,trust_list, 'bs-')
-plt.plot(time_list,fitness_a, 'r--')
-plt.plot(time_list,fitness_b,'g+-')
-plt.plot(time_list,id_a,'r--')
-plt.plot(time_list,id_b,'g+-')
-plt.show()
-#plt.savefig('aguas.png')
+        time_list.append(n)
+        n+=1
 
 
+
+    plt.plot(time_list,trust_list, 'bs-')
+    plt.plot(time_list,fitness_a, 'r--')
+    plt.plot(time_list,fitness_b,'g+-')
+    plt.plot(time_list,id_a,'r--')
+    plt.plot(time_list,id_b,'g+-')
+    #plt.show()
+    plt.savefig(path)
+
+
+def multiplot(runs, path):
+    for T in runs:
+        trust_list = []
+        fitness_a = []
+        fitness_b = []
+        time_list = []
+        n = 0
+        for t in T:
+            trust_list.append(t['trust'])
+            fitness_a.append(t['f_a'])
+            fitness_b.append(t['f_b'])
+            time_list.append(n)
+
+            n+=1
+
+        plt.plot(time_list,trust_list, 'b-')
+        plt.plot(time_list,fitness_a, 'r-')
+        plt.plot(time_list,fitness_b,'g-')
+
+    plt.savefig(path)
