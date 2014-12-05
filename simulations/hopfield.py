@@ -62,7 +62,11 @@ positions = nx.random_layout(g)
 
 def draw():
     pl.cla()
-    nx.draw(g, pos = positions, node_color = [g.node[i]['s'] for i in g.nodes_iter()], with_labels = True, edge_color = 'c', cmap = pl.cm.RdBu, vmin = 0, vmax = 1)
+    nx.draw(g, pos = positions,
+            node_color = [g.node[i]['s'] for i in g.nodes_iter()],
+            with_labels = True, edge_color = 'c',
+            cmap = pl.cm.autumn, vmin = 0, vmax = 1)
+    
     pl.axis('image')
     pl.title('t = ' + str(time))
     #pl.title('Energy = ' + str(E))
@@ -81,27 +85,73 @@ def step():
     i = rd.choice(g.nodes())
     for j in g.neighbors(i):
         m.append( g.edge[i][j]['w'] * g.node[j]['s'] )
-        e = sum(m)
-        if e >= 1:
-            g.node[i]['s'] = 1
-        else:
-            g.node[i]['s'] = -1
+        
+    e = sum(m)
+    print i, e
+    if e >= 1:
+        g.node[i]['s'] = 1
+    else:
+        g.node[i]['s'] = -1
                 
-    for i, j in g.edges():
-        if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
-            ef.append( g.edge[i][j]['w']  )
-            E = sum(ef)
+    # for i, j in g.edges():
+    #     if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+    #         ef.append( g.edge[i][j]['w']  )
+    #         E = sum(ef)
 
     
-    for i in g.node:
-        states.append(g.node[i]['s'])
-        if len(states) == 4:
-            print states
+    # for i in g.node:
+    #     states.append(g.node[i]['s'])
+    #     if len(states) == 4:
+    #         print states
                 
 
 
-    time_list.append(time)
-    energy_state.append(E)
+    # time_list.append(time)
+    # energy_state.append(E)
+
+
+
+def step_sync_global():
+    global time, g, positions, E
+
+    time += 1
+    states = []
+    m = []
+    """ef for energy function"""
+    ef = []
+
+    g_plus = g.copy()
+    
+    for i in g.nodes():
+        for j in g.neighbors(i):
+            m.append( g.edge[i][j]['w'] * g.node[j]['s'] )
+
+        e = sum(m)
+        # print i, e
+
+        if e >= 1:
+            g_plus.node[i]['s'] = 1
+        else:
+            g_plus.node[i]['s'] = -1
+
+
+    g = g_plus.copy()
+                    
+    # for i, j in g.edges():
+    #     if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+    #         ef.append( g.edge[i][j]['w']  )
+    #         E = sum(ef)
+
+    
+    # for i in g.node:
+    #     states.append(g.node[i]['s'])
+    #     if len(states) == 4:
+    #         print states
+                
+
+
+    # time_list.append(time)
+    # energy_state.append(E)
 
 
 
