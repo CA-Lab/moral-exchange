@@ -279,3 +279,23 @@ def plot(T, path):
     plt.savefig(path)
 
 
+def multiplot(runs, path):
+    for T in runs:
+        trust_list = []
+        fitness_a = []
+        fitness_b = []
+        time_list = []
+        n = 0
+        for t in T:
+            trust_list.append(t['trust'])
+            fitness_a.append(t['f_a'])
+            fitness_b.append(t['f_b'])
+            time_list.append(n)
+
+            n+=1
+
+        plt.plot(time_list,trust_list, 'b-')
+        plt.plot(time_list,fitness_a, 'r-')
+        plt.plot(time_list,fitness_b,'g-')
+
+    plt.savefig(path)
