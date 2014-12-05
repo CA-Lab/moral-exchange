@@ -15,17 +15,19 @@ state1 = {'f_a': 12,
           's_b':  D,
           'trust': 9,}
 
-T = [ state0,  ]
-state = step(T[0], T, 0, strategy=random_strategy)
-T.append( state )
-
-# if there's more than one initial state, iterate from t=1
-# otherwise start on t=0
-t=1
-while T[t]['trust']>0 and t<200:
-    state = step(T[t], T, t, strategy=selfish_perfect_memory)
+runs = []
+for i in range(0,1000):
+    T = [ state0,  ]
+    state = step(T[0], T, 0, strategy=random_strategy)
     T.append( state )
-    t +=1
+
+    t=1
+    while T[t]['trust']>0 and t<200:
+        state = step(T[t], T, t, strategy=selfish_perfect_memory)
+        T.append( state )
+        t +=1
+
+    runs.append(T)
 
 
-plot(T, 'selfish_perfect_memory.png')
+multiplot(runs, 'selfish_memory_multi.png')

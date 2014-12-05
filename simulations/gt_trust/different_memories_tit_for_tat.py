@@ -15,17 +15,22 @@ state1 = {'f_a': 12,
           's_b':  D,
           'trust': 9,}
 
-T = [ state0,  ]
-state = step(T[0], T, 0, strategy=random_strategy)
-T.append( state )
+runs = []
 
-# if there's more than one initial state, iterate from t=1
-# otherwise start on t=0
-t=1
-while T[t]['trust']>0 and t<200:
-    state = step(T[t], T, t, strategy=different_memories_tit_for_tat)
+for i in range(0, 1000):
+    T = [ state0,  ]
+    state = step(T[0], T, 0, strategy=random_strategy)
     T.append( state )
-    t +=1
+
+    # if there's more than one initial state, iterate from t=1
+    # otherwise start on t=0
+    t=1
+    while T[t]['trust']>0 and t<200:
+        state = step(T[t], T, t, strategy=different_memories_tit_for_tat)
+        T.append( state )
+        t +=1
+
+    runs.append(T)
 
 
-plot(T, 'different_memories_tit_for_tat.png')
+multiplot(runs, 'different_memories_tit_for_tat_multi.png')
