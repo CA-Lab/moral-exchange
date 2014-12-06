@@ -55,10 +55,46 @@ def init():
     g.edge['d']['c']['w'] = 0
     g.edge['d']['d']['w'] = 0
     
+def init_watts():
+    global time, g, positions, E
+    E = 0
+    time = 0
 
-init()
+    g = nx.watts_strogatz_graph(100, 2, 0.3)
 
-positions = nx.random_layout(g)
+    
+    for i in g.nodes():
+        g.node[i]['s'] = rd.choice([1,-1])
+    
+    for i,j in g.edges():
+        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+
+
+def init_erdos():
+    global time, g, positions, E
+    E = 0
+    time = 0
+    g = nx.erdos_renyi_graph(100, .3)
+
+    for i in g.nodes():
+        g.node[i]['s'] = rd.choice([1,-1])
+    
+    for i,j in g.edges():
+        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+
+def init_barabasi():
+    global time, g, positions, E
+    E = 0
+    time = 0
+    g = nx.barabasi_albert_graph(500, 15)
+
+    for i in g.nodes():
+        g.node[i]['s'] = rd.choice([1,-1])
+    
+    for i,j in g.edges():
+        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+
+
 
 def draw():
     pl.cla()
@@ -157,7 +193,10 @@ def step_sync_global():
 
 
 import pycxsimulator
-pycxsimulator.GUI().start(func = [init, draw, step])
+
+init_watts()
+positions = nx.random_layout(g)
+pycxsimulator.GUI().start(func = [init_watts, draw, step_sync_global])
 
 plt.plot(time_list, energy_state, 'bs-')
 plt.xlabel('Time')
