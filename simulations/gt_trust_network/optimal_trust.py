@@ -8,7 +8,7 @@ import scipy as sp
 import networkx as nx
 import numpy as np
 import math as mt
-import pprint as ppt
+from pprint import pprint
 
 time_list = []
 energy_state = []
@@ -94,11 +94,7 @@ def draw():
 
 def step_async():
     global time, g, positions, E
-
     time += 1
-    states = []
-    """ef for energy function"""
-    ef = []
 
     # grab a node
     i = rd.choice(g.nodes())
@@ -141,6 +137,17 @@ def step_async():
             g.node[j]['f'] += -1
             g.edge[i][j]['w'] += -2
 
+
+    print i, g.node[i],d,tau
+    
+    # report
+    ef = []
+    for i, j in g.edges():
+        if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+            ef.append( g.edge[i][j]['w']  )
+            E = sum(ef)
+    time_list.append(time)
+    energy_state.append(E)
 
             
 def step_sync_global():
