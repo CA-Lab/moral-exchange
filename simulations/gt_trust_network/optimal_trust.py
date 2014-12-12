@@ -1,6 +1,6 @@
 import matplotlib
-# matplotlib.use('TkAgg')
-matplotlib.use('GTK')
+matplotlib.use('TkAgg')
+# matplotlib.use('GTK')
 import matplotlib.pyplot as plt
 import pylab as pl
 import random as rd
@@ -92,7 +92,7 @@ def draw():
     plt.show() 
 
 
-def step():
+def step_async():
     global time, g, positions, E
 
     time += 1
@@ -110,7 +110,7 @@ def step():
         m.append( g.edge[i][j]['w'] )
         
     tau = sum(m)
-    d   = tau / i['f']
+    d   = tau / g.node[i]['f']
     
     if d <= theta:
         g.node[i]['s'] = not g.node[i]['s']
@@ -121,24 +121,24 @@ def step():
     m_j = []
     w = []
     for j in g.neighbors(i):
-        if i['s'] == C and j['s'] ==  D:
-            i['f'] += -2
-            j['f'] += 2
+        if g.node[i]['s'] == C and g.node[j]['s'] ==  D:
+            g.node[i]['f'] += -2
+            g.node[j]['f'] += 2
             g.edge[i][j]['w'] += -1
             
-        if i['s'] ==  D and j['s'] == C:
-            i['f'] += 2
-            j['f'] += -2
+        if g.node[i]['s'] ==  D and g.node[j]['s'] == C:
+            g.node[i]['f'] += 2
+            g.node[j]['f'] += -2
             g.edge[i][j]['w'] += -1
             
-        if i['s'] == C and j['s'] == C:
-            i['f'] += 1
-            j['f'] += 1
+        if g.node[i]['s'] == C and g.node[j]['s'] == C:
+            g.node[i]['f'] += 1
+            g.node[j]['f'] += 1
             g.edge[i][j]['w'] += 2
 
-        if i['s'] ==  D and j['s'] ==  D:
-            i['f'] += -1
-            j['f'] += -1
+        if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
+            g.node[i]['f'] += -1
+            g.node[j]['f'] += -1
             g.edge[i][j]['w'] += -2
 
 
@@ -192,9 +192,9 @@ import pycxsimulator
 
 #init_watts()
 #init_erdos()
-init_barabasi()
+init_simple()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_barabasi, draw, step_sync_global])
+pycxsimulator.GUI().start(func = [init_simple, draw, step_async])
 plt.cla()
 plt.plot(time_list, energy_state, 'bs-')
 plt.xlabel('Time')
