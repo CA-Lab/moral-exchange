@@ -17,6 +17,17 @@ C = True
 D = False
 theta = 1
 
+
+
+def plot():
+    plt.cla()
+    plt.plot(time_list, energy_state, 'bs-')
+    plt.xlabel('Time')
+    plt.ylabel('Energy states')
+#    plt.ylim(-300, 300)
+    plt.savefig('e_plot.png')
+
+
 """Generates a full connected network"""
 def init_simple():
     global time, g, positions, E
@@ -35,6 +46,7 @@ def init_simple():
         g.node[i]['s'] = rd.choice([C,D])
         # all start with same fitness
         g.node[i]['f'] = 10
+        
 
 
 
@@ -45,13 +57,15 @@ def init_watts():
 
     g = nx.watts_strogatz_graph(100, 2, 0.3)
 
-    
     for i in g.nodes():
-        g.node[i]['s'] = rd.choice([1,-1])
-    
-    for i,j in g.edges():
-        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+        # choose random state
+        g.node[i]['s'] = rd.choice([C,D])
+        # all start with same fitness
+        g.node[i]['f'] = 10
 
+    for e in g.edges():
+        g.add_edge(*e, w=10)
+        
 
 def init_erdos():
     global time, g, positions, E
@@ -60,11 +74,15 @@ def init_erdos():
     g = nx.erdos_renyi_graph(100, .3)
 
     for i in g.nodes():
-        g.node[i]['s'] = rd.choice([1,-1])
-    
-    for i,j in g.edges():
-        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+        # choose random state
+        g.node[i]['s'] = rd.choice([C,D])
+        # all start with same fitness
+        g.node[i]['f'] = 10
 
+    for e in g.edges():
+        g.add_edge(*e, w=10)
+
+        
 def init_barabasi():
     global time, g, positions, E
     E = 0
@@ -72,24 +90,28 @@ def init_barabasi():
     g = nx.barabasi_albert_graph(200, 15)
 
     for i in g.nodes():
-        g.node[i]['s'] = rd.choice([1,-1])
-    
-    for i,j in g.edges():
-        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+        # choose random state
+        g.node[i]['s'] = rd.choice([C,D])
+        # all start with same fitness
+        g.node[i]['f'] = 10
 
+    for e in g.edges():
+        g.add_edge(*e, w=10)
 
 
 def draw():
-    pl.cla()
-    nx.draw(g, pos = positions,
-            node_color = [g.node[i]['s'] for i in g.nodes_iter()],
-            with_labels = True, edge_color = 'c',
-            cmap = pl.cm.autumn, vmin = 0, vmax = 1)
+    # pl.cla()
+    # nx.draw(g, pos = positions,
+    #         node_color = [g.node[i]['s'] for i in g.nodes_iter()],
+    #         with_labels = True, edge_color = 'c',
+    #         cmap = pl.cm.autumn, vmin = 0, vmax = 1)
     
-    pl.axis('image')
-    pl.title('t = ' + str(time))
-    #pl.title('Energy = ' + str(E))
-    plt.show() 
+    # pl.axis('image')
+    # pl.title('t = ' + str(time))
+    # #pl.title('Energy = ' + str(E))
+    # pl.show() 
+    global time
+    print time
 
 
 def step_async():
@@ -106,7 +128,12 @@ def step_async():
         m.append( g.edge[i][j]['w'] )
         
     tau = sum(m)
+
+    if not g.node[i]['f']:
+        g.node[i]['f'] = 0.0000000001
+    
     d   = tau / g.node[i]['f']
+
     
     if d <= theta:
         g.node[i]['s'] = not g.node[i]['s']
@@ -149,46 +176,67 @@ def step_async():
     time_list.append(time)
     energy_state.append(E)
 
+
+    
             
 def step_sync_global():
-    global time, g, positions, E
-
+    global time, g,  E
     time += 1
-    states = []
-    m = []
-    """ef for energy function"""
-    ef = []
 
     g_plus = g.copy()
-    
+
+    # do all nodes
     for i in g.nodes():
+
+        # set state for node
+        m = []
         for j in g.neighbors(i):
-            m.append( g.edge[i][j]['w'] * g.node[j]['s'] )
+            m.append( g.edge[i][j]['w'] )
+        
+        tau = sum(m)
 
-        e = sum(m)
-        # print i, e
+        if not g.node[i]['f']:
+            g.node[i]['f'] = 0.0000000001
 
-        if e >= 1:
-            g_plus.node[i]['s'] = 1
-        else:
-            g_plus.node[i]['s'] = -1
+        d   = tau / g.node[i]['f']
+        if d <= theta:
+            g_plus.node[i]['s'] = not g.node[i]['s']
+
+
+        # interact
+        m_i = []
+        m_j = []
+        w = []
+        for j in g.neighbors(i):
+            if g.node[i]['s'] == C and g.node[j]['s'] ==  D:
+                g_plus.node[i]['f'] += -2
+                g_plus.node[j]['f'] += 2
+                g_plus.edge[i][j]['w'] += -1
+            
+            if g.node[i]['s'] ==  D and g.node[j]['s'] == C:
+                g_plus.node[i]['f'] += 2
+                g_plus.node[j]['f'] += -2
+                g_plus.edge[i][j]['w'] += -1
+            
+            if g.node[i]['s'] == C and g.node[j]['s'] == C:
+                g_plus.node[i]['f'] += 1
+                g_plus.node[j]['f'] += 1
+                g_plus.edge[i][j]['w'] += 2
+
+            if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
+                g_plus.node[i]['f'] += -1
+                g_plus.node[j]['f'] += -1
+                g_plus.edge[i][j]['w'] += -2
 
 
     g = g_plus.copy()
-                    
+
+    # report
+    ef = []
     for i, j in g.edges():
         if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
             ef.append( g.edge[i][j]['w']  )
             E = sum(ef)
-
-    
-    for i in g.node:
-        states.append(g.node[i]['s'])
-        if len(states) == 4:
-            print states
-                
-
-
     time_list.append(time)
     energy_state.append(E)
 
@@ -197,17 +245,11 @@ def step_sync_global():
 
 import pycxsimulator
 
-#init_watts()
+init_watts()
 #init_erdos()
-init_simple()
+#init_barabasi()
+#init_simple()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_simple, draw, step_async])
-plt.cla()
-plt.plot(time_list, energy_state, 'bs-')
-plt.xlabel('Time')
-plt.ylabel('Energy states')
-plt.ylim(-100, 100)
-#plt.yticks(range(-10, 13, 2))
-plt.savefig('e_plot.png')
-#plt.show()
+pycxsimulator.GUI().start(func = [init_watts, draw, step_async])
 
+plot()
