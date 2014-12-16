@@ -11,30 +11,45 @@ import math as mt
 from pprint import pprint
 
 time_list = []
+time_list2 = []
 energy_state = []
+fitness_state = []
 
 C = True
 D = False
 theta = 1
 
+# def plot():
+#     plt.cla()
+#     plt.plot(time_list, energy_state, 'bs-')
+#     plt.plot(time_list, fitness_state, 'r--')
+#     plt.xlabel('Time')
+#     plt.ylabel('Energy states')
+#     plt.savefig('test.png')
 
 
 def plot():
-    plt.cla()
-    plt.plot(time_list, energy_state, 'bs-')
-    plt.xlabel('Time')
-    plt.ylabel('Energy states')
-#    plt.ylim(-300, 300)
-    plt.savefig('fitness_plot.png')
+    fig = plt.figure()
+    ax1 = fig.add_subplot(211)
+    ax1.plot(time_list, energy_state, 'bs-')
+    ax1.set_xlabel('Time')
+    ax1.set_ylabel('Global trust states')
 
+    ax2 = fig.add_subplot(212)
+    ax2.plot(time_list2, fitness_state, 'ro-')
+    ax2.set_xlabel('Time')
+    ax2.set_ylabel('Global fitness states')
+
+    plt.savefig('opt_fitness.png')
 
 """Generates a full connected network"""
 def init_simple():
-    global time, g, positions, E
+    global time, g, positions, E, F
     E = 0
+    F = 0
     time = 0
     g = nx.Graph()
-    g.add_nodes_from(['a','b','c','d'])
+    g.add_nodes_from(['a','b','c'])
 
     for i in g.node:
         for j in g.node:
@@ -51,8 +66,9 @@ def init_simple():
 
 
 def init_watts():
-    global time, g, positions, E
+    global time, g, positions, E, F
     E = 0
+    F = 0
     time = 0
 
     g = nx.watts_strogatz_graph(100, 2, 0.3)
@@ -68,8 +84,9 @@ def init_watts():
         
 
 def init_erdos():
-    global time, g, positions, E
+    global time, g, positions, E, F
     E = 0
+    F = 0
     time = 0
     g = nx.erdos_renyi_graph(100, .3)
 
@@ -84,8 +101,9 @@ def init_erdos():
 
         
 def init_barabasi():
-    global time, g, positions, E
+    global time, g, positions, E, F
     E = 0
+    F = 0
     time = 0
     g = nx.barabasi_albert_graph(200, 15)
 
@@ -101,10 +119,12 @@ def init_barabasi():
 
 def draw():
     # pl.cla()
+    # nodeSize=[g.degree(n)**2 for n in nx.nodes(g)]
     # nx.draw(g, pos = positions,
     #         node_color = [g.node[i]['s'] for i in g.nodes_iter()],
     #         with_labels = True, edge_color = 'c',
-    #         cmap = pl.cm.autumn, vmin = 0, vmax = 1)
+    #         cmap = pl.cm.autumn, vmin = 0, vmax = 1,
+    #tnode_size=nodeSize, alpha=0.75)
     
     # pl.axis('image')
     # pl.title('t = ' + str(time))
@@ -115,7 +135,7 @@ def draw():
 
 
 def step_async():
-    global time, g, positions, E
+    global time, g, positions, E, F
     time += 1
 
     # grab a node
@@ -169,22 +189,30 @@ def step_async():
             g.edge[i][j]['w'] += -2
 
 
-    print i, g.node[i],d,tau
+    print time
     
-    # report
+    # report global Trust
     ef = []
     for i, j in g.edges():
-        if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+        #if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+        if g.node[i]['s'] == C and g.node[j]['s'] == C:
             ef.append( g.edge[i][j]['w']  )
-            E = sum(ef)
+        E = sum(ef)
     time_list.append(time)
     energy_state.append(E)
 
-
+    #report global fitness
+    fitness_i = []
+    for i in g.nodes():
+        fitness_i.append( g.node[i]['f'] )
+        F = sum(fitness_i)
+    time_list2.append(time)
+    fitness_state.append(F)
+        
     
             
 def step_sync_global():
-    global time, g,  E
+    global time, g,  E, F
     time += 1
 
     g_plus = g.copy()
@@ -242,13 +270,20 @@ def step_sync_global():
     # report
     ef = []
     for i, j in g.edges():
-        if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+        #if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+        if g.node[i]['s'] == C and g.node[j]['s'] == C:
             ef.append( g.edge[i][j]['w']  )
-            E = sum(ef)
+        E = sum(ef)
     time_list.append(time)
     energy_state.append(E)
 
-
+    # report global fitness
+    fitness_i = []
+    for i in g.nodes():
+        fitness_i.append( g.node[i]['f'] )
+        F = sum(fitness_i)
+    time_list2.append(time)
+    fitness_state.append(F)
 
 
 import pycxsimulator
@@ -258,6 +293,8 @@ init_watts()
 #init_barabasi()
 #init_simple()
 positions = nx.spring_layout(g)
+#pycxsimulator.GUI().start(func = [init_watts, draw, step_async])
 pycxsimulator.GUI().start(func = [init_watts, draw, step_sync_global])
+
 
 plot()
