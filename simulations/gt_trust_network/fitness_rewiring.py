@@ -9,6 +9,7 @@ import scipy as sp
 import networkx as nx
 import numpy as np
 import math as mt
+import operator
 from pprint import pprint
 
 time_list = []
@@ -198,6 +199,7 @@ def step_async():
 
 
     print time
+    rewire_async(i)
     
     # report global Trust
     ef = []
@@ -217,7 +219,7 @@ def step_async():
     time_list2.append(time)
     fitness_state.append(F)
 
-    rewire(g)
+
 
             
 def step_sync_global():
@@ -294,15 +296,43 @@ def step_sync_global():
     time_list2.append(time)
     fitness_state.append(F)
 
-def rewire(net):
+def rewire_sync(net):
     for i in g.nodes():
         for j in g.neighbors(i):
             if g.edge[i][j]['w'] < 1:
                 g.remove_edge(i,j)
-                r = rd.random()
+    
                 for j in rd.choice( g.nodes() ):
                     if r < g.node[j]['f']/len(g.nodes()):
                         g.add_edge(i,j)
+
+
+def rewire_async(node):
+    # find weakest link, remove it
+    weights = {}
+    for j in g.neighbors(node):
+        weights[j] = g.get_edge_data(node, j)['w']
+
+    if weights:
+        sorted_w = sorted(weights.items(), key=operator.itemgetter(1))
+        weakest = sorted_w.pop(0)
+        if weakest[1] < 1:
+            g.remove_edge(node, weakest[0])
+
+    # find trustable node to wire
+    total_fitness = sum([g.node[n]['f'] for n in g.nodes()])
+    proportional_f_per_node = {}
+    acc = 0
+    for n in g.nodes():
+        proportional_f_per_node[n] = (acc, acc + (g.node[n]['f'] / total_fitness))
+        acc = proportional_f_per_node[n][1]
+
+    # flip a coin
+    r = rd.random()
+    for n in proportional_f_per_node:
+        if r >= proportional_f_per_node[n][0] and r <= proportional_f_per_node[n][1]:
+            if not g.get_edge_data(node, n):
+                g.add_edge(node, n, w=10)
 
     
 import pycxsimulator
