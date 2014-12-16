@@ -16,6 +16,9 @@ time_list = []
 time_list2 = []
 energy_state = []
 fitness_state = []
+global_cc = []
+global_apl = []
+
 
 C = True
 D = False
@@ -32,18 +35,52 @@ theta = 1
 
 def plot():
     fig = plt.figure()
-    ax1 = fig.add_subplot(211)
-    ax1.plot(time_list, energy_state, 'bs-')
+    ax1 = fig.add_subplot(411)
+    ax1.plot(time_list, energy_state, 'b-')
     ax1.set_xlabel('Time')
     ax1.set_ylabel('Global trust states')
 
-    ax2 = fig.add_subplot(212)
-    ax2.plot(time_list2, fitness_state, 'ro-')
+    ax2 = fig.add_subplot(412)
+    ax2.plot(time_list2, fitness_state, 'r-')
     ax2.set_xlabel('Time')
     ax2.set_ylabel('Global fitness states')
 
+    ax3 = fig.add_subplot(413)
+    ax3.plot(time_list2, global_cc, 'r-')
+    ax3.set_xlabel('Time')
+    ax3.set_ylabel('Global CC')
+
+    ax4 = fig.add_subplot(414)
+    ax4.plot(time_list2, global_apl, 'r-')
+    ax4.set_xlabel('Time')
+    ax4.set_ylabel('Global APL')
+
     plt.savefig('rewire_fitness.png')
 
+
+def report():
+    # report global Trust
+    ef = []
+    for i, j in g.edges():
+        #if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+        if g.node[i]['s'] == C and g.node[j]['s'] == C:
+            ef.append( g.edge[i][j]['w']  )
+        E = sum(ef)
+    time_list.append(time)
+    energy_state.append(E)
+
+    #report global fitness
+    fitness_i = []
+    for i in g.nodes():
+        fitness_i.append( g.node[i]['f'] )
+        F = sum(fitness_i)
+    time_list2.append(time)
+    fitness_state.append(F)
+
+    global_cc.append(nx.average_clustering(g))
+    global_apl.append(nx.average_shortest_path_length(g))
+    
+    
 """Generates a full connected network"""
 def init_simple():
     global time, g, positions, E, F
@@ -140,6 +177,11 @@ def draw():
     global time
     print time
 
+def not_draw():
+    global time
+    print time
+
+    
 
 def step_async():
     global time, g, positions, E, F
@@ -198,26 +240,11 @@ def step_async():
             g.edge[i][j]['w'] += -2
 
 
-    print time
+    # rewire!
     rewire_async(i)
-    
-    # report global Trust
-    ef = []
-    for i, j in g.edges():
-        #if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
-        if g.node[i]['s'] == C and g.node[j]['s'] == C:
-            ef.append( g.edge[i][j]['w']  )
-        E = sum(ef)
-    time_list.append(time)
-    energy_state.append(E)
 
-    #report global fitness
-    fitness_i = []
-    for i in g.nodes():
-        fitness_i.append( g.node[i]['f'] )
-        F = sum(fitness_i)
-    time_list2.append(time)
-    fitness_state.append(F)
+    # report for later plotting
+    report()
 
 
 
@@ -337,12 +364,12 @@ def rewire_async(node):
     
 import pycxsimulator
 
-#init_watts()
+init_watts()
 #init_erdos()
 #init_barabasi()
-init_simple()
+#init_simple()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_simple, draw, step_async])
+pycxsimulator.GUI().start(func = [init_watts, not_draw, step_async])
 #pycxsimulator.GUI().start(func = [init_simple, draw, step_sync_global])
 
 
