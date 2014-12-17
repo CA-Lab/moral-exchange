@@ -10,6 +10,7 @@ import networkx as nx
 import numpy as np
 import math as mt
 import operator
+from networkx.readwrite import json_graph
 from pprint import pprint
 
 time_list = []
@@ -78,8 +79,11 @@ def report():
     fitness_state.append(F)
 
     global_cc.append(nx.average_clustering(g))
-    global_apl.append(nx.average_shortest_path_length(g))
-    
+    try:
+        global_apl.append(nx.average_shortest_path_length(g))
+    except:
+        print "no apl"
+        global_apl.append(0)
     
 """Generates a full connected network"""
 def init_simple():
@@ -115,7 +119,7 @@ def init_watts():
     F = 0
     time = 0
 
-    g = nx.watts_strogatz_graph(100, 2, 0.3)
+    g = nx.watts_strogatz_graph(50, 2, 0.3)
 
     for i in g.nodes():
         # choose random state
@@ -132,7 +136,7 @@ def init_erdos():
     E = 0
     F = 0
     time = 0
-    g = nx.erdos_renyi_graph(100, .3)
+    g = nx.erdos_renyi_graph(20, .3)
 
     for i in g.nodes():
         # choose random state
@@ -163,12 +167,12 @@ def init_barabasi():
 
 def draw():
     pl.cla()
-    nodeSize=[g.degree(n)**2 for n in nx.nodes(g)]
+    nodeSize=[g.node[n]['f']**2 for n in nx.nodes(g)]
     nx.draw(g, pos = positions,
             node_color = [g.node[i]['s'] for i in g.nodes_iter()],
             with_labels = True, edge_color = 'c',
             cmap = pl.cm.autumn, vmin = 0, vmax = 1,
-    tnode_size=nodeSize, alpha=0.75)
+            node_size=nodeSize, alpha=0.75)
     
     pl.axis('image')
     pl.title('t = ' + str(time))
@@ -204,20 +208,13 @@ def step_async():
     if not tau:
         tau = 0.0000000001
         
-    #d   = tau / g.node[i]['f']
-    d   =  g.node[i]['f'] / tau
-
+    d   = tau / g.node[i]['f']
+    #d   =  g.node[i]['f'] / tau
     
     if d <= theta:
         g.node[i]['s'] = not g.node[i]['s']
-
-
-
     
     # interact
-    m_i = []
-    m_j = []
-    w = []
     for j in g.neighbors(i):
         if g.node[i]['s'] == C and g.node[j]['s'] ==  D:
             g.node[i]['f'] += -2
@@ -257,12 +254,11 @@ def step_sync_global():
 
     # do all nodes
     for i in g.nodes():
-
         # set state for node
         m = []
         for j in g.neighbors(i):
             m.append( g.edge[i][j]['w'] )
-        
+           
         tau = sum(m)
 
         if not g.node[i]['f']:
@@ -277,63 +273,74 @@ def step_sync_global():
             g_plus.node[i]['s'] = not g.node[i]['s']
 
 
-        # interact
-        m_i = []
-        m_j = []
-        w = []
-        for j in g.neighbors(i):
-            if g.node[i]['s'] == C and g.node[j]['s'] ==  D:
-                g_plus.node[i]['f'] += -2
-                g_plus.node[j]['f'] += 2
-                g_plus.edge[i][j]['w'] += -1
-            
-            if g.node[i]['s'] ==  D and g.node[j]['s'] == C:
-                g_plus.node[i]['f'] += 2
-                g_plus.node[j]['f'] += -2
-                g_plus.edge[i][j]['w'] += -1
-            
-            if g.node[i]['s'] == C and g.node[j]['s'] == C:
-                g_plus.node[i]['f'] += 1
-                g_plus.node[j]['f'] += 1
-                g_plus.edge[i][j]['w'] += 2
-
-            if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
-                g_plus.node[i]['f'] += -1
-                g_plus.node[j]['f'] += -1
-                g_plus.edge[i][j]['w'] += -2
-
-
-    g = g_plus.copy()
-
-    # report
-    ef = []
-    for i, j in g.edges():
-        #if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
-        if g.node[i]['s'] == C and g.node[j]['s'] == C:
-            ef.append( g.edge[i][j]['w']  )
-        E = sum(ef)
-    time_list.append(time)
-    energy_state.append(E)
-
-    # report global fitness
-    fitness_i = []
-    for i in g.nodes():
-        fitness_i.append( g.node[i]['f'] )
-        F = sum(fitness_i)
-    time_list2.append(time)
-    fitness_state.append(F)
-
-def rewire_sync(net):
-    for i in g.nodes():
-        for j in g.neighbors(i):
-            if g.edge[i][j]['w'] < 1:
-                g.remove_edge(i,j)
+        try:
+            # interact
+            for j in g.neighbors(i):
+                if g.node[i]['s'] == C and g.node[j]['s'] ==  D:
+                    g_plus.node[i]['f'] += -2
+                    g_plus.node[j]['f'] += 2
+                    g_plus.edge[i][j]['w'] += -1
+                
+                if g.node[i]['s'] ==  D and g.node[j]['s'] == C:
+                    g_plus.node[i]['f'] += 2
+                    g_plus.node[j]['f'] += -2
+                    g_plus.edge[i][j]['w'] += -1
+                
+                if g.node[i]['s'] == C and g.node[j]['s'] == C:
+                    g_plus.node[i]['f'] += 1
+                    g_plus.node[j]['f'] += 1
+                    g_plus.edge[i][j]['w'] += 2
     
-                for j in rd.choice( g.nodes() ):
-                    if r < g.node[j]['f']/len(g.nodes()):
-                        g.add_edge(i,j)
+                if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
+                    g_plus.node[i]['f'] += -1
+                    g_plus.node[j]['f'] += -1
+                    g_plus.edge[i][j]['w'] += -2
+        except KeyError:
+            print i,j
+            for n in g_plus.nodes():
+                print n, g.node[n], g.get_edge_data(i,j)
 
 
+
+    # rewire
+    for i in g_plus.nodes():
+        weights = {}
+        for j in g_plus.neighbors(i):
+            weights[j] = g_plus.get_edge_data(i, j)['w']
+
+        if weights:
+            sorted_w = sorted(weights.items(), key=operator.itemgetter(1))
+            weakest = sorted_w.pop(0)
+            if weakest[1] < 1:
+                g_plus.remove_edge(i, weakest[0])
+    
+                # 
+                other_nodes = g_plus.nodes()
+                other_nodes.remove(i) # no self loop
+                total_fitness = sum([g_plus.node[n]['f'] for n in other_nodes]) + 0.0000000001
+                proportional_f_per_node = {}
+                acc = 0
+                for n in other_nodes:
+                    proportional_f_per_node[n] = (acc, acc + (g_plus.node[n]['f'] / total_fitness))
+                    acc = proportional_f_per_node[n][1]
+
+                # flip a coin
+                r = rd.random()
+                for n in proportional_f_per_node:
+                    if r >= proportional_f_per_node[n][0] and r <= proportional_f_per_node[n][1]:
+                        if not g_plus.get_edge_data(i, n):
+                            g_plus.add_edge(i, n, w=10)
+
+
+                
+    g = g_plus.copy()
+    
+    # report for later plotting
+    report()
+
+
+                
+                
 def rewire_async(node):
     # find weakest link, remove it
     weights = {}
@@ -346,31 +353,33 @@ def rewire_async(node):
         if weakest[1] < 1:
             g.remove_edge(node, weakest[0])
 
-    # find trustable node to wire
-    total_fitness = sum([g.node[n]['f'] for n in g.nodes()])
-    proportional_f_per_node = {}
-    acc = 0
-    for n in g.nodes():
-        proportional_f_per_node[n] = (acc, acc + (g.node[n]['f'] / total_fitness))
-        acc = proportional_f_per_node[n][1]
+            # find trustable node to wire
+            other_nodes = g.nodes()
+            other_nodes.remove(node) # no self loop
+            total_fitness = sum([g.node[n]['f'] for n in other_nodes])
+            proportional_f_per_node = {}
+            acc = 0
+            for n in other_nodes:
+                proportional_f_per_node[n] = (acc, acc + (g.node[n]['f'] / total_fitness))
+                acc = proportional_f_per_node[n][1]
 
-    # flip a coin
-    r = rd.random()
-    for n in proportional_f_per_node:
-        if r >= proportional_f_per_node[n][0] and r <= proportional_f_per_node[n][1]:
-            if not g.get_edge_data(node, n):
-                g.add_edge(node, n, w=10)
+            # flip a coin
+            r = rd.random()
+            for n in proportional_f_per_node:
+                if r >= proportional_f_per_node[n][0] and r <= proportional_f_per_node[n][1]:
+                    if not g.get_edge_data(node, n):
+                        g.add_edge(node, n, w=10)
 
     
 import pycxsimulator
 
-init_watts()
-#init_erdos()
+#init_watts()
+init_erdos()
 #init_barabasi()
 #init_simple()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_watts, not_draw, step_async])
-#pycxsimulator.GUI().start(func = [init_simple, draw, step_sync_global])
+pycxsimulator.GUI().start(func = [init_erdos, draw, step_async])
+#pycxsimulator.GUI().start(func = [init_barabasi, not_draw, step_sync_global])
 
 
 plot()
