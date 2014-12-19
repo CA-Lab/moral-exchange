@@ -1,4 +1,4 @@
-moral-economy
+moral-exchange
 =============
 
-Studies on moral economy
+Studies on moral exchange, game-theory and network analysis.
