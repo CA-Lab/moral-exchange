@@ -2,28 +2,33 @@
 # matplotlib.use('TkAgg')
 #import matplotlib.pyplot as plt
 #import pylab as pl
-import random as rd
 #import scipy as sp
-import networkx as nx
 #import numpy as np
-#import math as mt
-from pprint import pprint
 
+
+import random as rd
+import networkx as nx
 from elixir import *
 
+from pprint import pprint
+
+
+# database initialize
 metadata.bind = "sqlite:///db.sqlite"
 metadata.bind.echo = False
 
-C = True
-D = False
 theta = 1
 
 
+##############
+# Node model #
+##############
 class Node(Entity):
     fitness = Field(Integer)
     state   = Field(Boolean)
     edges   = ManyToMany('Edge')
 
+    using_options(tablename='nodes')
     
     def neighbors(self):
         nodes = set()
@@ -55,11 +60,14 @@ class Node(Entity):
         return '<Node [%s] f=%i s=%s>' % (self.id, self.fitness, self.state)
 
 
-    
+##################
+# Edge model     #
+##################
 class Edge(Entity):
     w     = Field(Integer)
     nodes = ManyToMany('Node')
 
+    using_options(tablename='edges')
     
     def prissoners_dilema( self ):    
         # interaction of nodes
@@ -85,6 +93,7 @@ class Edge(Entity):
 
         self.nodes[0].update_state()
         self.nodes[1].update_state()
+
         session.commit()
 
         
@@ -94,6 +103,8 @@ class Edge(Entity):
 
 setup_all()
 create_all()
+
+
 
 
 
@@ -112,6 +123,7 @@ def init_watts():
         g.add_edge(*e, w=10)
 
     return g
+
 
 
 
@@ -153,18 +165,6 @@ def network_from_db():
 
 
 
-
-def random_prissoner_walk():
-    e = rd.choice( Edge.query.all() )
-        
-    while True:
-        print "interaction among ", e
-        e.prissoners_dilema()
-        e = edge_from_edge( e )
-        if not e:
-            e = rd.choice( Edge.query.all() )
-    
-
 def edge_from_edge( edge ):
     node    = rd.choice( edge.nodes )
     n_edges = list( node.edges )
@@ -173,6 +173,28 @@ def edge_from_edge( edge ):
         return rd.choice(n_edges)
     else:
         return False
+
+
+
+def random_prissoner_walk():
+    e = rd.choice( Edge.query.all() )
+        
+    while True:
+        print "interaction among ", e
+        try:
+            e.prissoners_dilema()
+        except:
+            session.rollback()
+            print "rolled back"
+
+        e = edge_from_edge( e )
+        if not e:
+            print "reached the border"
+            e = rd.choice( Edge.query.all() )
+
+
+
+            
     
 
 
