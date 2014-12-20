@@ -24,34 +24,43 @@ class Node(Entity):
     state   = Field(Boolean)
     edges   = ManyToMany('Edge')
 
+    
+    def neighbors(self):
+        nodes = set()
+        for e in self.edges:
+            for n in e.nodes:
+                nodes.add(n)
+        nodes.remove(self)
+        return nodes
+
+    
     # will I be True or False?
     def update_state(self):
         m = []    
-        for j in g.neighbors(i):
-            m.append( g.edge[i][j]['w'] )
+        for e in self.edges:
+            m.append( e.w )
         
         tau = sum(m)
         
-        if not g.node[i]['f']:
-            g.node[i]['f'] = 0.0000000001
-
         if not tau:
             tau = 0.0000000001
         
-        #d   = tau / g.node[i]['f']
-        d   =  g.node[i]['f'] / tau
+        d =  self.fitness / tau
 
         if d <= theta:
-            g.node[i]['s'] = not g.node[i]['s']
+            self.state = not self.state
 
     
     def __repr__(self):
         return '<Node [%s] f=%i s=%s>' % (self.id, self.fitness, self.state)
 
+
+    
 class Edge(Entity):
     w     = Field(Integer)
     nodes = ManyToMany('Node')
 
+    
     def prissoners_dilema( self ):    
         # interaction of nodes
         if self.nodes[0].state == True  and self.nodes[1].state ==  False:
@@ -74,9 +83,13 @@ class Edge(Entity):
             self.nodes[1].fitness += -1
             self.w += -2
 
-    
+        self.nodes[0].update_state()
+        self.nodes[1].update_state()
+        session.commit()
+
+        
     def __repr__(self):
-        return '<Edge %s>' % self.nodes
+        return '<Edge %s, %s>' % (self.nodes, self.w)
 
 
 setup_all()
@@ -141,12 +154,12 @@ def network_from_db():
 
 
 
-def random_walk():
+def random_prissoner_walk():
     e = rd.choice( Edge.query.all() )
         
     while True:
-        
-        
+        print "interaction among ", e
+        e.prissoners_dilema()
         e = edge_from_edge( e )
         if not e:
             e = rd.choice( Edge.query.all() )
@@ -156,7 +169,10 @@ def edge_from_edge( edge ):
     node    = rd.choice( edge.nodes )
     n_edges = list( node.edges )
     n_edges.remove( edge )
-    return rd.choice(n_edges)
+    if n_edges:
+        return rd.choice(n_edges)
+    else:
+        return False
     
 
 
@@ -164,14 +180,6 @@ def edge_from_edge( edge ):
 
 #g = init_watts()
 #network_to_db(g)
+#h = network_from_db()
 
-h = network_from_db()
-
-
-
-
-
-#session.commit()
-#Movie.query.all()
-#d = Director.get_by(name=u'Ridley Scott')
-#q = Movie.query.filter_by(director=d)
+random_prissoner_walk()
