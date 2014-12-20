@@ -1,25 +1,32 @@
-#import matplotlib
-# matplotlib.use('TkAgg')
-#import matplotlib.pyplot as plt
-#import pylab as pl
+import matplotlib
+#matplotlib.use('GTK')
+import matplotlib.pyplot as plt
+import pylab as pl
 #import scipy as sp
-#import numpy as np
-
-
+import numpy as np
+import argparse
 import random as rd
 import networkx as nx
+from time import sleep
 from elixir import *
 
 from pprint import pprint
 
 
-# database initialize
-metadata.bind = "sqlite:///db.sqlite"
-metadata.bind.echo = False
+parser = argparse.ArgumentParser(description='prissoner dilema network simulation')
+parser.add_argument('--db_url', default='sqlite:///db.sqlite', help='DB URL, e.g. sqlite:///db.sqlite')
+parser.add_argument('--mode', required=True, choices=['init','view','walk'])
+
+args = parser.parse_args()
+
+
+
+# database connect
+metadata.bind = args.db_url
+
+
 
 theta = 1
-
-
 ##############
 # Node model #
 ##############
@@ -102,20 +109,16 @@ class Edge(Entity):
 
 
 setup_all()
-create_all()
-
-
-
 
 
 
 
 def init_watts():
-    g = nx.watts_strogatz_graph(100, 2, 0.3)
+    g = nx.watts_strogatz_graph(20, 2, 0.3)
 
     for i in g.nodes():
         # choose random state
-        g.node[i]['s'] = rd.choice([C,D])
+        g.node[i]['s'] = rd.choice([True, False])
         # all start with same fitness
         g.node[i]['f'] = 10
 
@@ -180,13 +183,13 @@ def random_prissoner_walk():
     e = rd.choice( Edge.query.all() )
         
     while True:
-        print "interaction among ", e
+        print "interaction", e
         try:
             e.prissoners_dilema()
         except:
             session.rollback()
             print "rolled back"
-
+        sleep(0.2) # makes ctl-break easier
         e = edge_from_edge( e )
         if not e:
             print "reached the border"
@@ -194,14 +197,45 @@ def random_prissoner_walk():
 
 
 
-            
+def view():
+    g       = network_from_db()
+    old_pos = nx.layout.spring_layout(g, iterations=11)
     
+    while True:
+        pos = nx.layout.spring_layout(g, pos=old_pos, iterations=11)
+        node_sizes  = [g.node[n]['f']*50 for n in g.nodes()]
+        node_colors = [g.node[n]['s'] for n in g.nodes()]
+        nx.draw(g,
+                pos         = pos,
+                with_labels = False,
+                node_size   = node_sizes,
+                node_color  = node_colors,
+                alpha       = 1,
+                edge_color  = "lightgrey")
+        pl.axis('image')
+        # plt.show()
+        plt.savefig("aguas.png", dpi=150)
+        sleep(0.2)
+        g = network_from_db()
+        old_pos = pos
+        pl.cla()
 
 
+#    pl.title('cited in')
+#
+
+
+
+if args.mode == 'init':
+    create_all()
+    g = init_watts()
+    network_to_db(g)
+elif args.mode == 'walk':
+    random_prissoner_walk()
+elif args.mode == 'view':
+    view()
+
+
+
+    # old_pos = nx.graphviz_layout(g, prog='twopi', args='-Goverlap=scale -Gnodesep=70')
     
-
-#g = init_watts()
-#network_to_db(g)
-#h = network_from_db()
-
-random_prissoner_walk()
