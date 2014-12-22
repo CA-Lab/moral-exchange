@@ -9,7 +9,7 @@ Synchronous version works much like a cellular automata: using data from the cur
 
 The async version takes a random node at a time and has it play with all its neighbors.
 
-The multithread version implements random walkers that go from edge to edge and have the nodes at each side play. Walker moves through connected edges. It starts from another random edge if it reaches a dead end.
+The multithread version implements random walkers that go from edge to edge and have the nodes at each side play. Walker moves through connected edges. It starts from another random edge if it reaches a dead end. Multithread version uses Elixir but we might look into SQL-Alchemy's  [Declarative](http://docs.sqlalchemy.org/en/rel_0_9/orm/extensions/declarative.html).
 
 
 
