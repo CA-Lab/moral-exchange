@@ -1,22 +1,11 @@
-import argparse
+from time import sleep
 import random as rd
 import networkx as nx
-from time import sleep
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import relationship
 
-
-from pprint import pprint
-
-################################
-# parse command line arguments #
-################################
-parser = argparse.ArgumentParser(description='prissoner dilema network simulation')
-parser.add_argument('--db_url', default='sqlite:///db.sqlite', help='DB URL, default: sqlite:///db.sqlite')
-parser.add_argument('--mode', required=True, choices=['init','walk'])
-args = parser.parse_args()
 
 
 #######################
@@ -24,17 +13,13 @@ args = parser.parse_args()
 #######################
 theta = 1
 
-####################
-# database connect #
-####################
-engine  = create_engine(args.db_url)
-Base    = declarative_base()
-Session = sessionmaker(bind=engine)
+
 
 
 #############
 # ORM setup #
 #############
+Base    = declarative_base()
 
 # nodes have many edges, edges have at least two nodes #
 nodes_edges = Table(
@@ -88,9 +73,7 @@ class Node(Base):
         return '<Node [%s] f=%i s=%s>' % (self.id, self.fitness, self.state)
 
 
-##################
 # Edge model     #
-##################
 class Edge(Base):
     __tablename__='edges'
     
@@ -138,6 +121,14 @@ class Edge(Base):
 
 
 
+
+
+
+
+
+####################
+# helper functions #
+####################
 def init_watts():
     g = nx.watts_strogatz_graph(20, 2, 0.3)
 
@@ -209,6 +200,8 @@ def edge_from_edge( edge ):
 
 
 
+
+
 def random_prissoner_walk():
     session = Session()
     
@@ -229,14 +222,5 @@ def random_prissoner_walk():
             print "reached the border"
             e = rd.choice( session.query(Edge).all() )
 
-
-
-
-if args.mode == 'init':
-    Base.metadata.create_all(engine)
-    g = init_watts()
-    network_to_db(g)
-elif args.mode == 'walk':
-    random_prissoner_walk()
 
 
