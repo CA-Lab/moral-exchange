@@ -86,7 +86,7 @@ Global fitness is defined as:
 
 $F = \sum f_{i}/N$
 
-Where $N$ is the number of agents in the network. Global fitness is seen as fitness average (nowak2006)\\
+Where $N$ is the number of agents in the network. Global fitness is seen as fitness average (nowak2006). It is important to aknowledge that average may not represent properly fitness distribution on scale-free networks.\\
 
 
 Global trust:
@@ -95,6 +95,9 @@ $T = 1/2 \sum w_{ij}$
 
 The sum of the weight of all links is multiplied by $.5$ so to avoid counting the value of each link twice.\\
 
+\section{Rewiring}
+
+In a different version of the model, agents can choose to eliminate one of its links with a neighbor with the lowest value of trust and rewire to another agent. Choosing a new agent is governed by preferential attachment dependent on the candidate agents' trustability value. This is, the higher the trustability of an agent the higher the chances to be chosen.
 
 \begin{thebibliography}{30}
 
