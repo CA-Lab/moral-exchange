@@ -84,6 +84,7 @@ def update_network_from_db(canvas):
             else:
                 E.weight = 0.01
 
+    print "updated"
 
 create_network_from_db()
 
@@ -96,7 +97,7 @@ create_network_from_db()
 #     if len(node.edges) == 1:
 #         node.edges[0].length *= 0.1
 
-g.distance         = 10   # Overall spacing between nodes.
+g.distance         = 10  # Overall spacing between nodes.
 g.layout.force     = 0.01 # Strength of the attractive & repulsive force.
 g.layout.repulsion = 15   # Repulsion radius.
 
@@ -105,7 +106,7 @@ def draw(canvas):
     
     canvas.clear()
     background(1)
-    translate(250, 250)
+    translate(canvas.width/2, canvas.height/2)
     
     # With directed=True, edges have an arrowhead indicating the direction of the connection.
     # With weighted=True, Node.centrality is indicated by a shadow under high-traffic nodes.
@@ -118,8 +119,8 @@ def draw(canvas):
     # Make it interactive!
     # When the mouse is pressed, remember on which node.
     # Drag this node around when the mouse is moved.
-    dx = canvas.mouse.x - 250 # Undo translate().
-    dy = canvas.mouse.y - 250
+    dx = canvas.mouse.x - canvas.width/2 # Undo translate().
+    dy = canvas.mouse.y - canvas.height/2
     global dragged
     if canvas.mouse.pressed and not dragged:
         dragged = g.node_at(dx, dy)
