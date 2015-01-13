@@ -14,12 +14,12 @@ A problem of game theory and cooperation on networks is to find how cooperation 
 The purpose of our model is to have a better understanding of the behavior of a network of selfish agents when trust among them is also an important variable. Trust can increase or decrease as it depends on the agent's behavior and the state of its neighbors.\\
 
 Though our model is inspired in Hopfield networks as we are interested
-in optimizing global utilities (fitness and trust), there are many differences to consider. 1) Hopfield networks are coordination, Ising-based models (agents or neurons states can be $1$ or $-1$). Our model is based on game theory (the states of the agents are \textit{defect} or \textit{cooperate}). 2) Beacuse of point 1, in a Hopfield network optimality can be found when all agents are in state $1$ or in state $-1$. This is not the case in our network because all being \textit{defectors} does not lead to an optimal state, only all being \textit{cooperative} will do the job. Actually all being defectors will lead to the lowest possible average fitness, while all cooperative will produce the highest \cite{nowak2006}. For this reason, we are interested in reaching a configuration in which global fitness and trust remain positive. \\
+in optimizing global utilities (fitness and trust), there are many differences to consider. 1) Hopfield networks are coordination, Ising-based models (agents or neurons states can be $1$ or $-1$). Our model is based on game theory (the states of the agents are \textit{betray} or \textit{cooperate}). 2) Beacuse of point 1, in a Hopfield network optimality can be found when all agents are in state $1$ or in state $-1$. This is not the case in our network because all being \textit{treacherous} does not lead to an optimal state, only all being \textit{cooperative} will do the job. Actually all being treacherous will lead to the lowest possible average fitness, while all cooperative will produce the highest \cite{nowak2006}. For this reason, we are interested in reaching a configuration in which global fitness and trust remain positive. \\
 
 \section{Model}
 
 \subsection{Structure}
-Being a game theory based model, agents in the network can be \textit{cooperative} or \textit{defective}. We implement the model using different topologies: full-connected network (as in a Hopfield network), Erdos-R'enyi random network, Watts-Strogatz small-world and Barabasi-Albert scale-free networks. Distribution of \textit{cooperative} and \textit{defective} agents in the network is random.\\
+Being a game theory based model, agents in the network can be \textit{cooperative} or \textit{treacherous}. We implement the model using different topologies: full-connected network (as in a Hopfield network), Erdos-R'enyi random network, Watts-Strogatz small-world and Barabasi-Albert scale-free networks. Distribution of \textit{cooperative} and \textit{treacherous} agents in the network is random.\\
 
 The connections have the following restrictions:
 
@@ -79,7 +79,7 @@ $S_{i} = \begin{cases} S_{i(t)} & if  \tau_{i}/f_{i} > \theta,\\
 
 \section{Global values}
 
-We keep track of the whole network fitness and trust \footnote{Rember that our model, being close to the concept of Evolutionaru Game Theory, it cannot be seen as an optimizing strategy for fitness.}. Though fitness cannot be optimized as in a Hopfield network, we want to find a way in which trust can remain positive.\\
+We keep track of the whole network fitness and trust \footnote{Our model, being close to the concept of Evolutionary Game Theory, cannot be seen as an optimizing strategy for fitness.}. Though fitness cannot be optimized as in a Hopfield network, we want to find a way in which trust can remain positive.\\
 
 Global fitness is defined as:
 
@@ -96,12 +96,12 @@ The sum of the weight of all links is multiplied by $.5$ so to avoid counting th
 
 \section{Rewiring}
 
-In a different version of the model, agents can choose to eliminate
-one of its links with a neighbor with the lowest value of trust and
+In a different version of our model, agents can choose to eliminate
+one of their links with neighbors with the low value of trust and
 rewire to another agent. Choosing a new agent is governed by
-preferential attachment dependent on the candidate agents'
-trustability value. This is, the higher the trustability of an agent
-the higher the chances to be chosen.
+preferential attachment dependent on the candidate agents' fitness or
+trustability value. This is, the higher the fitness or trustability of
+an agent, the higher the chances to be chosen.
 
 \begin{thebibliography}{30}
 
