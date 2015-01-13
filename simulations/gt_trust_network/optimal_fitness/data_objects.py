@@ -130,7 +130,9 @@ class Edge(Base):
 # helper functions #
 ####################
 def init_watts():
-    g = nx.watts_strogatz_graph(20, 2, 0.3)
+    g = nx.watts_strogatz_graph(150, 2, 0.3)
+#    g = nx.barabasi_albert_graph(100, 15)
+#    g = nx.erdos_renyi_graph(100, .3)
 
     for i in g.nodes():
         # choose random state
