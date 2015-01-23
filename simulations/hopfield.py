@@ -1,13 +1,13 @@
+# python hopfield.py --csv ../Data/cols-cols_w_edgelist.csv
+# python hopfield.py -h da la sinopsis
+
 import matplotlib
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
+matplotlib.use('svg')
 import matplotlib.pyplot as plt
 import pylab as pl
 import random as rd
-import scipy as sp
 import networkx as nx
-import numpy as np
-import math as mt
-import pprint as ppt
 import argparse
 import csv
 import sys
@@ -21,7 +21,6 @@ energy_state = []
 
 parser = argparse.ArgumentParser(description='Hopfield network simulation.')
 parser.add_argument('--csv', type=argparse.FileType('r'), help='Edge list in CSV format')
-parser.add_argument('--view', type=bool, default=False, help='wether to draw graph')
 parser.add_argument('--iterations', type=int, default=10000, help='how many iterations')
 args = parser.parse_args()
 
@@ -33,11 +32,17 @@ def init_from_csv():
     E = 0
     time = 0
     g = nx.read_weighted_edgelist(args.csv, delimiter=",")
-    
+
+    initbar = ProgressBar(len(g.nodes()))
+    print "setting random states"
+    n = 0
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
+        n+=1
+        initbar.update(n)
+    initbar.finish()
 
-    positions = nx.spring_layout(g)
+
 
     
 """Generates a full connected network"""
@@ -124,19 +129,6 @@ def init_barabasi():
 
 
 
-def draw():
-    if args.view:
-        pl.cla()
-        nx.draw(g, pos = positions,
-                node_color = [g.node[i]['s'] for i in g.nodes_iter()],
-                with_labels = True, edge_color = 'c',
-                cmap = pl.cm.autumn, vmin = 0, vmax = 1)
-    
-        pl.axis('image')
-        pl.title('t = ' + str(time))
-        #pl.title('Energy = ' + str(E))
-        plt.show() 
-
 
 def step():
     global time, g, positions, E
@@ -166,10 +158,6 @@ def step():
     time_list.append(time)
     energy_state.append(E)
 
-    pbar.update(time)    
-    if time == args.iterations:
-        pbar.finish()
-        sys.exit(0)
 
 
 def step_sync_global():
@@ -217,19 +205,26 @@ def step_sync_global():
 
 
 
-import pycxsimulator
 
 #init_watts()
 #init_erdos()
 #init_barabasi()
 
-pycxsimulator.GUI().start(func = [init_from_csv, draw, step])
+
+init_from_csv()
+print "running simulation"
+for time in range(0,args.iterations):
+    step()
+    pbar.update(time)    
+pbar.finish()
+
+
+
 plt.cla()
 plt.plot(time_list, energy_state, 'bs-')
 plt.xlabel('Time')
 plt.ylabel('Energy states')
-#plt.ylim(-100, 100)
-#plt.yticks(range(-10, 13, 2))
-plt.savefig('e_plot.png')
-#plt.show()
+
+plt.savefig('e_plot.svg')
+
 
