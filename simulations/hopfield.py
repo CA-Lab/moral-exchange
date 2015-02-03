@@ -1,17 +1,50 @@
+# python hopfield.py --csv ../Data/cols-cols_w_edgelist.csv
+# python hopfield.py -h da la sinopsis
+
 import matplotlib
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
+matplotlib.use('svg')
 import matplotlib.pyplot as plt
 import pylab as pl
 import random as rd
-import scipy as sp
 import networkx as nx
-import numpy as np
-import math as mt
-import pprint as ppt
+import argparse
+import csv
+import sys
+from progressbar import ProgressBar
+
+
 
 time_list = []
 energy_state = []
 
+
+parser = argparse.ArgumentParser(description='Hopfield network simulation.')
+parser.add_argument('--csv', type=argparse.FileType('r'), help='Edge list in CSV format')
+parser.add_argument('--iterations', type=int, default=10000, help='how many iterations')
+args = parser.parse_args()
+
+pbar = ProgressBar(maxval=args.iterations)
+
+
+def init_from_csv():
+    global time, g, positions, E
+    E = 0
+    time = 0
+    g = nx.read_weighted_edgelist(args.csv, delimiter=",")
+
+    initbar = ProgressBar(len(g.nodes()))
+    print "setting random states"
+    n = 0
+    for i in g.nodes():
+        g.node[i]['s'] = rd.choice([1,-1])
+        n+=1
+        initbar.update(n)
+    initbar.finish()
+
+
+
+    
 """Generates a full connected network"""
 def init():
     global time, g, positions, E
@@ -28,32 +61,32 @@ def init():
         g.node[i]['s'] = rd.choice([1,-1])
 
     #for i, j in g.edges():
-        #g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+        #g.edge[i][j]['weight'] = rd.choice([-2,-1,0,1,2])
 
     # for i in g.edge:
     #     for j in g.edge:
-    #         g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+    #         g.edge[i][j]['weight'] = rd.choice([-2,-1,0,1,2])
 
     """for proof testing """
-    g.edge['a']['b']['w'] = -2
-    g.edge['a']['c']['w'] = -1
-    g.edge['a']['d']['w'] = 0
-    g.edge['a']['a']['w'] = 0
+    g.edge['a']['b']['weight'] = -2
+    g.edge['a']['c']['weight'] = -1
+    g.edge['a']['d']['weight'] = 0
+    g.edge['a']['a']['weight'] = 0
 
-    g.edge['b']['a']['w'] = -2
-    g.edge['b']['c']['w'] = 1
-    g.edge['b']['d']['w'] = 2
-    g.edge['b']['b']['w'] = 2
+    g.edge['b']['a']['weight'] = -2
+    g.edge['b']['c']['weight'] = 1
+    g.edge['b']['d']['weight'] = 2
+    g.edge['b']['b']['weight'] = 2
     
-    g.edge['c']['a']['w'] = -1
-    g.edge['c']['b']['w'] = 1
-    g.edge['c']['d']['w'] = 0
-    g.edge['c']['c']['w'] = 0
+    g.edge['c']['a']['weight'] = -1
+    g.edge['c']['b']['weight'] = 1
+    g.edge['c']['d']['weight'] = 0
+    g.edge['c']['c']['weight'] = 0
 
-    g.edge['d']['a']['w'] = 0
-    g.edge['d']['b']['w'] = 2
-    g.edge['d']['c']['w'] = 0
-    g.edge['d']['d']['w'] = 0
+    g.edge['d']['a']['weight'] = 0
+    g.edge['d']['b']['weight'] = 2
+    g.edge['d']['c']['weight'] = 0
+    g.edge['d']['d']['weight'] = 0
     
 def init_watts():
     global time, g, positions, E
@@ -67,7 +100,7 @@ def init_watts():
         g.node[i]['s'] = rd.choice([1,-1])
     
     for i,j in g.edges():
-        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+        g.edge[i][j]['weight'] = rd.choice([-2,-1,0,1,2])
 
 
 def init_erdos():
@@ -80,7 +113,7 @@ def init_erdos():
         g.node[i]['s'] = rd.choice([1,-1])
     
     for i,j in g.edges():
-        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+        g.edge[i][j]['weight'] = rd.choice([-2,-1,0,1,2])
 
 def init_barabasi():
     global time, g, positions, E
@@ -92,21 +125,9 @@ def init_barabasi():
         g.node[i]['s'] = rd.choice([1,-1])
     
     for i,j in g.edges():
-        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
+        g.edge[i][j]['weight'] = rd.choice([-2,-1,0,1,2])
 
 
-
-def draw():
-    pl.cla()
-    nx.draw(g, pos = positions,
-            node_color = [g.node[i]['s'] for i in g.nodes_iter()],
-            with_labels = True, edge_color = 'c',
-            cmap = pl.cm.autumn, vmin = 0, vmax = 1)
-    
-    pl.axis('image')
-    pl.title('t = ' + str(time))
-    #pl.title('Energy = ' + str(E))
-    plt.show() 
 
 
 def step():
@@ -120,30 +141,22 @@ def step():
 
     i = rd.choice(g.nodes())
     for j in g.neighbors(i):
-        m.append( g.edge[i][j]['w'] * g.node[j]['s'] )
+        m.append( g.edge[i][j]['weight'] * g.node[j]['s'] )
         
     e = sum(m)
-    print i, e
+
     if e >= 1:
         g.node[i]['s'] = 1
     else:
         g.node[i]['s'] = -1
-                
-    # for i, j in g.edges():
-    #     if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
-    #         ef.append( g.edge[i][j]['w']  )
-    #         E = sum(ef)
+        
+    for i, j in g.edges():
+        if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+            ef.append( g.edge[i][j]['weight']  )
+            E = sum(ef)
 
-    
-    # for i in g.node:
-    #     states.append(g.node[i]['s'])
-    #     if len(states) == 4:
-    #         print states
-                
-
-
-    # time_list.append(time)
-    # energy_state.append(E)
+    time_list.append(time)
+    energy_state.append(E)
 
 
 
@@ -160,7 +173,7 @@ def step_sync_global():
     
     for i in g.nodes():
         for j in g.neighbors(i):
-            m.append( g.edge[i][j]['w'] * g.node[j]['s'] )
+            m.append( g.edge[i][j]['weight'] * g.node[j]['s'] )
 
         e = sum(m)
         # print i, e
@@ -175,7 +188,7 @@ def step_sync_global():
                     
     for i, j in g.edges():
         if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
-            ef.append( g.edge[i][j]['w']  )
+            ef.append( g.edge[i][j]['weight']  )
             E = sum(ef)
 
     
@@ -192,19 +205,26 @@ def step_sync_global():
 
 
 
-import pycxsimulator
 
 #init_watts()
 #init_erdos()
-init_barabasi()
-positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_barabasi, draw, step_sync_global])
+#init_barabasi()
+
+
+init_from_csv()
+print "running simulation"
+for time in range(0,args.iterations):
+    step()
+    pbar.update(time)    
+pbar.finish()
+
+
+
 plt.cla()
 plt.plot(time_list, energy_state, 'bs-')
 plt.xlabel('Time')
 plt.ylabel('Energy states')
-plt.ylim(-100, 100)
-#plt.yticks(range(-10, 13, 2))
-plt.savefig('e_plot.png')
-#plt.show()
+
+plt.savefig('e_plot.svg')
+
 
