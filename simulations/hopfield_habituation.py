@@ -26,7 +26,9 @@ def init():
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([True, False])
-
+        g.node[i]['p'] = 0
+        g.node[i]['prime'] = rd.choice([True, False])
+        
     #for i, j in g.edges():
         #g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])
 
@@ -44,6 +46,8 @@ def init_watts():
     
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([True, False])
+        g.node[i]['p'] = 0
+        g.node[i]['prime'] = rd.choice([True, False])
     
 
 
@@ -73,7 +77,7 @@ def draw():
     pl.cla()
     node_color = []
     for i in g.nodes_iter():
-        if i['s']:
+        if g.node[i]['s']:
             node_color.append(1)
         else:
             node_color.append(-1)
@@ -88,25 +92,61 @@ def draw():
     plt.show() 
 
 
+
+def p_local_u(i):
+    u = local_u(i)
+    
+    m = []
+    for j in g.neighbors(i):
+        if g.node[i]['prime']:
+            Ar = 0.005
+        else:
+            Ar = -0.005
+
+        g.node[i]['p'] += Ar
+        
+    if (2 * u) > (2 * u + g.node[i]['p']):
+        g.node[i]['prime'] = True
+    else:
+        g.node[i]['prime'] = False
+
+    return 2 * u + g.node[i]['p']
+    
+
+def local_u(i):
+    m = []
+    for j in g.neighbors(i):
+        if g.node[i]['s'] == g.node[j]['s']:
+            m.append( 1 )
+    return sum(m)
+    
+
+def global_u():
+    gu = []
+    for i in g.nodes():
+        gu.append( local_u( i ) )
+    return sum(gu)
+
+    
 def step():
     global time, g, positions, E
 
     time += 1
     states = []
-    m = []
+
     """ef for energy function"""
     ef = []
 
     i = rd.choice(g.nodes())
-    for j in g.neighbors(i):
-        if i['s'] == j['s']:
-            m.append( 1 )
-        
-    theta = sum(m) / len( g.neighbors(i) )
+
+    
+    theta = p_local_u(i) / len( g.neighbors(i) )
     
     if theta < 0.5:
         g.node[i]['s'] = not g.node[i]['s']
 
+    time_list.append(time)
+    energy_state.append(global_u())
                 
 
 
@@ -148,8 +188,6 @@ def step_sync_global():
         if len(states) == 4:
             print states
                 
-
-
     time_list.append(time)
     energy_state.append(E)
 
@@ -158,17 +196,19 @@ def step_sync_global():
 
 import pycxsimulator
 
-#init_watts()
+#init()
+init_watts()
 #init_erdos()
-init_barabasi()
+#init_barabasi()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_barabasi, draw, step])
+pycxsimulator.GUI().start(func = [init_watts, draw, step])
+
 plt.cla()
 plt.plot(time_list, energy_state, 'bs-')
 plt.xlabel('Time')
 plt.ylabel('Energy states')
 #plt.ylim(-100, 100)
 #plt.yticks(range(-10, 13, 2))
-plt.savefig('e_plot.png')
+plt.savefig('hh_plot.png')
 #plt.show()
 
