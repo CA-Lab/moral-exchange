@@ -54,13 +54,26 @@ def init():
     g.edge['d']['b']['w'] = 2
     g.edge['d']['c']['w'] = 0
     g.edge['d']['d']['w'] = 0
+
+def init_full():
+    global time, g, positions, E
+    E = 0
+    time = 0
+    g = nx.complete_graph(25)
+
+    for i in g.nodes():
+        g.node[i]['s'] = rd.choice([1,-1])
+    
+    for i,j in g.edges():
+        g.edge[i][j]['w'] = rd.choice([-2,-1,0,1,2])    
+
     
 def init_watts():
     global time, g, positions, E
     E = 0
     time = 0
 
-    g = nx.watts_strogatz_graph(100, 2, 0.3)
+    g = nx.watts_strogatz_graph(25, 2, 0.3)
 
     
     for i in g.nodes():
@@ -74,7 +87,7 @@ def init_erdos():
     global time, g, positions, E
     E = 0
     time = 0
-    g = nx.erdos_renyi_graph(100, .3)
+    g = nx.erdos_renyi_graph(25, .3)
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -129,10 +142,11 @@ def step():
     else:
         g.node[i]['s'] = -1
                 
-    # for i, j in g.edges():
-    #     if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
-    #         ef.append( g.edge[i][j]['w']  )
-    #         E = sum(ef)
+    for i, j in g.edges():
+        if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
+
+            ef.append( g.edge[i][j]['w']  )
+            E = sum(ef)
 
     
     # for i in g.node:
@@ -142,8 +156,8 @@ def step():
                 
 
 
-    # time_list.append(time)
-    # energy_state.append(E)
+    time_list.append(time)
+    energy_state.append(E)
 
 
 
@@ -194,16 +208,18 @@ def step_sync_global():
 
 import pycxsimulator
 
+#init()
+init_full()
 #init_watts()
 #init_erdos()
-init_barabasi()
+#init_barabasi()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_barabasi, draw, step_sync_global])
+pycxsimulator.GUI().start(func = [init_full, draw, step])
 plt.cla()
 plt.plot(time_list, energy_state, 'bs-')
 plt.xlabel('Time')
 plt.ylabel('Energy states')
-plt.ylim(-100, 100)
+#plt.ylim(-100, 100)
 #plt.yticks(range(-10, 13, 2))
 plt.savefig('e_plot.png')
 #plt.show()
