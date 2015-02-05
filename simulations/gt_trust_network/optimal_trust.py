@@ -185,7 +185,10 @@ def step_async():
             g.node[j]['f'] += -1
             g.edge[i][j]['w'] += -2
 
-
+        # if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
+        #    g.node[i]['f'] += 0
+        #    g.node[j]['f'] += 0
+        #    g.edge[i][j]['w'] += -2
         
 
     # report
@@ -257,10 +260,15 @@ def step_sync_global():
                 g_plus.node[j]['f'] += -1
                 g_plus.edge[i][j]['w'] += -2
 
+            # if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
+            #    g.node[i]['f'] += 0
+            #    g.node[j]['f'] += 0
+            #    g.edge[i][j]['w'] += -2
+
 
     g = g_plus.copy()
 
-    # report
+    # report  Viendo la literatura F (fitness global) y Tau (Trust global) deben ser promedios, es decir F = sum(f_i)/n, en donde n es el numero de nodos en la red. Lo mismo para Trust global.
     ef = []
     for i, j in g.edges():
         #if g.node[i]['s'] == 1 and g.node[j]['s'] == 1:
