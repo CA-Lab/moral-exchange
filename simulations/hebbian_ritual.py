@@ -34,7 +34,7 @@ def init_watts():
     global time, g, positions, U
     E = 0
     time = 0
-
+    #"""For Watts-Strogatz topology 10 ritual agents seems to work fine in order to optimize U"""
     g = nx.watts_strogatz_graph(56, 3, 0.2)
 
     
@@ -173,15 +173,15 @@ def no_draw():
 import pycxsimulator
 #init()
 #init_full()
-init_watts()
-#init_erdos()
+#init_watts()
+init_erdos()
 #init_barabasi()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_watts, no_draw, step])
+pycxsimulator.GUI().start(func = [init_erdos, no_draw, step])
 #pycxsimulator.GUI().start(func = [init_watts, draw, step])
 plt.cla()
 plt.plot(time_list, energy_state, 'b-')
 plt.xlabel('Time')
-plt.ylabel('Energy states')
+plt.ylabel('Global Utility')
 plt.savefig('hebb_plot.png')
 #plt.show()
