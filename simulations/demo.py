@@ -11,7 +11,7 @@ import pprint as ppt
 
 time_list = []
 energy_state = []
-perturbation_period = 250
+perturbation_period = 600
 pert_accu = 0
 
 def init_full():
@@ -46,7 +46,7 @@ def init_erdos():
     global time, g, positions, U
     E = 0
     time = 0
-    g = nx.erdos_renyi_graph(30, .08)
+    g = nx.erdos_renyi_graph(56, .1)
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -124,7 +124,7 @@ def step():
     else:
         pert_accu += 1
         
-    if time <= 250:
+    if time <= 600:
         hopfield()
     else:
         hebbian()
@@ -150,6 +150,6 @@ pycxsimulator.GUI().start(func = [init_erdos, draw, step])
 plt.cla()
 plt.plot(time_list, energy_state, 'b-')
 plt.xlabel('Time')
-plt.ylabel('Energy states')
+plt.ylabel('Global Utility')
 plt.savefig('demo_plot.png')
 #plt.show()
