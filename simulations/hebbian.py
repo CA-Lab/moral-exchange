@@ -11,7 +11,7 @@ import pprint as ppt
 
 time_list = []
 energy_state = []
-perturbation_period = 500
+perturbation_period = 460
 pert_accu = 0
 
 def init_full():
@@ -46,7 +46,7 @@ def init_erdos():
     global time, g, positions, U
     E = 0
     time = 0
-    g = nx.erdos_renyi_graph(50, .1)
+    g = nx.erdos_renyi_graph(56, .08)
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -149,6 +149,6 @@ pycxsimulator.GUI().start(func = [init_erdos, no_draw, step])
 plt.cla()
 plt.plot(time_list, energy_state, 'b-')
 plt.xlabel('Time')
-plt.ylabel('Energy states')
+plt.ylabel('Global Utility')
 plt.savefig('hebb_plot.png')
 #plt.show()
