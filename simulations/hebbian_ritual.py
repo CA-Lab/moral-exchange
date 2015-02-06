@@ -11,9 +11,11 @@ import pprint as ppt
 
 time_list = []
 energy_state = []
-perturbation_period = 500
+
+#"""perturbation period based on Watson et al, 2011. t = 3/4eN ln N
+perturbation_period = 460
 pert_accu = 0
-ritual_agents = 25
+ritual_agents = 10
 
 def init_full():
     global time, g, positions, U
@@ -33,7 +35,7 @@ def init_watts():
     E = 0
     time = 0
 
-    g = nx.watts_strogatz_graph(25, 2, 0.3)
+    g = nx.watts_strogatz_graph(56, 3, 0.2)
 
     
     for i in g.nodes():
@@ -47,7 +49,7 @@ def init_erdos():
     global time, g, positions, U
     E = 0
     time = 0
-    g = nx.erdos_renyi_graph(50, .1)
+    g = nx.erdos_renyi_graph(56, .1)
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -171,12 +173,12 @@ def no_draw():
 import pycxsimulator
 #init()
 #init_full()
-#init_watts()
-init_erdos()
+init_watts()
+#init_erdos()
 #init_barabasi()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_erdos, no_draw, step])
-#pycxsimulator.GUI().start(func = [init_erdos, draw, step])
+pycxsimulator.GUI().start(func = [init_watts, no_draw, step])
+#pycxsimulator.GUI().start(func = [init_watts, draw, step])
 plt.cla()
 plt.plot(time_list, energy_state, 'b-')
 plt.xlabel('Time')
