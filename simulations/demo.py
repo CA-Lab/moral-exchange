@@ -11,7 +11,7 @@ import pprint as ppt
 
 time_list = []
 energy_state = []
-perturbation_period = 600
+perturbation_period = 164
 pert_accu = 0
 
 def init_full():
@@ -46,7 +46,8 @@ def init_erdos():
     global time, g, positions, U
     E = 0
     time = 0
-    g = nx.erdos_renyi_graph(56, .1)
+    #"""p is calculated according to Watson et al 2011, p = k/N, in the current configuration k = 2. """
+    g = nx.erdos_renyi_graph(25, .08)
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -81,8 +82,8 @@ def global_u():
     U = []
     for i in g.nodes():
         U.append( local_u( i ) )
-        #print sum( U )
-    return sum(U)
+
+    return sum( U )
 
 def randomize_states():
     for i in g.nodes():
@@ -124,7 +125,7 @@ def step():
     else:
         pert_accu += 1
         
-    if time <= 600:
+    if time <= 460:
         hopfield()
     else:
         hebbian()
