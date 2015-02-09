@@ -14,7 +14,6 @@ energy_state = []
 perturbation_period = 1200
 pert_accu = 0
 time = 0
-m = []
 
 def init_full():
     global time, g, positions
@@ -65,7 +64,8 @@ def init_barabasi():
         g.edge[i][j]['w'] = rd.choice([-1,1])
 
 
-        
+
+
 def draw():
     pl.cla()
     nx.draw(g, pos = positions,
@@ -83,8 +83,39 @@ def randomize_states():
         g.node[i]['s'] = rd.choice([1,-1])
     
 
+
+def node_state(i):
+    m_1 = 0
+    for j in g.neighbors(i):
+        m_1 += g.edge[i][j]['w'] * -1 * g.node[j]['s']
+
+    m_2 = 0
+    for j in g.neighbors(i):
+        m_2 += g.edge[i][j]['w'] * 1 * g.node[j]['s']
+        
+    if m_1 != m_2:
+        if m_1 > m_2:
+            g.node[i]['s'] = -1
+        else:
+            g.node[i]['s'] = 1
+
+def local_u(i):
+    u = 0
+    for j in g.neighbors(i):
+        u +=  g.edge[i][j]['w'] * g.node[i]['s'] * g.node[j]['s'] 
+    return u
+
+
+def global_u():
+    U = 0
+    for i in g.nodes():
+        U += local_u( i )
+    return U
+
+
+            
 def step():
-    global time, g, positions, pert_accu, perturbation_period, m
+    global time, g, positions, pert_accu, perturbation_period
     time += 1
 
     # if pert_accu == perturbation_period:
@@ -93,42 +124,39 @@ def step():
     # else:
     #     pert_accu += 1
     
-    u = 0
+
     #m = []
-    U = 0
 
     i = rd.choice(g.nodes())
     
-    m_1 = []
-        
-    for j in g.neighbors(i):
-        m_1.append(g.edge[i][j]['w'] * -1 * g.node[j]['s'])
-    M_1 = sum(m_1)
-    #print M_1
+    node_state(i)
 
-    m_2 = []
-        
-    for j in g.neighbors(i):
-        m_2.append(g.edge[i][j]['w'] * 1 * g.node[j]['s'])
-    M_2 = sum(m_2)
-    #print M_2
-        
-    if M_1 != M_2:
-        if M_1 > M_2:
-            g.node[i]['s'] = -1
-        else:
-            g.node[i]['s'] = 1
-
-    for j in g.neighbors(i):
-        u +=  g.edge[i][j]['w'] * g.node[i]['s'] * g.node[j]['s'] 
-        m.append(u)
-    print m
-    U = sum(m)
-    print U
-            
     time_list.append(time)
-    energy_state.append( sum(m) )
+    energy_state.append( global_u() )
     
+
+
+
+
+def step_sync():
+    global time, g, positions, pert_accu, perturbation_period
+    time += 1
+
+    # if pert_accu == perturbation_period:
+    #     pert_accu = 0
+    #     randomize_states()
+    # else:
+    #     pert_accu += 1
+    
+
+    #m = []
+
+    i = rd.choice(g.nodes())
+    
+    node_state(i)
+
+    time_list.append(time)
+    energy_state.append( global_u() )
 
     
 
