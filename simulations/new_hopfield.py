@@ -18,7 +18,7 @@ time = 0
 def init_full():
     global time, g, positions
 
-    g = nx.complete_graph(10) 
+    g = nx.complete_graph(100)
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -84,7 +84,7 @@ def randomize_states():
     
 
 
-def node_state(i):
+def node_state(i, g):
     m_1 = 0
     for j in g.neighbors(i):
         m_1 += g.edge[i][j]['w'] * -1 * g.node[j]['s']
@@ -99,17 +99,17 @@ def node_state(i):
         else:
             g.node[i]['s'] = 1
 
-def local_u(i):
+def local_u(i, g):
     u = 0
     for j in g.neighbors(i):
         u +=  g.edge[i][j]['w'] * g.node[i]['s'] * g.node[j]['s'] 
     return u
 
 
-def global_u():
+def global_u(g):
     U = 0
     for i in g.nodes():
-        U += local_u( i )
+        U += local_u( i, g )
     return U
 
 
@@ -129,10 +129,10 @@ def step():
 
     i = rd.choice(g.nodes())
     
-    node_state(i)
+    node_state(i, g)
 
     time_list.append(time)
-    energy_state.append( global_u() )
+    energy_state.append( global_u(g) )
     
 
 
@@ -150,13 +150,15 @@ def step_sync():
     
 
     #m = []
-
-    i = rd.choice(g.nodes())
+    h = g.copy()
     
-    node_state(i)
+    for i in g.nodes():
+        node_state(i,h)
 
+    g = h.copy()
+        
     time_list.append(time)
-    energy_state.append( global_u() )
+    energy_state.append( global_u(g) )
 
     
 
@@ -175,7 +177,7 @@ init_full()
 #init_barabasi()
 positions = nx.spring_layout(g)
 #pycxsimulator.GUI().start(func = [init_erdos, no_draw, step])
-pycxsimulator.GUI().start(func = [init_full, draw, step])
+pycxsimulator.GUI().start(func = [init_full, no_draw, step_sync])
 plt.cla()
 plt.plot(time_list, energy_state, 'b-')
 plt.xlabel('Time')
