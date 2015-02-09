@@ -19,7 +19,7 @@ m = []
 def init_full():
     global time, g, positions
 
-    g = nx.complete_graph(56) 
+    g = nx.complete_graph(10) 
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -87,16 +87,16 @@ def step():
     global time, g, positions, pert_accu, perturbation_period, m
     time += 1
 
-    if pert_accu == perturbation_period:
-        pert_accu = 0
-        randomize_states()
-    else:
-        pert_accu += 1
+    # if pert_accu == perturbation_period:
+    #     pert_accu = 0
+    #     randomize_states()
+    # else:
+    #     pert_accu += 1
     
     u = 0
     #m = []
     U = 0
-    
+
     i = rd.choice(g.nodes())
     
     m_1 = []
@@ -122,13 +122,15 @@ def step():
     for j in g.neighbors(i):
         u +=  g.edge[i][j]['w'] * g.node[i]['s'] * g.node[j]['s'] 
         m.append(u)
+    print m
     U = sum(m)
-
-
+    print U
             
     time_list.append(time)
-    energy_state.append( U )
+    energy_state.append( sum(m) )
+    
 
+    
 
 
 
@@ -139,13 +141,13 @@ def no_draw():
         
 import pycxsimulator
 #init()
-#init_full()
+init_full()
 #init_watts()
-init_erdos()
+#init_erdos()
 #init_barabasi()
 positions = nx.spring_layout(g)
-pycxsimulator.GUI().start(func = [init_erdos, no_draw, step])
-#pycxsimulator.GUI().start(func = [init_full, draw, step])
+#pycxsimulator.GUI().start(func = [init_erdos, no_draw, step])
+pycxsimulator.GUI().start(func = [init_full, draw, step])
 plt.cla()
 plt.plot(time_list, energy_state, 'b-')
 plt.xlabel('Time')
