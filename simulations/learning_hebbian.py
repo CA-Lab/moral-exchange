@@ -10,8 +10,10 @@ import math as mt
 import pprint as ppt
 
 time_list = []
-energy_state = []
-original_state = []
+
+energy_state_g = []
+energy_state_o = []
+
 perturbation_period = 50
 pert_accu = 0
 time = 0
@@ -26,11 +28,13 @@ def init_full():
         g.node[i]['s'] = rd.choice([1,-1])
     
     for i,j in g.edges():
-        g.edge[i][j]['w'] = rd.choice([-1,1])
+        g.edge[i][j]['w'] = 0
 
+
+    # TODO: should weights be initialized to 0, 1 or 0.01?
     o = g.copy()
     for i,j in o.edges():
-        o.edge[i][j]['w'] = 0
+        o.edge[i][j]['w'] = 1
     
 def init_erdos():
     global time, g, o, positions, U
@@ -94,11 +98,25 @@ def draw():
     plt.show() 
 
 def randomize_states():
+    state = rd.choice([1,-1])
     for i in g.nodes():
-        g.node[i]['s'] = rd.choice([1,-1])
+        g.node[i]['s'] = state
+        o.node[i]['s'] = state
 
-    for i in o.nodes():
-        o.node[i]['s'] = rd.choice([1,-1])
+
+def local_u(i, g):
+    u = 0
+    for j in g.neighbors(i):
+        u +=  g.edge[i][j]['w'] * g.node[i]['s'] * g.node[j]['s'] 
+    return u
+
+
+def global_u(g):
+    U = 0
+    for i in g.nodes():
+        U += local_u( i, g )
+    return U
+        
 
 def step():
 #def hebbian(): """hebbian learning""
@@ -107,39 +125,51 @@ def step():
 
     # if pert_accu == perturbation_period:
     #     pert_accu = 0
-    #     randomize_states()
+    #     randomize_states(g)
     # else:
     #     pert_accu += 1
     
-    u = 0
-    U = 0
-    u_o = 0
-    U_o = 0
 
     i = rd.choice(g.nodes())
 
     r = 0.005
-
-    m_1 = [] 
-    for j in g.neighbors(i) and o.neighbors(i):
-        m_1.append((g.edge[i][j]['w'] + o.edge[i][j]['w'] + r) * g.node[i]['s'] * g.node[j]['s'])
-    M_1 = sum(m_1)
-
-    m_2 = []
-    for j in g.neighbors(i) and o.neighbors(i):
-        m_2.append((g.edge[i][j]['w'] + o.edge[i][j]['w'] -r) * g.node[i]['s']  * g.node[j]['s'])
-    M_2 = sum(m_2)
     
-    if M_1 != M_2:
-        if M_1 > M_2:
+    m_1 = 0
+    for j in g.neighbors(i) and o.neighbors(i):
+        m_1 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] + r) * g.node[i]['s'] * g.node[j]['s']
+
+
+    m_2 = 0
+    for j in g.neighbors(i) and o.neighbors(i):
+        m_2 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] -r) * g.node[i]['s']  * g.node[j]['s']
+
+        
+    if m_1 != m_2:
+        if m_1 > m_2:
             g.edge[i][j]['w'] += r
         else:
-            g.edge[i][j]['w'] -= r        
+            g.edge[i][j]['w'] -= r
 
-    for j in g.neighbors(i):
-        u +=  g.edge[i][j]['w'] * g.node[i]['s'] * g.node[j]['s'] 
-        m.append(u)
-    U = sum(m)
+
+    j_1 = 0
+    for j in g.neighbors(i) and o.neighbors(i):
+        j_1 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] - 1) * g.node[i]['s'] * g.node[j]['s']
+
+
+    j_2 = 0
+    for j in g.neighbors(i) and o.neighbors(i):
+        j_2 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] + 1) * g.node[i]['s']  * g.node[j]['s']
+
+    if j_1 > j_2:
+        g.node[i]['s'] = -1
+        o.node[i]['s'] = -1
+    else:
+        g.node[i]['s'] = 1
+        o.node[i]['s'] = 1
+
+        
+            
+
     
 #"""Original constrains network without learning"""
 
@@ -168,7 +198,9 @@ def step():
     # U_o = sum(m)
 
     time_list.append(time)
-    energy_state.append( U )
+    energy_state_o.append( global_u(o) )
+    energy_state_g.append( global_u(g) )
+    
     #original_state.append( U_o )
     
 #def step():
@@ -230,10 +262,11 @@ init_full()
 #init_erdos()
 #init_barabasi()
 positions = nx.spring_layout(g)
-#pycxsimulator.GUI().start(func = [init_full, no_draw, step])
-pycxsimulator.GUI().start(func = [init_full, draw, step])
+pycxsimulator.GUI().start(func = [init_full, no_draw, step])
+#pycxsimulator.GUI().start(func = [init_full, draw, step])
 plt.cla()
-plt.plot(time_list, energy_state, 'b-')
+#plt.plot(time_list, energy_state_g, 'b-')
+plt.plot(time_list, energy_state_o, 'r-')
 #plt.plot( original_state, 'r-' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
