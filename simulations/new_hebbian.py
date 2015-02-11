@@ -22,7 +22,7 @@ m = []
 def init_full():
     global time, g, o, positions
 
-    g = nx.complete_graph(10) 
+    g = nx.complete_graph(100) 
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -104,23 +104,33 @@ def randomize_states( g ):
         o.node[i]['s'] = state
 
 
-def local_u(i, g):
-    u = 0
+def local_uo(i, o):
+    u_o = 0
     for j in o.neighbors(i):
-        u +=  o.edge[i][j]['w'] * o.node[i]['s'] * o.node[j]['s'] 
-    return u
+        u_o +=  o.edge[i][j]['w'] * o.node[i]['s'] * o.node[j]['s']
+    return u_o
+
+# def local_ul(i, g):
+#     u_l = 0
+#     for j in g.neighbors(i):
+#         u_l += g.edge[i][j]['w'] * g.node[i]['s'] * g.node[j]['s']
+#     return u_l
 
 
-def global_u(g):
+def global_uo(o):
     U = 0
-    for i in g.nodes():
-        U += local_u( i, g )
-    print U
+    for i in o.nodes():
+        U += local_uo( i, g )
     return U
+
+# def global_ul(g):
+#     U_l = 0
+#     for i in g.nodes():
+#         U_l += local_ul( i, g )
 
 
 def step():
-    global time, g, o, positions, pert_accu, perturbation_period, m
+    global time, g, o, positions, pert_accu, perturbation_period
     time += 1
 
     # if pert_accu == perturbation_period:
@@ -150,7 +160,6 @@ def step():
         else:
             g.edge[i][j]['w'] -= r
 
-            print g.edge[i][j]['w']
     
     node_state( i, g )
 
@@ -172,8 +181,8 @@ def step():
 
 
     time_list.append(time)
-    energy_state_o.append( global_u(o) )
-    energy_state_g.append( global_u(g) )
+    energy_state_o.append( global_uo(o) )
+    #energy_state_g.append( global_ul(g) )
     
 def node_state(i, g):
     m_1 = 0
@@ -210,8 +219,8 @@ positions = nx.spring_layout(g)
 pycxsimulator.GUI().start(func = [init_full, no_draw, step])
 #pycxsimulator.GUI().start(func = [init_full, draw, step])
 plt.cla()
-#plt.plot(time_list, energy_state_g, 'b-')
+#plt.plot(time_list, energy_state_g, 'b+')
 plt.plot(time_list, energy_state_o, 'r-')
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
-plt.savefig('learning_plot.png')
+plt.savefig('new_hebbian_plot.png')
