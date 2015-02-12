@@ -103,6 +103,24 @@ def randomize_states( g ):
         g.node[i]['s'] = state
         o.node[i]['s'] = state
 
+def node_state(i, g):
+    m_1 = 0
+    for j in g.neighbors(i):
+        m_1 += g.edge[i][j]['w'] * -1 * g.node[j]['s']
+   
+
+    m_2 = 0
+    for j in g.neighbors(i):
+        m_2 += g.edge[i][j]['w'] * 1 * g.node[j]['s']
+
+
+    if m_1 != m_2:
+        if m_1 > m_2:
+            g.node[i]['s'] = -1
+            o.node[i]['s'] = -1
+        else:
+            g.node[i]['s'] = 1
+            o.node[i]['s'] = 1
 
 def local_uo(i, o):
     u_o = 0
@@ -167,25 +185,57 @@ def step():
     time_list.append(time)
     energy_state_o.append( global_uo(o) )
     #energy_state_g.append( global_ul(g) )
+
+
+
+# def step_sync():
+#     global time, g, o, positions, pert_accu, perturbation_period
+#     time += 1
+
+#     if pert_accu == perturbation_period:
+#         pert_accu = 0
+#         randomize_states( g )
+#     else:
+#         pert_accu += 1
+
+        
+#     i = rd.choice(g.nodes())
+
+#     r = 0.005
     
-def node_state(i, g):
-    m_1 = 0
-    for j in g.neighbors(i):
-        m_1 += g.edge[i][j]['w'] * -1 * g.node[j]['s']
-   
-
-    m_2 = 0
-    for j in g.neighbors(i):
-        m_2 += g.edge[i][j]['w'] * 1 * g.node[j]['s']
+#     m_1 = 0
+#     for j in g.neighbors(i) and o.neighbors(i):
+#         m_1 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] + r) * g.node[i]['s'] * g.node[j]['s']
 
 
-    if m_1 != m_2:
-        if m_1 > m_2:
-            g.node[i]['s'] = -1
-            o.node[i]['s'] = -1
-        else:
-            g.node[i]['s'] = 1
-            o.node[i]['s'] = 1
+#     m_2 = 0
+#     for j in g.neighbors(i) and o.neighbors(i):
+#         m_2 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] -r) * g.node[i]['s']  * g.node[j]['s']
+
+        
+#     if m_1 != m_2:
+#         if m_1 > m_2:
+#             g.edge[i][j]['w'] += r
+#         else:
+#             g.edge[i][j]['w'] -= r
+
+    
+#     #node_state( i, g )
+    
+
+#     #m = []
+#     h = g.copy()
+#     p = o.copy()
+    
+#     for i in g.nodes() and o.nodes():
+#         node_state(i,h)
+
+#     g = h.copy()
+#     o = p.copy()
+
+#     time_list.append(time)
+#     energy_state_o.append( global_uo(o) )
+#     #energy_state_g.append( global_ul(g) )
 
 
 def no_draw():
