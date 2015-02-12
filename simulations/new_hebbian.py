@@ -14,7 +14,7 @@ time_list = []
 energy_state_g = []
 energy_state_o = []
 
-perturbation_period = 500
+perturbation_period = 1000
 pert_accu = 0
 time = 0
 m = []
@@ -31,10 +31,10 @@ def init_full():
         g.edge[i][j]['w'] = 1
 
 
-    # TODO: should weights be initialized to 0, 1 or 0.01?
+    #should weights be initialized to 0, 1 or 0.01?
     o = g.copy()
     for i,j in o.edges():
-        o.edge[i][j]['w'] = 1
+        o.edge[i][j]['w'] = 0
     
 def init_erdos():
     global time, g, o, positions, U
@@ -98,8 +98,8 @@ def draw():
     plt.show() 
 
 def randomize_states( g ):
-    state = rd.choice([1,-1])
     for i in g.nodes():
+        state = rd.choice([1,-1])
         g.node[i]['s'] = state
         o.node[i]['s'] = state
 
@@ -133,11 +133,11 @@ def step():
     global time, g, o, positions, pert_accu, perturbation_period
     time += 1
 
-    # if pert_accu == perturbation_period:
-    #     pert_accu = 0
-    #     randomize_states(g)
-    # else:
-    #     pert_accu += 1
+    if pert_accu == perturbation_period:
+        pert_accu = 0
+        randomize_states(g)
+    else:
+        pert_accu += 1
     
 
     i = rd.choice(g.nodes())
@@ -162,22 +162,6 @@ def step():
 
     
     node_state( i, g )
-
-    # j_1 = 0
-    # for j in g.neighbors(i) and o.neighbors(i):
-    #     j_1 += g.edge[i][j]['w'] * - 1 * g.node[i]['s']
-                
-
-    # j_2 = 0
-    # for j in g.neighbors(i) and o.neighbors(i):
-    #     j_2 += g.edge[i][j]['w'] * 1 * g.node[i]['s']
-        
-    # if j_1 > j_2:
-    #     g.node[i]['s'] = -1
-    #     o.node[i]['s'] = -1
-    # else:
-    #     g.node[i]['s'] = 1
-    #     o.node[i]['s'] = 1
 
 
     time_list.append(time)
