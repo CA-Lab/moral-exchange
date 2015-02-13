@@ -44,7 +44,7 @@ def init_erdos():
     global time, g, o, positions, U
     
     time = 0
-    g = nx.erdos_renyi_graph(120, .06)
+    g = nx.erdos_renyi_graph(50, .07)
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -192,7 +192,7 @@ def step():
     energy_state_o.append( global_uo(o) )
     #energy_state_g.append( global_ul(g) )
     
-    if time%1000 == 0:
+    if time%145 == 0:
         T += 1
         T_list.append( T )
         U_plot.append( global_uo(o) )
@@ -246,7 +246,7 @@ def step_sync():
     o = p.copy()
 
     time_list.append(time)
- #   energy_state_o.append( global_uo(o) )
+    energy_state_o.append( global_uo(o) )
 #     #energy_state_g.append( global_ul(g) )
     
     if time%1000 == 0:
@@ -275,4 +275,4 @@ plt.cla()
 plt.scatter( T_list, U_plot, c=u'r', marker=u'D' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
-plt.savefig('new_hebbian_plot.png')
+plt.savefig('async_new_hebbian_plot.png')
