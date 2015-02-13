@@ -11,9 +11,15 @@ import pprint as ppt
 
 time_list = []
 energy_state = []
-perturbation_period = 1200
+perturbation_period = 1000
 pert_accu = 0
 time = 0
+
+T_list = [0, ]
+T = 0
+U_plot = [0, ]
+
+
 
 def init_full():
     global time, g, positions
@@ -30,7 +36,7 @@ def init_erdos():
     global time, g, positions, U
     
     time = 0
-    g = nx.erdos_renyi_graph(560, .08)
+    g = nx.erdos_renyi_graph(120, .06)
 
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([1,-1])
@@ -115,14 +121,14 @@ def global_u(g):
 
             
 def step():
-    global time, g, positions, pert_accu, perturbation_period
+    global time, g, positions, pert_accu, perturbation_period, T
     time += 1
 
-    # if pert_accu == perturbation_period:
-    #     pert_accu = 0
-    #     randomize_states()
-    # else:
-    #     pert_accu += 1
+    if pert_accu == perturbation_period:
+        pert_accu = 0
+        randomize_states()
+    else:
+        pert_accu += 1
     
 
     #m = []
@@ -135,18 +141,23 @@ def step():
     energy_state.append( global_u(g) )
     
 
+    if time%1000 == 0:
+        T += 1
+        T_list.append( T )
+        U_plot.append( global_u(g) )
+
 
 
 
 def step_sync():
-    global time, g, positions, pert_accu, perturbation_period
+    global time, g, positions, pert_accu, perturbation_period, T
     time += 1
 
-    # if pert_accu == perturbation_period:
-    #     pert_accu = 0
-    #     randomize_states()
-    # else:
-    #     pert_accu += 1
+    if pert_accu == perturbation_period:
+        pert_accu = 0
+        randomize_states()
+    else:
+        pert_accu += 1
     
 
     #m = []
@@ -160,8 +171,10 @@ def step_sync():
     time_list.append(time)
     energy_state.append( global_u(g) )
 
-    
-
+    if time%1000 == 0:
+        T += 1
+        T_list.append( T )
+        U_plot.append( global_u(g) )
 
 
 def no_draw():
@@ -176,10 +189,11 @@ init_full()
 #init_erdos()
 #init_barabasi()
 positions = nx.spring_layout(g)
-#pycxsimulator.GUI().start(func = [init_erdos, no_draw, step])
-pycxsimulator.GUI().start(func = [init_full, no_draw, step_sync])
+pycxsimulator.GUI().start(func = [init_erdos, no_draw, step_sync])
+#pycxsimulator.GUI().start(func = [init_full, no_draw, step_sync])
 plt.cla()
-plt.plot(time_list, energy_state, 'b-')
+#plt.plot(time_list, energy_state, 'b-')
+plt.scatter( T_list, U_plot, c=u'r', marker=u'D' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
 plt.savefig('new_plot.png')
