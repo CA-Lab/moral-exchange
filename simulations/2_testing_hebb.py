@@ -25,10 +25,9 @@ U_plot = [0, ]
 def init_full():
     global g, o
 
-    g = nx.complete_graph(50) 
+    g = nx.complete_graph(100) 
 
-    for i in g.nodes():
-        g.node[i]['s'] = rd.choice([1,-1])
+    randomize_states(g)
     
     for i,j in g.edges():
         g.edge[i][j]['w'] = 0
@@ -44,8 +43,7 @@ def init_erdos():
     
     g = nx.erdos_renyi_graph(50, .07)
 
-    for i in g.nodes():
-        g.node[i]['s'] = rd.choice([1,-1])
+    randomize_states(g)
 
     for i,j in g.edges():
         g.edge[i][j]['w'] = 0
@@ -97,11 +95,10 @@ def node_state(i,o):
         m_2 += (o.edge[i][j]['w'] + g.edge[i][j]['w']) * 1 * o.node[j]['s']
 
 
-    if m_1 != m_2:
-        if m_1 > m_2:
-            o.node[i]['s'] = -1
-        else:
-            o.node[i]['s'] = 1
+    if m_1 > m_2:
+        o.node[i]['s'] = -1
+    else:
+        o.node[i]['s'] = 1
 
 def step():
     global time, o, g, T, perturbation_period, pert_accu
@@ -124,8 +121,8 @@ def step():
 
     node_state(i,o)
 
-    time_list.append(time)
-    energy_state_o.append( global_uo(o) )
+#    time_list.append(time)
+#    energy_state_o.append( global_uo(o) )
     #energy_state_g.append( global_ul(g) )
 
     
@@ -145,11 +142,11 @@ def learning():
             m_2 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] -r) * o.node[i]['s']  * o.node[j]['s']
 
         
-        if m_1 != m_2:
-            if m_1 > m_2:
-                g.edge[i][j]['w'] += r
-            else:
-                g.edge[i][j]['w'] -= r
+
+        if m_1 > m_2:
+            g.edge[i][j]['w'] += r
+        else:
+            g.edge[i][j]['w'] -= r
 
 
 
@@ -169,7 +166,7 @@ def no_draw():
 #pycxsimulator.GUI().start(func = [init_full, no_draw, step])
 #pycxsimulator.GUI().start(func = [init_full, draw, step])
 
-init_erdos()
+init_full()
 for n in xrange(300000):
     # no_draw()
     step()
@@ -182,4 +179,4 @@ plt.cla()
 plt.scatter( T_list, U_plot, c=u'r', marker=u'D' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
-plt.savefig('learning_plot_erdos.png')
+plt.savefig('learning_plot_full.png')
