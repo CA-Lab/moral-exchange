@@ -31,14 +31,17 @@ def init_full():
     randomize_states(g)
     
     for i,j in g.edges():
-        g.edge[i][j]['w'] = 0
+        g.edge[i][j]['weight'] = 0
 
     o = g.copy()
     for i,j in o.edges():
         if rd.random() < 0.1:
-            o.edge[i][j]['w'] = rd.choice([1,-1])
+            o.edge[i][j]['weight'] = rd.choice([1,-1])
             #get weigthed matrix at t=0 and at the end for both networks
-            
+
+    nx.write_weighted_edgelist(g, 'g_edgelist.csv')
+    nx.write_weighted_edgelist(o, 'o_edgelist.csv')
+
 def init_erdos():
     global g, o
     
@@ -47,18 +50,19 @@ def init_erdos():
     randomize_states(g)
 
     for i,j in g.edges():
-        g.edge[i][j]['w'] = 0
+        g.edge[i][j]['weight'] = 0
         
     o = g.copy()
     for i,j in o.edges():
-        o.edge[i][j]['w'] = rd.choice([-1,0,1])
+        if rd.random() < 0.07:
+            o.edge[i][j]['weight'] = rd.choice([-1,1])
         
 def draw():
     pl.cla()
     nx.draw(g, pos = positions,
             node_color = [g.node[i]['s'] for i in g.nodes_iter()],
             with_labels = True, edge_color = 'c',
-            #width = [g.edge[i][j]['w'] for (i,j) in g.edges_iter()],
+            #width = [g.edge[i][j]['weight'] for (i,j) in g.edges_iter()],
             cmap = pl.cm.autumn, vmin = 0, vmax = 1)
     
     pl.axis('image')
@@ -73,7 +77,7 @@ def randomize_states( o ):
 def local_uo(i, o):
     u_o = 0
     for j in o.neighbors(i):
-        u_o +=  o.edge[i][j]['w'] * o.node[i]['s'] * o.node[j]['s']
+        u_o +=  o.edge[i][j]['weight'] * o.node[i]['s'] * o.node[j]['s']
     return u_o
 
 
@@ -88,12 +92,12 @@ def node_state(i):
     
     m_1 = 0
     for j in o.neighbors(i):
-        m_1 += (o.edge[i][j]['w'] + g.edge[i][j]['w']) * -1 * o.node[j]['s']
+        m_1 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) * -1 * o.node[j]['s']
    
 
     m_2 = 0
     for j in o.neighbors(i):
-        m_2 += (o.edge[i][j]['w'] + g.edge[i][j]['w']) * 1 * o.node[j]['s']
+        m_2 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) * 1 * o.node[j]['s']
 
 
     if m_1 > m_2:
@@ -107,18 +111,18 @@ def step():
     time +=1
     
     if pert_accu == perturbation_period:
-        if T > 100 and T < 300:
+        if T > 100 and T < 500:
             learning()
         pert_accu = 0
         T += 1
         T_list.append( T )
-        U_plot.append( global_uo(o) )
+        #U_plot.append( global_uo(o) )
         randomize_states(o)
     else:
         pert_accu += 1
-
+    
     i = rd.choice(o.nodes())
-
+    U_plot.append( global_uo(o) )
     # if T > 100 and T < 200:
     #     learning()
 
@@ -137,19 +141,20 @@ def learning():
     for i in o.nodes():
         m_1 = 0
         for j in o.neighbors(i):
-            m_1 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] + r) * o.node[i]['s'] * o.node[j]['s']
+            m_1 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] + r) * o.node[i]['s'] * o.node[j]['s']
     
 
         m_2 = 0
         for j in o.neighbors(i):
-            m_2 += (g.edge[i][j]['w'] + o.edge[i][j]['w'] -r) * o.node[i]['s']  * o.node[j]['s']
+            m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] -r) * o.node[i]['s']  * o.node[j]['s']
 
         
 
         if m_1 > m_2:
-            g.edge[i][j]['w'] += r
+            g.edge[i][j]['weight'] += r
         else:
-            g.edge[i][j]['w'] -= r
+            g.edge[i][j]['weight'] -= r
+
 
 
 
@@ -170,7 +175,7 @@ def no_draw():
 #pycxsimulator.GUI().start(func = [init_full, draw, step])
 
 init_full()
-for n in xrange(perturbation_period * 400):
+for n in xrange(perturbation_period * 600):
     no_draw()
     step()
 
@@ -183,3 +188,4 @@ plt.scatter( T_list, U_plot, c=u'r', marker=u'D' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
 plt.savefig('learning_plot_full.png')
+#plt.savefig('learning_plot_erdos.png')
