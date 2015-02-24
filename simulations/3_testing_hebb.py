@@ -21,8 +21,8 @@ T = 0
 m = []
 T_list = [0, ]
 U_plot = [0, ]
-g = nx.complete_graph(20)
-o = nx.complete_graph(20)
+g = nx.complete_graph(120)
+o = nx.complete_graph(120)
 
 def init_full():
     global g, o
@@ -35,9 +35,9 @@ def init_full():
 
     o = g.copy()
     for i,j in o.edges():
-        if rd.random() < 0.1:
+        if rd.random() < 0.07:
             o.edge[i][j]['weight'] = rd.choice([1,-1])
-            #get weigthed matrix at t=0 and at the end for both networks
+            
 
     nx.write_weighted_edgelist(g, 'g_edgelist.csv')
     nx.write_weighted_edgelist(o, 'o_edgelist.csv')
@@ -45,7 +45,21 @@ def init_full():
 def init_erdos():
     global g, o
     
-    g = nx.erdos_renyi_graph(120, .07)
+    g = nx.erdos_renyi_graph(120, 1)
+
+    randomize_states(g)
+
+    for i,j in g.edges():
+        g.edge[i][j]['weight'] = 0
+        
+    o = g.copy()
+    for i,j in o.edges():
+        if rd.random() < 0.07:
+            o.edge[i][j]['weight'] = rd.choice([-1,1])
+
+def init_small_world():
+    
+    g = nx.watts_strogatz_graph(120, 8, 0.5)
 
     randomize_states(g)
 
@@ -111,27 +125,25 @@ def step():
     time +=1
     
     if pert_accu == perturbation_period:
-        if T > 100 and T < 500:
+        if T > 600 and T < 3000:
             learning()
         pert_accu = 0
         T += 1
         T_list.append( T )
-        #U_plot.append( global_uo(o) )
+        U_plot.append( global_uo(o) )
         randomize_states(o)
     else:
         pert_accu += 1
     
     i = rd.choice(o.nodes())
-    U_plot.append( global_uo(o) )
-    # if T > 100 and T < 200:
-    #     learning()
+
 
     node_state(i)
 
-#    time_list.append(time)
-#    energy_state_o.append( global_uo(o) )
-    #energy_state_g.append( global_ul(g) )
 
+    if time == 3599998:
+        nx.write_weighted_edgelist(g, 'g_edgelist_end.csv')
+        nx.write_weighted_edgelist(o, 'o_edgelist_end.csv')    
     
 def learning():
     global  g, o
@@ -163,22 +175,13 @@ def no_draw():
     global time
     print time
 
-        
-#import pycxsimulator
-#init()
-
-#init_watts()
-#init_erdos()
-#init_barabasi()
-#positions = nx.spring_layout(g)
-#pycxsimulator.GUI().start(func = [init_full, no_draw, step])
-#pycxsimulator.GUI().start(func = [init_full, draw, step])
 
 init_full()
-for n in xrange(perturbation_period * 600):
+#init_erdos()
+#init_small_world()
+for n in xrange(perturbation_period * 3600):
     no_draw()
     step()
-
 
 
 plt.cla()
@@ -188,4 +191,5 @@ plt.scatter( T_list, U_plot, c=u'r', marker=u'D' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
 plt.savefig('learning_plot_full.png')
+#plt.savefig('learning_plot_small.png')
 #plt.savefig('learning_plot_erdos.png')
