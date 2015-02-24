@@ -1,5 +1,6 @@
 import matplotlib
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
+matplotlib.use('svg')
 import matplotlib.pyplot as plt
 import pylab as pl
 import random as rd
@@ -23,6 +24,7 @@ T_list = [0, ]
 U_plot = [0, ]
 g = nx.complete_graph(120)
 o = nx.complete_graph(120)
+GU = open('gu_0', 'w')
 
 def init_full():
     global g, o
@@ -120,7 +122,7 @@ def node_state(i):
         o.node[i]['s'] = 1
 
 def step():
-    global time, o, g, T, perturbation_period, pert_accu
+    global time, o, g, T, perturbation_period, pert_accu, g_ut
     
     time +=1
     
@@ -142,9 +144,10 @@ def step():
 
 
     if time == 3599998:
+    #if time == 3598:
         nx.write_weighted_edgelist(g, 'g_edgelist_end.csv')
-        nx.write_weighted_edgelist(o, 'o_edgelist_end.csv')    
-    
+        nx.write_weighted_edgelist(o, 'o_edgelist_end.csv') 
+
 def learning():
     global  g, o
 
@@ -174,7 +177,11 @@ def learning():
 def no_draw():
     global time
     print time
-
+    if time == 2999:
+        gu = global_uo(o)
+        GU.write(str(gu))
+        GU.close()
+        
 
 init_full()
 #init_erdos()
@@ -190,6 +197,6 @@ plt.cla()
 plt.scatter( T_list, U_plot, c=u'r', marker=u'D' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
-plt.savefig('learning_plot_full.png')
-#plt.savefig('learning_plot_small.png')
-#plt.savefig('learning_plot_erdos.png')
+plt.savefig('learning_plot_full.svg')
+#plt.savefig('learning_plot_small.svg')
+#plt.savefig('learning_plot_erdos.svg')
