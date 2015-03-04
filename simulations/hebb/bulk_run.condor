@@ -1,0 +1,6 @@
+executable   = /usr/bin/python
+Arguments    = 3_testing_hebb.py --runid $(Process)
+Requirements = Machine == "notron.inmegen.gob.mx"
+universe     = vanilla 
+log          = hebb.log 
+queue 50

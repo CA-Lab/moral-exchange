@@ -1,3 +1,4 @@
+import argparse
 import matplotlib
 #matplotlib.use('TkAgg')
 matplotlib.use('svg')
@@ -9,6 +10,13 @@ import networkx as nx
 import numpy as np
 import math as mt
 import pprint as ppt
+
+
+
+parser = argparse.ArgumentParser(description='Hebbian network simulation')
+parser.add_argument('--runid', required=True )
+args = parser.parse_args()
+
 
 file_num = 0
 
@@ -44,9 +52,8 @@ def init_full():
         if rd.random() < 0.07:
             o.edge[i][j]['weight'] = rd.choice([1,-1])
             
-
-    nx.write_weighted_edgelist(g, 'g_edgelist_%d.csv' %file_num)
-    nx.write_weighted_edgelist(o, 'o_edgelist_%d.csv' %file_num)
+    nx.write_weighted_edgelist(g, 'run_%s_g_edgelist_%d.csv' % (args.runid, file_num))
+    nx.write_weighted_edgelist(o, 'run_%s_o_edgelist_%d.csv' % (args.runid, file_num))
 
 
 def init_erdos():
@@ -144,7 +151,6 @@ def step():
     
     i = rd.choice(o.nodes())
 
-
     node_state(i)
 
 
@@ -186,24 +192,20 @@ def no_draw():
 
 def data():
     global time, o, g, file_num
+    nx.write_weighted_edgelist(g, 'run_%s_g_edgelist_end_%d.csv' % (args.runid, file_num))
+    nx.write_weighted_edgelist(o, 'run_%s_o_edgelist_end_%d.csv' % (args.runid, file_num))
+    GU = open('run_%s_gu_%d.txt' % (args.runid, file_num), 'w')
+    gu = global_uo(o)
+    GU.write(str(gu))
+    GU.close()
 
-    if time%3600000 == 0:
-        nx.write_weighted_edgelist(g, 'g_edgelist_end_%d.csv' %file_num)
-        nx.write_weighted_edgelist(o, 'o_edgelist_end_%d.csv' %file_num)
-        GU = open('gu_%d.txt' %file_num, 'w')
-        gu = global_uo(o)
-        GU.write(str(gu))
-        GU.close()
-
-for n in xrange(2):
-    file_num += 1
-    print file_num
-    init_full()
-    for n in xrange(perturbation_period * 3600):
-        data()
-        no_draw()
-        step()
-
+    
+init_full()
+for n in xrange(perturbation_period * 3600):
+    # no_draw()
+    step()
+    
+data()
 
 plt.cla()
 #plt.plot(time_list, energy_state_g, 'b+')
@@ -211,6 +213,6 @@ plt.cla()
 plt.scatter( T_list, U_plot, c=u'r', marker=u'D' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
-plt.savefig('learning_plot_full.svg')
+plt.savefig('run_%s_learning_plot_full.svg' % args.runid)
 #plt.savefig('learning_plot_small.svg')
 #plt.savefig('learning_plot_erdos.svg')
