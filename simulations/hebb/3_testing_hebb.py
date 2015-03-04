@@ -151,7 +151,6 @@ def step():
     
     i = rd.choice(o.nodes())
 
-
     node_state(i)
 
 
@@ -193,21 +192,20 @@ def no_draw():
 
 def data():
     global time, o, g, file_num
+    nx.write_weighted_edgelist(g, 'run_%s_g_edgelist_end_%d.csv' % (args.runid, file_num))
+    nx.write_weighted_edgelist(o, 'run_%s_o_edgelist_end_%d.csv' % (args.runid, file_num))
+    GU = open('run_%s_gu_%d.txt' % (args.runid, file_num), 'w')
+    gu = global_uo(o)
+    GU.write(str(gu))
+    GU.close()
 
-    if time%3600000 == 0:
-        nx.write_weighted_edgelist(g, 'run_%s_g_edgelist_end_%d.csv' % (args.runid, file_num))
-        nx.write_weighted_edgelist(o, 'run_%s_o_edgelist_end_%d.csv' % (args.runid, file_num))
-        GU = open('run_%s_gu_%d.txt' % (args.runid, file_num), 'w')
-        gu = global_uo(o)
-        GU.write(str(gu))
-        GU.close()
-
+    
 init_full()
 for n in xrange(perturbation_period * 3600):
-    data()
     # no_draw()
     step()
-
+    
+data()
 
 plt.cla()
 #plt.plot(time_list, energy_state_g, 'b+')
