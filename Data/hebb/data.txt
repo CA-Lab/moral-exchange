@@ -1,0 +1,4 @@
+50 puntos (50 corridas de la simulación)
+Utilidad global promedio post-aprendizaje: 423.12
+Varianza: 1156.924
+Desviación estándar: 34.01259 sqrt(varianza)
