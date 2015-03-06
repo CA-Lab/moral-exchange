@@ -16,6 +16,7 @@ import pprint as ppt
 parser = argparse.ArgumentParser(description='Hebbian network simulation')
 parser.add_argument('--runid', default="single" )
 parser.add_argument('--iterations', type=int, default=3600 )
+parser.add_argument('--nodes', type=int, default=120 )
 args = parser.parse_args()
 
 
@@ -33,8 +34,8 @@ T = 0
 m = []
 T_list = [0, ]
 U_plot = [0, ]
-g = nx.complete_graph(120)
-o = nx.complete_graph(120)
+g = nx.complete_graph(args.nodes)
+o = nx.complete_graph(args.nodes)
 
 iterations = args.iterations
 sixth = int(iterations / 6)
@@ -57,10 +58,39 @@ def init_full():
     nx.write_weighted_edgelist(o, 'run_%s_o_edgelist_%d.csv' % (args.runid, file_num))
 
 
+def init_minimal():
+    global g, o, file_num
+    g = nx.complete_graph(args.nodes)
+
+    for n in g.nodes():
+        g.node[n]['s'] = 1
+
+    for i,j in g.edges():
+        g.edge[i][j]['weight'] = 0
+
+    o = g.copy()
+
+    for i,j in o.edges():
+        o.edge[i][j]['weight'] = rd.choice([1,0])
+
+    # for i,j in o.edges():
+    #     if rd.random() < 0.07:
+    #         o.edge[i][j]['weight'] = rd.choice([1,-1])
+    
+    # o.edge[0][1]['weight'] = 1
+    # o.edge[0][2]['weight'] = 1
+    # o.edge[1][2]['weight'] = 1
+
+    
+    nx.write_weighted_edgelist(g, 'run_%s_g_edgelist_%d.csv' % (args.runid, file_num))
+    nx.write_weighted_edgelist(o, 'run_%s_o_edgelist_%d.csv' % (args.runid, file_num))
+
+    
+
 def init_erdos():
     global g, o
     
-    g = nx.erdos_renyi_graph(120, 1)
+    g = nx.erdos_renyi_graph(args.nodes, 1)
 
     randomize_states(g)
 
@@ -70,11 +100,11 @@ def init_erdos():
     o = g.copy()
     for i,j in o.edges():
         if rd.random() < 0.07:
-            o.edge[i][j]['weight'] = rd.choice([-1,1])
+            o.edge[i][j]['weight'] = rd.choice([-1,0,1])
 
 def init_small_world():
     
-    g = nx.watts_strogatz_graph(120, 8, 0.5)
+    g = nx.watts_strogatz_graph(args.nodes, 8, 0.5)
 
     randomize_states(g)
 
@@ -114,6 +144,7 @@ def global_uo(o):
         U += local_uo( i, o )
     return U
 
+
 def node_state(i):
     global g, o
     
@@ -127,6 +158,24 @@ def node_state(i):
         o.node[i]['s'] = -1
     else:
         o.node[i]['s'] = 1
+                    
+
+def learning(n):
+    global  g, o
+
+    r = 0.005
+    
+    for i in o.neighbors(n):
+        m_1 = 0
+        m_2 = 0
+        for j in o.neighbors(i):
+            m_1 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] + r) * o.node[i]['s'] * o.node[j]['s']
+            m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] - r) * o.node[i]['s'] * o.node[j]['s']
+
+            if m_1 > m_2:
+                g.edge[i][j]['weight'] += r
+            else:
+                g.edge[i][j]['weight'] -= r
 
         
 def step():
@@ -134,9 +183,14 @@ def step():
     
     time +=1
     
+    i = rd.choice(o.nodes())
+    node_state(i)
+
+    if T > 1*sixth and T < 5*sixth:
+        learning(i)
+
+    # perturbate when the time comes
     if pert_accu == perturbation_period:
-        if T > 1*sixth and T < 5*sixth:
-            learning()
         pert_accu = 0
         T += 1
         T_list.append( T )
@@ -144,31 +198,8 @@ def step():
         randomize_states(o)
     else:
         pert_accu += 1
+        
     
-    i = rd.choice(o.nodes())
-
-    node_state(i)
-
-
-def learning():
-    global  g, o
-
-    r = 0.005
-    
-    for i in o.nodes():
-        m_1 = 0
-        m_2 = 0
-        for j in o.neighbors(i):
-            m_1 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] + r) * o.node[i]['s'] * o.node[j]['s']
-            m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] - r) * o.node[i]['s'] * o.node[j]['s']    
-
-            if m_1 > m_2:
-                g.edge[i][j]['weight'] += r
-            else:
-                g.edge[i][j]['weight'] -= r
-
-
-
 
     
 def no_draw():
@@ -176,6 +207,7 @@ def no_draw():
     print time
     
 
+    
 def data():
     global time, o, g, file_num
     nx.write_weighted_edgelist(g, 'run_%s_g_edgelist_end_%d.csv' % (args.runid, file_num))
@@ -186,7 +218,9 @@ def data():
     GU.close()
 
     
-init_full()
+#init_full()
+init_erdos()
+#init_minimal()
 for n in xrange(perturbation_period * iterations):
     # no_draw()
     step()
