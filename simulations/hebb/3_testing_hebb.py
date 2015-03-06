@@ -14,7 +14,7 @@ import pprint as ppt
 
 
 parser = argparse.ArgumentParser(description='Hebbian network simulation')
-parser.add_argument('--runid', required=True )
+parser.add_argument('--runid', default="single" )
 args = parser.parse_args()
 
 
@@ -34,14 +34,11 @@ T_list = [0, ]
 U_plot = [0, ]
 g = nx.complete_graph(120)
 o = nx.complete_graph(120)
-#GU = open('gu_%d.txt' %file_num, 'w')
+
 
 def init_full():
     global g, o, file_num
     
-    #file_num += 1
-    #print file_num
-
     randomize_states(g)
     
     for i,j in g.edges():
@@ -90,9 +87,7 @@ def draw():
     nx.draw(g, pos = positions,
             node_color = [g.node[i]['s'] for i in g.nodes_iter()],
             with_labels = True, edge_color = 'c',
-            #width = [g.edge[i][j]['weight'] for (i,j) in g.edges_iter()],
-            cmap = pl.cm.autumn, vmin = 0, vmax = 1)
-    
+            cmap = pl.cm.autumn, vmin = 0, vmax = 1)    
     pl.axis('image')
     pl.title('t = ' + str(time))
     plt.show() 
@@ -154,11 +149,6 @@ def step():
     node_state(i)
 
 
-    #if time == 3599998:
-    #if time == 3599:
-    #nx.write_weighted_edgelist(g, 'g_edgelist_end_%d.csv' %file_num)
-    #nx.write_weighted_edgelist(o, 'o_edgelist_end_%d.csv' %file_num) 
-
 def learning():
     global  g, o
 
@@ -166,20 +156,15 @@ def learning():
     
     for i in o.nodes():
         m_1 = 0
-        for j in o.neighbors(i):
-            m_1 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] + r) * o.node[i]['s'] * o.node[j]['s']
-    
-
         m_2 = 0
         for j in o.neighbors(i):
-            m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] -r) * o.node[i]['s']  * o.node[j]['s']
+            m_1 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] + r) * o.node[i]['s'] * o.node[j]['s']
+            m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] -r) * o.node[i]['s']  * o.node[j]['s']    
 
-        
-
-        if m_1 > m_2:
-            g.edge[i][j]['weight'] += r
-        else:
-            g.edge[i][j]['weight'] -= r
+            if m_1 > m_2:
+                g.edge[i][j]['weight'] += r
+            else:
+                g.edge[i][j]['weight'] -= r
 
 
 
