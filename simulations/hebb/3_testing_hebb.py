@@ -15,6 +15,7 @@ import pprint as ppt
 
 parser = argparse.ArgumentParser(description='Hebbian network simulation')
 parser.add_argument('--runid', default="single" )
+parser.add_argument('--iterations', type=int, default=3600 )
 args = parser.parse_args()
 
 
@@ -34,6 +35,9 @@ T_list = [0, ]
 U_plot = [0, ]
 g = nx.complete_graph(120)
 o = nx.complete_graph(120)
+
+iterations = args.iterations
+sixth = int(iterations / 6)
 
 
 def init_full():
@@ -114,27 +118,24 @@ def node_state(i):
     global g, o
     
     m_1 = 0
-    for j in o.neighbors(i):
-        m_1 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) * -1 * o.node[j]['s']
-   
-
     m_2 = 0
     for j in o.neighbors(i):
-        m_2 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) * 1 * o.node[j]['s']
-
+        m_1 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) * -1 * o.node[j]['s']
+        m_2 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) *  1 * o.node[j]['s']
 
     if m_1 > m_2:
         o.node[i]['s'] = -1
     else:
         o.node[i]['s'] = 1
 
+        
 def step():
     global time, o, g, T, perturbation_period, pert_accu, file_num
     
     time +=1
     
     if pert_accu == perturbation_period:
-        if T > 600 and T < 3000:
+        if T > 1*sixth and T < 5*sixth:
             learning()
         pert_accu = 0
         T += 1
@@ -159,7 +160,7 @@ def learning():
         m_2 = 0
         for j in o.neighbors(i):
             m_1 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] + r) * o.node[i]['s'] * o.node[j]['s']
-            m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] -r) * o.node[i]['s']  * o.node[j]['s']    
+            m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] - r) * o.node[i]['s'] * o.node[j]['s']    
 
             if m_1 > m_2:
                 g.edge[i][j]['weight'] += r
@@ -186,7 +187,7 @@ def data():
 
     
 init_full()
-for n in xrange(perturbation_period * 3600):
+for n in xrange(perturbation_period * iterations):
     # no_draw()
     step()
     
