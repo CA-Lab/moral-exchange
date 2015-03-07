@@ -39,7 +39,7 @@ o = nx.complete_graph(args.nodes)
 
 iterations = args.iterations
 sixth = int(iterations / 6)
-
+third = int(iterations / 3)
 
 def init_full():
     global g, o, file_num
@@ -51,7 +51,7 @@ def init_full():
 
     o = g.copy()
     for i,j in o.edges():
-        if rd.random() < 0.07:
+        if rd.random() < 0.1:
             o.edge[i][j]['weight'] = rd.choice([1,-1])
             
     nx.write_weighted_edgelist(g, 'run_%s_g_edgelist_%d.csv' % (args.runid, file_num))
@@ -70,12 +70,12 @@ def init_minimal():
 
     o = g.copy()
 
-    for i,j in o.edges():
-        o.edge[i][j]['weight'] = rd.choice([1,0])
+    #for i,j in o.edges():
+        #o.edge[i][j]['weight'] = rd.choice([1,-1])
 
-    # for i,j in o.edges():
-    #     if rd.random() < 0.07:
-    #         o.edge[i][j]['weight'] = rd.choice([1,-1])
+    for i,j in o.edges():
+         if rd.random() < 0.07:
+             o.edge[i][j]['weight'] = rd.choice([1,-1])
     
     # o.edge[0][1]['weight'] = 1
     # o.edge[0][2]['weight'] = 1
@@ -152,13 +152,15 @@ def node_state(i):
     m_2 = 0
     for j in o.neighbors(i):
         m_1 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) * -1 * o.node[j]['s']
-        m_2 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) *  1 * o.node[j]['s']
+        m_2 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) * 1 * o.node[j]['s']
 
     if m_1 > m_2:
         o.node[i]['s'] = -1
     else:
         o.node[i]['s'] = 1
-                    
+
+        
+        
 
 def learning(n):
     global  g, o
@@ -171,12 +173,13 @@ def learning(n):
         for j in o.neighbors(i):
             m_1 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] + r) * o.node[i]['s'] * o.node[j]['s']
             m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] - r) * o.node[i]['s'] * o.node[j]['s']
-
+        
             if m_1 > m_2:
                 g.edge[i][j]['weight'] += r
             else:
                 g.edge[i][j]['weight'] -= r
 
+                
         
 def step():
     global time, o, g, T, perturbation_period, pert_accu, file_num
@@ -186,8 +189,8 @@ def step():
     i = rd.choice(o.nodes())
     node_state(i)
 
-    if T > 1*sixth and T < 5*sixth:
-        learning(i)
+    if T > 1*third and T < 2*third:
+       learning(i)
 
     # perturbate when the time comes
     if pert_accu == perturbation_period:
@@ -210,6 +213,7 @@ def no_draw():
     
 def data():
     global time, o, g, file_num
+    UO = []
     nx.write_weighted_edgelist(g, 'run_%s_g_edgelist_end_%d.csv' % (args.runid, file_num))
     nx.write_weighted_edgelist(o, 'run_%s_o_edgelist_end_%d.csv' % (args.runid, file_num))
     GU = open('run_%s_gu_%d.txt' % (args.runid, file_num), 'w')
@@ -217,12 +221,20 @@ def data():
     GU.write(str(gu))
     GU.close()
 
+    LU = open('run_%s_UO_%d.txt' % (args.runid, file_num), 'w')
+    for i in o.nodes():
+        UO.append( local_uo( i, o ))
+        lo_sum =sum(UO)
+    LU.write(str(UO))
+    LU.close()
+    print lo_sum
+
     
-#init_full()
-init_erdos()
+init_full()
+#init_erdos()
 #init_minimal()
 for n in xrange(perturbation_period * iterations):
-    # no_draw()
+    #no_draw()
     step()
     
 data()
