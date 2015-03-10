@@ -126,18 +126,6 @@ def draw():
     pl.title('t = ' + str(time))
     plt.show() 
 
-def timer():
-    global time, T, perturbation_period, pert_accu
-
-    if pert_accu == perturbation_period:
-        pert_accu = 0
-        T += 1
-        T_list.append( T )
-        U_plot.append( global_uo(o) )
-    else:
-        pert_accu +=1
-
-    #print T_list, U_plot
 
     
 def randomize_states( o ):
@@ -162,6 +150,8 @@ def global_uo(o):
 def node_state():
     global g, o
 
+    oc = o.copy()
+    
     for i in o.nodes():
         m_1 = 0
         m_2 = 0
@@ -170,15 +160,18 @@ def node_state():
             m_2 += (o.edge[i][j]['weight'] + g.edge[i][j]['weight']) * 1 * o.node[j]['s']
         
             if m_1 > m_2:
-                o.node[i]['s'] = -1
+                oc.node[i]['s'] = -1
             else:
-                o.node[i]['s'] = 1
-        
-        
+                oc.node[i]['s'] = 1
+
+    o = oc.copy()
+
 
 def learning():
     global  g, o
 
+    gc = g.copy()
+    
     r = 0.005
     for i in o.nodes():
     #for i in o.neighbors(n):
@@ -189,65 +182,16 @@ def learning():
             m_2 += (g.edge[i][j]['weight'] + o.edge[i][j]['weight'] - r) * o.node[i]['s'] * o.node[j]['s']
             
             if m_1 > m_2:
-                g.edge[i][j]['weight'] += r
+                gc.edge[i][j]['weight'] += r
             else:
-                g.edge[i][j]['weight'] -= r    
+                gc.edge[i][j]['weight'] -= r    
+
+    g = gc.copy()
 
 
-def meta_step():
-    global time, o, g, T, perturbation_period, pert_accu, file_num
-    
-    time +=1
-    
-    if pert_accu != perturbation_period:
-        node_state()
-            #print 'hello'
-    
-    
-
-        
-
-            
-    # perturbate when the time comes
-    # if pert_accu == perturbation_period:
-    #     if T > 1*sixth and T < 5*sixth:
-    #         learning()
-    #     pert_accu = 0
-    #     T += 1
-    #     T_list.append( T )
-    #     U_plot.append( global_uo(o) )
-    #     randomize_states(o)
-    # else:
-    #     pert_accu += 1
-        
-    
-def step():
-    global time, o, g, T, perturbation_period, pert_accu, file_num
-    
-    time +=1
-    
-    #i = rd.choice(o.nodes())
-    for i in o.nodes():
-        node_state(i)
-
-    # perturbate when the time comes
-    if pert_accu == perturbation_period:
-        if T > 1*sixth and T < 5*sixth:
-            learning()
-        pert_accu = 0
-        T += 1
-        T_list.append( T )
-        U_plot.append( global_uo(o) )
-        randomize_states(o)
-    else:
-        pert_accu += 1
-
-
-    
 def no_draw():
     global time, file_num
-    print time
-    print T
+    print time, T
 
     
 def data():
@@ -268,24 +212,28 @@ def data():
     LU.close()
     print lo_sum
 
-    
-init_full()
-#init_erdos()
+
+
+#init_full()
+init_erdos()
 #init_minimal()
-for n in xrange(perturbation_period * iterations):
-#for n in xrange(1000 * iterations):
-    no_draw()
-    #if pert_accu == perturbation_period:
-        #randomize_states(o)
-        #print "random"
-    meta_step()
+
+for time in xrange(perturbation_period * iterations):
+#    no_draw()
+
     if pert_accu == perturbation_period:
-        #randomize_states(o)  
-        if T > 1*sixth and T < 5*sixth:
-            #print "learn"
+        pert_accu = 0
+        T += 1
+        T_list.append( T )
+        U_plot.append( global_uo(o) )
+        if T >= 1*sixth and T <= 5*sixth:
+#            print "learning"
             learning()
-        
-    timer()
+        # randomize_states( o )
+    else:
+        pert_accu +=1
+        node_state() 
+    
 data()
 
 plt.cla()
