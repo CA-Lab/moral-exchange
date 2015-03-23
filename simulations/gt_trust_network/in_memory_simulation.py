@@ -5,13 +5,16 @@ import pylab as pl
 from pprint import pprint
 from initializators import *
 
+# log keeping variables
+time = 0
 time_list = []
 energy_state = []
 fitness_state = []
 
+# states: cooperate, detract
 C = True
 D = False
-time = 0
+# threshold for state change
 theta = 1
 
 
@@ -19,7 +22,8 @@ def report():
     global time, g, energy_state, fitness_state
 
     time_list.append(time)
-    
+
+    # report global trust
     ef = []
     for i, j in g.edges():
         if g.node[i]['s'] == C and g.node[j]['s'] == C:
@@ -52,7 +56,38 @@ def plot():
     plt.savefig('opt_trust.png')
 
 
+def node_state_optimize_trust(node):
+    global g
+    tau = sum([g.edge[node][j]['w'] for j in g.neighbors(node)]) # tau for trust: sum of the weights in edges from this node
 
+    if not g.node[node]['f']:
+        f = 0.0000000001
+    else:
+        f = g.node[node]['f']
+    
+    d = float(tau) / f
+    
+    if d <= theta:
+        return not g.node[node]['s']
+    else:
+        return g.node[node]['s']
+
+
+def node_state_optimize_fitness(node):
+    global g
+    tau = sum([g.edge[node][j]['w'] for j in g.neighbors(node)]) # sum of the weights in edges from this node
+
+    if not tau:
+        tau = 0.0000000001
+    
+    d = g.node[node]['f'] / float(tau)
+    
+    if d <= theta:
+        return not g.node[node]['s']
+    else:
+        return g.node[node]['s']
+
+    
 def step_async():
     global time, g
     time += 1
@@ -60,22 +95,10 @@ def step_async():
     # grab a node
     i = rd.choice(g.nodes())
     
-
+    #
     # set state for node
-    m = []    
-    for j in g.neighbors(i):
-        m.append( g.edge[i][j]['w'] )
-        
-    tau = sum(m)
-
-    if not g.node[i]['f']:
-        g.node[i]['f'] = 0.0000000001
-    
-    d   = tau / g.node[i]['f']
-
-    
-    if d <= theta:
-        g.node[i]['s'] = not g.node[i]['s']
+    #
+    g.node[i]['s'] = node_state_optimize_trust(i)
 
         
     # interact
@@ -114,19 +137,7 @@ def step_sync():
     for i in g.nodes():
 
         # set state for node
-        m = []
-        for j in g.neighbors(i):
-            m.append( g.edge[i][j]['w'] )
-        
-        tau = sum(m)
-
-        if not g.node[i]['f']:
-            g.node[i]['f'] = 0.0000000001
-
-        d   = tau / g.node[i]['f']
-        if d <= theta:
-            g_plus.node[i]['s'] = not g.node[i]['s']
-
+        g_plus.node[i]['s'] = node_state_optimize_trust(i)
 
         # interact
         for j in g.neighbors(i):
@@ -155,9 +166,13 @@ def step_sync():
 
 
 
-g = init_watts()
-for time in range(0,1000):
+# initialize network
+g = init_barabasi()
+
+# run 1000 steps
+for time in range(0,100):
     step_async()
     report()
-    
+
+# write down a plot
 plot()
