@@ -15,6 +15,28 @@ time = 0
 theta = 1
 
 
+def report():
+    global time, g, energy_state, fitness_state
+
+    time_list.append(time)
+    
+    ef = []
+    for i, j in g.edges():
+        if g.node[i]['s'] == C and g.node[j]['s'] == C:
+            ef.append( g.edge[i][j]['w']  )
+    E = sum(ef)
+
+    energy_state.append(E)
+
+    # report global fitness
+    fitness_i = []
+    for i in g.nodes():
+        fitness_i.append( g.node[i]['f'] )
+    F = sum(fitness_i)
+
+    fitness_state.append(F)
+
+
 def plot():
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
@@ -29,10 +51,6 @@ def plot():
 
     plt.savefig('opt_trust.png')
 
-
-def draw():
-    global time
-    print time
 
 
 def step_async():
@@ -61,9 +79,6 @@ def step_async():
 
         
     # interact
-    m_i = []
-    m_j = []
-    w = []
     for j in g.neighbors(i):
         if g.node[i]['s'] == C and g.node[j]['s'] ==  D:
             g.node[i]['f'] += -2
@@ -86,28 +101,10 @@ def step_async():
             g.edge[i][j]['w'] += -2
 
 
-    # report
-    time_list.append(time)
     
-    ef = []
-    for i, j in g.edges():
-        if g.node[i]['s'] == C and g.node[j]['s'] == C:
-            ef.append( g.edge[i][j]['w']  )
-    E = sum(ef)
-
-    energy_state.append(E)
-
-    # report global fitness
-    fitness_i = []
-    for i in g.nodes():
-        fitness_i.append( g.node[i]['f'] )
-    F = sum(fitness_i)
-
-    fitness_state.append(F)
-
     
             
-def step_sync_global():
+def step_sync():
     global time, g
     time += 1
 
@@ -132,9 +129,6 @@ def step_sync_global():
 
 
         # interact
-        m_i = []
-        m_j = []
-        w = []
         for j in g.neighbors(i):
             if g.node[i]['s'] == C and g.node[j]['s'] ==  D:
                 g_plus.node[i]['f'] += -2
@@ -159,30 +153,11 @@ def step_sync_global():
 
     g = g_plus.copy()
 
-    # report Viendo la literatura F (fitness global) y Tau (Trust
-    # global) deben ser promedios, es decir F = sum(f_i)/n, en donde n
-    # es el numero de nodos en la red. Lo mismo para Trust global.
-    time_list.append(time)
-    
-    ef = []
-    for i, j in g.edges():
-        if g.node[i]['s'] == C and g.node[j]['s'] == C:
-            ef.append( g.edge[i][j]['w']  )
-    E = sum(ef)
-
-    energy_state.append(E)
-
-    # report global fitness
-    fitness_i = []
-    for i in g.nodes():
-        fitness_i.append( g.node[i]['f'] )
-        F = sum(fitness_i)
-
-    fitness_state.append(F)
 
 
 g = init_watts()
 for time in range(0,1000):
-    step_sync_global()
-
+    step_async()
+    report()
+    
 plot()
