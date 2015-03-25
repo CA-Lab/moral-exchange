@@ -1,0 +1,19 @@
+Biomedical research: CONACyT and FOSISS
+
+CONACyT (Council of Science and Technology) is government entity of
+Mexico in charge of promoting the development of science and
+technology. It is also in charge of creating the country's scientific
+policies. CONACyT is equivalent to the National Science Foundation of
+the United States.
+
+Among CONACyT's functions it is to develop science and technology
+policies according to national needs and demands, to offer
+assessorship to the different instances of the government on
+scientific and technological topics, to promote the creation of
+research networks among the scientific community, grant scholarships
+for masters and doctoral studies, and it also offers grants to individual
+and groups for scientific and technological research. 
+
+CONACyT, along with other government agencies and entities have created sectorial funds or \emph{Fondos Sectoriales}. Sectorial funds are trusts for scientific and technological research. The objective of such funds is to cover and equally promote the research capacities of different areas such as energy, agriculture, or technological innovation. \emph{FOSISS} of Sectorial Fund for Health and Social Security Research (Fondo Sectorial en Investigaci\'on en Salud y Seguridad Social) is among such funds. FOSISS is constituted by CONACyT, SSA, IMSS and ISSSTE \footnote{SSA is the acronym for Secretariat of Health \emph{Secretar\'ia de Salud}; IMSS is the acronym for Social Security Mexican Institute (\emph{Instituto Mexicano del Seguro Social}); ISSSTE stands for Institute for Social Security and Services for State Workers (\emph{Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado})}, being all of them the major public health providers and research institutions in the country. 
+
+
