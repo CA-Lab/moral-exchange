@@ -4,6 +4,17 @@ import matplotlib.pyplot as plt
 import pylab as pl
 from pprint import pprint
 from initializators import *
+import argparse
+
+parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust network simulation.')
+parser.add_argument('--runid', default="" )
+parser.add_argument('--iterations', type=int, default=500 )
+parser.add_argument('--plot',   type=argparse.FileType('w'), required=True, help="path to plot" )
+parser.add_argument('--optimize', default="trust", choices=['fitness', 'trust'] )
+parser.add_argument('--step', default="async", choices=['async', 'sync'] )
+
+args = parser.parse_args()
+
 
 # log keeping variables
 time = 0
@@ -41,23 +52,23 @@ def report():
     fitness_state.append(F)
 
 
-def plot():
+def plot(plotfile):
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
-    ax1.plot(time_list, energy_state, 'bs-')
+    ax1.plot(time_list, energy_state, 'b-')
     ax1.set_xlabel('Time')
     ax1.set_ylabel('Global trust states')
 
     ax2 = fig.add_subplot(212)
-    ax2.plot(time_list, fitness_state, 'ro-')
+    ax2.plot(time_list, fitness_state, 'r-')
     ax2.set_xlabel('Time')
     ax2.set_ylabel('Global fitness states')
 
-    plt.savefig('opt_trust.png')
+    plt.savefig(plotfile)
 
 
 def node_state_optimize_trust(node):
-    global g
+    global g, theta
     tau = sum([g.edge[node][j]['w'] for j in g.neighbors(node)]) # tau for trust: sum of the weights in edges from this node
 
     if not g.node[node]['f']:
@@ -74,7 +85,7 @@ def node_state_optimize_trust(node):
 
 
 def node_state_optimize_fitness(node):
-    global g
+    global g, theta
     tau = sum([g.edge[node][j]['w'] for j in g.neighbors(node)]) # sum of the weights in edges from this node
 
     if not tau:
@@ -87,6 +98,12 @@ def node_state_optimize_fitness(node):
     else:
         return g.node[node]['s']
 
+
+if args.optimize == 'trust':
+    node_strategy = node_state_optimize_trust
+elif args.optimize == 'fitness':
+    node_strategy = node_state_optimize_fitness
+
     
 def step_async():
     global time, g
@@ -98,7 +115,7 @@ def step_async():
     #
     # set state for node
     #
-    g.node[i]['s'] = node_state_optimize_trust(i)
+    g.node[i]['s'] = node_strategy(i)
 
         
     # interact
@@ -137,7 +154,7 @@ def step_sync():
     for i in g.nodes():
 
         # set state for node
-        g_plus.node[i]['s'] = node_state_optimize_trust(i)
+        g_plus.node[i]['s'] = node_strategy(i)
 
         # interact
         for j in g.neighbors(i):
@@ -166,13 +183,20 @@ def step_sync():
 
 
 
+if args.step == 'sync':
+    step = step_sync
+elif args.step == 'async':
+    step = step_async
+
+    
+
 # initialize network
 g = init_barabasi()
 
 # run 1000 steps
-for time in range(0,100):
-    step_async()
+for time in range(0, args.iterations):
+    step()
     report()
 
 # write down a plot
-plot()
+plot(args.plot)
