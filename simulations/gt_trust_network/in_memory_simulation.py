@@ -136,9 +136,9 @@ def step_async():
             g.edge[i][j]['w'] += 2
 
         if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
-            g.node[i]['f'] += -1
-            g.node[j]['f'] += -1
-            g.edge[i][j]['w'] += -2
+            g.node[i]['f'] += 0
+            g.node[j]['f'] += 0
+            g.edge[i][j]['w'] += 0
 
 
     
@@ -174,9 +174,9 @@ def step_sync():
                 g_plus.edge[i][j]['w'] += 2
 
             if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
-                g_plus.node[i]['f'] += -1
-                g_plus.node[j]['f'] += -1
-                g_plus.edge[i][j]['w'] += -2
+                g_plus.node[i]['f'] += 0
+                g_plus.node[j]['f'] += 0
+                g_plus.edge[i][j]['w'] += 0
 
 
     g = g_plus.copy()
@@ -191,9 +191,9 @@ elif args.step == 'async':
     
 
 # initialize network
-g = init_barabasi()
+g = init_watts()
 
-# run 1000 steps
+# run as many steps as the user wants
 for time in range(0, args.iterations):
     step()
     report()
