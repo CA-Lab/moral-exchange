@@ -9,7 +9,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust network simulation.')
 parser.add_argument('--runid', default="" )
 parser.add_argument('--iterations', type=int, default=500 )
-parser.add_argument('--plot',   type=argparse.FileType('w'), required=True, help="path to plot" )
+parser.add_argument('--plot',   type=argparse.FileType('w'), help="path to plot", default=open('aguas.png', 'w') )
 parser.add_argument('--optimize', default="trust", choices=['fitness', 'trust'] )
 parser.add_argument('--step', default="async", choices=['async', 'sync'] )
 
@@ -27,6 +27,32 @@ C = True
 D = False
 # threshold for state change
 theta = 1
+
+def normalize(g):
+
+    G = g.copy()
+    
+    # calculate global trust
+    trust = []
+    for i, j in G.edges():
+        trust.append( G.edge[i][j]['w']  )
+    T = float(sum(trust))
+
+    # normalize trust
+    for i, j in G.edges():
+        G.edge[i][j]['w'] = G.edge[i][j]['w'] / T
+
+        
+    # calculate global fitness
+    fitness = []
+    for i in G.nodes():
+        fitness.append( G.node[i]['f'] )
+    F = float(sum(fitness))
+
+    for i in G.nodes():
+        G.node[i]['f'] = G.node[i]['f'] / F
+
+    return G
 
 
 def report():
@@ -97,6 +123,12 @@ def node_state_optimize_fitness(node):
         return not g.node[node]['s']
     else:
         return g.node[node]['s']
+
+
+def node_state_optimize_balance(node):
+    pass
+
+
 
 
 if args.optimize == 'trust':
@@ -194,9 +226,9 @@ elif args.step == 'async':
 g = init_watts()
 
 # run as many steps as the user wants
-for time in range(0, args.iterations):
-    step()
-    report()
+#for time in range(0, args.iterations):
+#    step()
+#    report()
 
 # write down a plot
-plot(args.plot)
+#plot(args.plot)
