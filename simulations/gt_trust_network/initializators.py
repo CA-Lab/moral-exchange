@@ -20,10 +20,10 @@ def init_simple():
 
 
 def init_watts():
-    g = nx.watts_strogatz_graph(100, 2, 0.3)
+    g = nx.watts_strogatz_graph(500, 8, 0.1)
     g = set_nodes_and_edges(g)
     return g
-        
+
 
 def init_erdos():
     g = nx.erdos_renyi_graph(100, .3)
