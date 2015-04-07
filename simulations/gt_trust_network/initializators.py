@@ -48,3 +48,13 @@ def set_nodes_and_edges(g, fitness=10, trust=10):
         g.add_edge(*e, w=trust)
 
     return g
+
+
+def reset_fitness_and_trust(g, fitness=10, trust=10):
+    for i in g.nodes():
+        g.node[i]['f'] = fitness
+
+    for e in g.edges():
+        g.add_edge(*e, w=trust)
+
+    return g
