@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust net
 parser.add_argument('--runid', default="" )
 parser.add_argument('--iterations', type=int, default=500 )
 parser.add_argument('--plot',   type=argparse.FileType('w'), help="path to plot", default=open('aguas.png', 'w') )
-parser.add_argument('--optimize', default="trust", choices=['fitness', 'trust'] )
+parser.add_argument('--optimize', default="balance", choices=['fitness', 'trust', 'balance'] )
 parser.add_argument('--step', default="async", choices=['async', 'sync'] )
 
 args = parser.parse_args()
@@ -124,9 +124,33 @@ def node_state_optimize_fitness(node):
     else:
         return g.node[node]['s']
 
+import operator
 
 def node_state_optimize_balance(node):
-    pass
+    # will accumulate fitness_delta + trust for each pair of
+    # cooperate, detract; detract, cooperate;
+    # cooperate, cooperate; detract, detract
+    b = {(C,D): 0,
+         (D,C): 0,
+         (C,C): 0,
+         (D,D): 0, }
+    for j in g.neighbors(node):
+        if g.node[node]['s'] == C and g.node[j]['s'] == D:
+            b[C,D] += -2 + g.edge[node][j]['w']
+
+        if g.node[node]['s'] == D and g.node[j]['s'] == C:
+            b[D,C] += 2 + g.edge[node][j]['w']
+            
+        if g.node[node]['s'] == C and g.node[j]['s'] == C:
+            b[C,C] += 1  + g.edge[node][j]['w']
+
+        if g.node[node]['s'] == D and g.node[j]['s'] == D:
+            b[D,D] += g.edge[node][j]['w']
+            
+    # choose the best strategy sorting dictionary b
+    sorted_b = sorted(b.items(), key=operator.itemgetter(1))
+    # grab key (C or D) of largest value
+    return sorted_b[-1][0][0]
 
 
 
@@ -135,7 +159,8 @@ if args.optimize == 'trust':
     node_strategy = node_state_optimize_trust
 elif args.optimize == 'fitness':
     node_strategy = node_state_optimize_fitness
-
+elif args.optimize == 'balance':
+    node_strategy = node_state_optimize_balance
     
 def step_async():
     global time, g
@@ -226,9 +251,10 @@ elif args.step == 'async':
 g = init_watts()
 
 # run as many steps as the user wants
-#for time in range(0, args.iterations):
-#    step()
-#    report()
+for time in range(0, args.iterations):
+    step()
+    report()
+#    g = reset_fitness_and_trust(g)
 
 # write down a plot
-#plot(args.plot)
+plot(args.plot)
