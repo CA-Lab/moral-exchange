@@ -173,7 +173,7 @@ def step_async():
     # set state for node
     #
     g.node[i]['s'] = node_strategy(i)
-
+    print g.node[i]['s'], node_strategy(i)
         
     # interact
     for j in g.neighbors(i):
@@ -212,6 +212,7 @@ def step_sync():
 
         # set state for node
         g_plus.node[i]['s'] = node_strategy(i)
+        print g.node[i]['s'], node_strategy(i)
 
         # interact
         for j in g.neighbors(i):
@@ -254,7 +255,7 @@ g = init_watts()
 for time in range(0, args.iterations):
     step()
     report()
-#    g = reset_fitness_and_trust(g)
+    g = reset_fitness_and_trust(g)
 
 # write down a plot
 plot(args.plot)
