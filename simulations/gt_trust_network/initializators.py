@@ -50,11 +50,19 @@ def set_nodes_and_edges(g, fitness=10, trust=10):
     return g
 
 
-def reset_fitness_and_trust(g, fitness=10, trust=10):
+def reset_fitness(g, fitness=10, trust=10):
     for i in g.nodes():
         g.node[i]['f'] = fitness
+    return g
 
+
+def reset_states(g, fitness=10, trust=10):
+    for i in g.nodes():
+        g.node[i]['s'] = rd.choice([C,D])
+    return g
+
+
+def reset_trust(g, fitness=10, trust=10):
     for e in g.edges():
         g.add_edge(*e, w=trust)
-
     return g
