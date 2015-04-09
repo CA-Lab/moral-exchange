@@ -2,9 +2,11 @@ import matplotlib
 matplotlib.use('svg')
 import matplotlib.pyplot as plt
 import pylab as pl
-from pprint import pprint
+import operator
 from initializators import *
 import argparse
+
+from pprint import pprint
 
 parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust network simulation.')
 parser.add_argument('--runid', default="" )
@@ -21,6 +23,7 @@ time = 0
 time_list = []
 energy_state = []
 fitness_state = []
+state_changes = []
 
 # states: cooperate, detract
 C = True
@@ -56,7 +59,7 @@ def normalize(g):
 
 
 def report():
-    global time, g, energy_state, fitness_state
+    global time, g, g_pre, energy_state, fitness_state
 
     time_list.append(time)
 
@@ -77,24 +80,38 @@ def report():
 
     fitness_state.append(F)
 
+    changed = 0
+    for n in g.nodes():
+        if g.node[n]['s'] != g_pre.node[n]['s']:
+            changed+=1
+    print changed
+    state_changes.append(changed)
 
+
+    
 def plot(plotfile):
     fig = plt.figure()
-    ax1 = fig.add_subplot(211)
+    ax1 = fig.add_subplot(311)
     ax1.plot(time_list, energy_state, 'b-')
     ax1.set_xlabel('Time')
     ax1.set_ylabel('Global trust states')
 
-    ax2 = fig.add_subplot(212)
+    ax2 = fig.add_subplot(312)
     ax2.plot(time_list, fitness_state, 'r-')
     ax2.set_xlabel('Time')
     ax2.set_ylabel('Global fitness states')
 
+    ax3 = fig.add_subplot(313)
+    ax3.plot(time_list, state_changes, 'g-')
+    ax3.set_xlabel('Time')
+    ax3.set_ylabel('state changes per step')
+    
     plt.savefig(plotfile)
 
 
 def node_state_optimize_trust(node):
     global g, theta
+    
     tau = sum([g.edge[node][j]['w'] for j in g.neighbors(node)]) # tau for trust: sum of the weights in edges from this node
 
     if not g.node[node]['f']:
@@ -103,7 +120,7 @@ def node_state_optimize_trust(node):
         f = g.node[node]['f']
     
     d = float(tau) / f
-    
+
     if d <= theta:
         return not g.node[node]['s']
     else:
@@ -124,7 +141,7 @@ def node_state_optimize_fitness(node):
     else:
         return g.node[node]['s']
 
-import operator
+
 
 def node_state_optimize_balance(node):
     # will accumulate fitness_delta + trust for each pair of
@@ -146,9 +163,9 @@ def node_state_optimize_balance(node):
 
         if g.node[node]['s'] == D and g.node[j]['s'] == D:
             b[D,D] += g.edge[node][j]['w']
-            
     # choose the best strategy sorting dictionary b
     sorted_b = sorted(b.items(), key=operator.itemgetter(1))
+
     # grab key (C or D) of largest value
     return sorted_b[-1][0][0]
 
@@ -173,7 +190,7 @@ def step_async():
     # set state for node
     #
     g.node[i]['s'] = node_strategy(i)
-    print g.node[i]['s'], node_strategy(i)
+
         
     # interact
     for j in g.neighbors(i):
@@ -212,7 +229,6 @@ def step_sync():
 
         # set state for node
         g_plus.node[i]['s'] = node_strategy(i)
-        print g.node[i]['s'], node_strategy(i)
 
         # interact
         for j in g.neighbors(i):
@@ -235,8 +251,7 @@ def step_sync():
                 g_plus.node[i]['f'] += 0
                 g_plus.node[j]['f'] += 0
                 g_plus.edge[i][j]['w'] += 0
-
-
+                
     g = g_plus.copy()
 
 
@@ -250,12 +265,18 @@ elif args.step == 'async':
 
 # initialize network
 g = init_watts()
+g_pre = g.copy()
 
 # run as many steps as the user wants
 for time in range(0, args.iterations):
+    g_pre = g.copy()
     step()
     report()
-    g = reset_fitness_and_trust(g)
+    #g = reset_fitness(g)
+    #g = reset_trust(g)
+    #g = reset_states(g)
 
+pprint(state_changes)
+    
 # write down a plot
 plot(args.plot)
