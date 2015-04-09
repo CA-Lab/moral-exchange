@@ -84,7 +84,7 @@ def report():
     for n in g.nodes():
         if g.node[n]['s'] != g_pre.node[n]['s']:
             changed+=1
-    print changed
+
     state_changes.append(changed)
 
 
@@ -114,6 +114,10 @@ def node_state_optimize_trust(node):
     
     tau = sum([g.edge[node][j]['w'] for j in g.neighbors(node)]) # tau for trust: sum of the weights in edges from this node
 
+    # small trust? must change!
+    if tau <= 0:
+        return not g.node[node]['s']
+    
     if not g.node[node]['f']:
         f = 0.0000000001
     else:
@@ -129,6 +133,11 @@ def node_state_optimize_trust(node):
 
 def node_state_optimize_fitness(node):
     global g, theta
+
+    # no fitness? must change!
+    if g.node[node]['f'] <= 0:
+        return not g.node[node]['s']        
+    
     tau = sum([g.edge[node][j]['w'] for j in g.neighbors(node)]) # sum of the weights in edges from this node
 
     if not tau:
@@ -264,7 +273,7 @@ elif args.step == 'async':
     
 
 # initialize network
-g = init_watts()
+g = init_erdos()
 g_pre = g.copy()
 
 # run as many steps as the user wants
@@ -272,11 +281,6 @@ for time in range(0, args.iterations):
     g_pre = g.copy()
     step()
     report()
-    #g = reset_fitness(g)
-    #g = reset_trust(g)
-    #g = reset_states(g)
-
-pprint(state_changes)
     
 # write down a plot
 plot(args.plot)
