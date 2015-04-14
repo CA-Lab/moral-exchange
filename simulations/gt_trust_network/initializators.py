@@ -31,7 +31,7 @@ def init_erdos():
     return g
         
 def init_barabasi():
-    g = nx.barabasi_albert_graph(200, 15)
+    g = nx.barabasi_albert_graph(1200, 15)
     g = set_nodes_and_edges(g)
     return g
 
