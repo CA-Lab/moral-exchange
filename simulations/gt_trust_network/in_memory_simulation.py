@@ -14,8 +14,8 @@ from time import sleep
 parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust network simulation.')
 parser.add_argument('--runid', default="" )
 parser.add_argument('--iterations', type=int, default=50 )
-parser.add_argument('--plot',   type=argparse.FileType('w'), help="path to plot", default=open('aguas.png', 'w') )
 parser.add_argument('--optimize', default="probabilistic", choices=['fitness', 'trust', 'balance', 'majority', 'probabilistic'] )
+parser.add_argument('--init', default="erdos", choices=['erdos', 'watts', 'barabasi'] )
 parser.add_argument('--step', default="sync", choices=['async', 'sync'] )
 
 args = parser.parse_args()
@@ -397,9 +397,15 @@ elif args.step == 'async':
     
 
 # initialize network
-g = init_barabasi()
-g_pre = g.copy()
+if args.init == 'erdos':
+    g = init_erdos()
+elif args.init == 'watts':
+    g = init_watts()
+elif args.init == 'barabasi':
+    g = init_barabasi()
 
+
+g_pre = g.copy()
 # run as many steps as the user wants
 for time in range(0, args.iterations):
     g_pre = g.copy()
@@ -407,4 +413,7 @@ for time in range(0, args.iterations):
     report()
     
 # write down a plot
-plot(args.plot)
+dynamics_plot = "%s_%s_%s_dynamics.png" % (args.init, args.optimize, args.step)
+histograms_plot = "%s_%s_%s_hist.png" % (args.init, args.optimize, args.step)
+
+plot(dynamics_plot)
