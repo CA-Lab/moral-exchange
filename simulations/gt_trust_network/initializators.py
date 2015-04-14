@@ -15,54 +15,55 @@ def init_simple():
         for j in g.node:
             g.add_edge(i,j,w=10)
             
-    g = set_nodes_and_edges(g)        
+
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
+
     return g
 
 
 def init_watts():
     g = nx.watts_strogatz_graph(500, 8, 0.1)
-    g = set_nodes_and_edges(g)
+
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
+
     return g
 
 
 def init_erdos():
     g = nx.erdos_renyi_graph(100, .3)
-    g = set_nodes_and_edges(g)
+
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
+
     return g
         
 def init_barabasi():
     g = nx.barabasi_albert_graph(1200, 15)
-    g = set_nodes_and_edges(g)
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
     return g
 
 
 
-def set_nodes_and_edges(g, fitness=10, trust=10):
-    for i in g.nodes():
-        # choose random state
-        g.node[i]['s'] = rd.choice([C,D])
-        # all start with same fitness
-        g.node[i]['f'] = fitness
-
-    for e in g.edges():
-        g.add_edge(*e, w=trust)
-
-    return g
-
-
-def reset_fitness(g, fitness=10, trust=10):
+def reset_fitness(g, fitness=10):
     for i in g.nodes():
         g.node[i]['f'] = fitness
     return g
 
 
-def reset_states(g, fitness=10, trust=10):
+def reset_states(g):
     for i in g.nodes():
         g.node[i]['s'] = rd.choice([C,D])
     return g
 
 
-def reset_trust(g, fitness=10, trust=10):
+def reset_trust(g, trust=10):
     for e in g.edges():
         g.add_edge(*e, w=trust)
     return g
