@@ -3,17 +3,20 @@ matplotlib.use('svg')
 import matplotlib.pyplot as plt
 import pylab as pl
 import operator
+import random as rd
 from initializators import *
 import argparse
+import numpy as np
 
 from pprint import pprint
+from time import sleep
 
 parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust network simulation.')
 parser.add_argument('--runid', default="" )
-parser.add_argument('--iterations', type=int, default=500 )
+parser.add_argument('--iterations', type=int, default=50 )
 parser.add_argument('--plot',   type=argparse.FileType('w'), help="path to plot", default=open('aguas.png', 'w') )
-parser.add_argument('--optimize', default="balance", choices=['fitness', 'trust', 'balance'] )
-parser.add_argument('--step', default="async", choices=['async', 'sync'] )
+parser.add_argument('--optimize', default="probabilistic", choices=['fitness', 'trust', 'balance', 'majority', 'probabilistic'] )
+parser.add_argument('--step', default="sync", choices=['async', 'sync'] )
 
 args = parser.parse_args()
 
@@ -22,7 +25,10 @@ args = parser.parse_args()
 time = 0
 time_list = []
 energy_state = []
+energy_state_S = []
 fitness_state = []
+fitness_S = []
+DC_ratio      = []
 state_changes = []
 
 # states: cooperate, detract
@@ -68,45 +74,69 @@ def report():
     for i, j in g.edges():
         if g.node[i]['s'] == C and g.node[j]['s'] == C:
             ef.append( g.edge[i][j]['w']  )
-    E = sum(ef)
+    E = float(sum(ef) ) / float( len( g.edges() ) )
 
     energy_state.append(E)
+    Es = np.std(ef)
+    energy_state_S.append(Es)
 
     # report global fitness
     fitness_i = []
     for i in g.nodes():
         fitness_i.append( g.node[i]['f'] )
-    F = sum(fitness_i)
-
+    F = float(sum(fitness_i)) / float( len( g.nodes() ) )
     fitness_state.append(F)
+
+    Fs = np.std(fitness_i)
+    fitness_S.append(Fs)
+
+    
+
+    # report ratio of C or D
+    cooperators = 0
+    l = len(g.nodes())    
+    for i in g.nodes():
+        if g.node[i]['s'] == C:
+            cooperators += 1.0
+
+    DC_ratio.append( cooperators / l )
+
 
     changed = 0
     for n in g.nodes():
         if g.node[n]['s'] != g_pre.node[n]['s']:
             changed+=1
-
+#            print time,g.node[n]['s'], g_pre.node[n]['s']
+            
     state_changes.append(changed)
 
 
     
 def plot(plotfile):
-    fig = plt.figure()
-    ax1 = fig.add_subplot(311)
-    ax1.plot(time_list, energy_state, 'b-')
+    fig = plt.figure(figsize=(23.5, 13.0))
+    ax1 = fig.add_subplot(411)
+    ax1.plot(time_list, energy_state, 'b-') 
+    ax1.plot(time_list, energy_state_S, 'b--') 
     ax1.set_xlabel('Time')
-    ax1.set_ylabel('Global trust states')
+    ax1.set_ylabel('mean trust states')
 
-    ax2 = fig.add_subplot(312)
+    ax2 = fig.add_subplot(412)
     ax2.plot(time_list, fitness_state, 'r-')
+    ax2.plot(time_list, fitness_S, 'r--')
     ax2.set_xlabel('Time')
-    ax2.set_ylabel('Global fitness states')
+    ax2.set_ylabel('mean fitness states')
 
-    ax3 = fig.add_subplot(313)
+    ax3 = fig.add_subplot(413)
     ax3.plot(time_list, state_changes, 'g-')
     ax3.set_xlabel('Time')
     ax3.set_ylabel('state changes per step')
+
+    ax4 = fig.add_subplot(414)
+    ax4.plot(time_list, DC_ratio, 'r-')
+    ax4.set_xlabel('Time')
+    ax4.set_ylabel('DC ratio')
     
-    plt.savefig(plotfile)
+    plt.savefig(plotfile, dpi=300)
 
 
 def node_state_optimize_trust(node):
@@ -123,7 +153,7 @@ def node_state_optimize_trust(node):
     else:
         f = g.node[node]['f']
     
-    d = float(tau) / f
+    d = float(tau) / float(f)
 
     if d <= theta:
         return not g.node[node]['s']
@@ -143,7 +173,7 @@ def node_state_optimize_fitness(node):
     if not tau:
         tau = 0.0000000001
     
-    d = g.node[node]['f'] / float(tau)
+    d = float(g.node[node]['f']) / float(tau)
     
     if d <= theta:
         return not g.node[node]['s']
@@ -151,7 +181,27 @@ def node_state_optimize_fitness(node):
         return g.node[node]['s']
 
 
+def node_state_optimize_majority(node):
+    global g
 
+    neighbors_C = []
+    neighbors_D = []
+
+    for j in g.neighbors(node):
+        if g.node[j]['s'] == C:
+            neighbors_C.append( g.node[j]['s'] )
+        else:
+            neighbors_D.append( g.node[j]['s'] )
+    
+    if len( neighbors_C ) > len( neighbors_D ):
+        return g.node[node]['s'] == C
+    elif len( neighbors_C ) < len( neighbors_D ):
+        return g.node[node]['s'] == D
+    else:
+        return g.node[node]['s']
+
+
+    
 def node_state_optimize_balance(node):
     # will accumulate fitness_delta + trust for each pair of
     # cooperate, detract; detract, cooperate;
@@ -180,6 +230,75 @@ def node_state_optimize_balance(node):
 
 
 
+def node_state_probabilistic(i):
+    f_i   = 0
+    c_i_j = 0
+    for j in g.neighbors(i):
+        if g.node[i]['s'] == C and g.node[j]['s'] ==  D:
+            f_i   += -1
+            c_i_j += -.5
+            
+        if g.node[i]['s'] ==  D and g.node[j]['s'] == C:
+            f_i   += 1
+            c_i_j += -.5
+                       
+        if g.node[i]['s'] == C and g.node[j]['s'] == C:
+            f_i   += .5
+            c_i_j += 1
+
+        if g.node[i]['s'] ==  D and g.node[j]['s'] ==  D:
+            f_i   += 0
+            c_i_j += 0
+
+    fitness = float(f_i) / float(len(g.neighbors(i)))
+    #if i == 55:
+    #    print "f ",fitness
+
+    
+    # if fitness > 1:
+    #     fitness = 1
+
+    # if fitness < 0:
+    #     fitness = 0
+    
+    
+    trust   = float(c_i_j) / float(len(g.neighbors(i)))
+    #if i == 55:
+    #    print "t ",trust
+    
+    # if trust > 1:
+    #     trust = 1
+
+    # if trust < 0:
+    #     trust = 0
+
+    naiveness =  fitness + trust
+
+    if naiveness > 1:
+        naiveness = 1
+
+    if naiveness < 0:
+        naiveness = 0
+
+    if naiveness <= 0.20:
+        state = D
+    else:
+        state = C
+
+    #if i == 55:        
+    #    print "n=%s" % i, fitness, trust, naiveness, state
+
+    #sleep(0.1)
+
+    return state
+    # if naiveness <= 0.1:
+    #     return D
+    # else:
+    #     return C
+
+
+
+
 
 if args.optimize == 'trust':
     node_strategy = node_state_optimize_trust
@@ -187,7 +306,12 @@ elif args.optimize == 'fitness':
     node_strategy = node_state_optimize_fitness
 elif args.optimize == 'balance':
     node_strategy = node_state_optimize_balance
-    
+elif args.optimize == 'majority':
+    node_strategy = node_state_optimize_majority
+elif args.optimize == 'probabilistic':
+    node_strategy = node_state_probabilistic
+
+
 def step_async():
     global time, g
     time += 1
@@ -273,7 +397,7 @@ elif args.step == 'async':
     
 
 # initialize network
-g = init_erdos()
+g = init_barabasi()
 g_pre = g.copy()
 
 # run as many steps as the user wants
