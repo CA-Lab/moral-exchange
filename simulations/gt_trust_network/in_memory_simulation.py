@@ -31,6 +31,12 @@ fitness_S = []
 DC_ratio      = []
 state_changes = []
 
+# initial and final fitnesses and trusts
+F_t0 = []
+F_tn = []
+T_t0 = []
+T_tn = []
+
 # states: cooperate, detract
 C = True
 D = False
@@ -110,9 +116,16 @@ def report():
             
     state_changes.append(changed)
 
+                
+    if time == args.iterations - 1:
+        for n in g.nodes():
+            F_tn.append(g.node[n]['f'])
+        for e in g.edges():
+            T_tn.append(g.get_edge_data(*e)['w'])
+    
 
     
-def plot(plotfile):
+def plot_dynamics(plotfile):
     fig = plt.figure(figsize=(23.5, 13.0))
     ax1 = fig.add_subplot(411)
     ax1.plot(time_list, energy_state, 'b-') 
@@ -138,6 +151,30 @@ def plot(plotfile):
     
     plt.savefig(plotfile, dpi=300)
 
+
+
+def plot_histograms(plotfile):
+#    pprint(T_t0)
+
+    fig = plt.figure(figsize=(23.5, 13.0))
+
+    ax3 = fig.add_subplot(221)
+    ax3.hist(T_t0, 50, normed=0, facecolor='b', alpha=0.33)
+    
+    ax4 = fig.add_subplot(222)
+    ax4.hist(T_tn, 50, normed=0, facecolor='b', alpha=0.77)
+    
+    ax1 = fig.add_subplot(223)
+    ax1.hist(F_t0, 50, normed=0, facecolor='r', alpha=0.33)
+
+    ax2 = fig.add_subplot(224)
+    ax2.hist(F_tn, 50, normed=0, facecolor='r', alpha=0.77)
+
+    
+    plt.savefig(plotfile, dpi=300)
+
+    
+    
 
 def node_state_optimize_trust(node):
     global g, theta
@@ -314,7 +351,6 @@ elif args.optimize == 'probabilistic':
 
 def step_async():
     global time, g
-    time += 1
 
     # grab a node
     i = rd.choice(g.nodes())
@@ -353,7 +389,6 @@ def step_async():
             
 def step_sync():
     global time, g
-    time += 1
 
     g_plus = g.copy()
 
@@ -405,15 +440,26 @@ elif args.init == 'barabasi':
     g = init_barabasi()
 
 
+
+
+for n in g.nodes():
+    F_t0.append(g.node[n]['f'])
+
+for e in g.edges():
+    T_t0.append(g.get_edge_data(*e)['w'])
+
+    
+    
 g_pre = g.copy()
 # run as many steps as the user wants
 for time in range(0, args.iterations):
     g_pre = g.copy()
     step()
-    report()
+    report() 
+
     
 # write down a plot
 dynamics_plot = "%s_%s_%s_dynamics.png" % (args.init, args.optimize, args.step)
 histograms_plot = "%s_%s_%s_hist.png" % (args.init, args.optimize, args.step)
-
-plot(dynamics_plot)
+plot_dynamics(dynamics_plot)
+plot_histograms(histograms_plot)
