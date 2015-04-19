@@ -23,15 +23,15 @@ def init_simple():
     return g
 
 
-def init_watts():
-    g = nx.watts_strogatz_graph(500, 8, 0.1)
+def init_full():
+    # complete graph
+    g =  nx.complete_graph(20)
 
     g = reset_states(g)
     g = reset_fitness(g)
     g = reset_trust(g)
 
     return g
-
 
 def init_erdos():
     g = nx.erdos_renyi_graph(100, .3)
@@ -42,6 +42,38 @@ def init_erdos():
 
     return g
         
+
+def init_erdos_directed():
+    # directed erdos renyi
+    g =  nx.erdos_renyi_graph( 100, .3, directed = True )
+
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
+
+    return g
+
+
+def init_watts():
+    g = nx.watts_strogatz_graph(500, 8, 0.1)
+
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
+
+    return g
+
+def init_directed_watts():
+    h = nx.watts_strogatz_graph(500, 8, 0.1)
+    g = h.to_directed()
+
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
+
+    return g
+    
+
 def init_barabasi():
     g = nx.barabasi_albert_graph(1200, 15)
     g = reset_states(g)
