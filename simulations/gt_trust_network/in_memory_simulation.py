@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('svg')
+#matplotlib.use('svg')
 import matplotlib.pyplot as plt
 import pylab as pl
 import operator
@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust net
 parser.add_argument('--runid', default="" )
 parser.add_argument('--iterations', type=int, default=50 )
 parser.add_argument('--optimize', default="probabilistic", choices=['fitness', 'trust', 'balance', 'majority', 'probabilistic'] )
-parser.add_argument('--init', default="erdos", choices=['erdos', 'watts', 'barabasi'] )
+parser.add_argument('--init', default="erdos", choices=['erdos', 'full', 'di_erdos', 'di_watts', 'watts', 'barabasi'] )
 parser.add_argument('--step', default="sync", choices=['async', 'sync'] )
 
 args = parser.parse_args()
@@ -434,8 +434,14 @@ elif args.step == 'async':
 # initialize network
 if args.init == 'erdos':
     g = init_erdos()
+elif args.init == 'full':
+    g = init_full()
+elif args.init == 'di_erdos':
+    g = init_erdos_directed()    
 elif args.init == 'watts':
     g = init_watts()
+elif args.init == 'di_watts':
+    g = init_directed_watts()
 elif args.init == 'barabasi':
     g = init_barabasi()
 
