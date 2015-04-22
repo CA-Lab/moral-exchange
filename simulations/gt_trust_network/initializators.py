@@ -22,15 +22,6 @@ def init_simple():
 
     return g
 
-def init_real():
-    #imports real network data
-    g = nx.read_edgelist('giant_component.csv')
-
-    g = reset_states(g)
-    g = reset_fitness(g)
-    g = reset_trust(g)
-
-    return g
 
 
 

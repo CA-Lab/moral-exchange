@@ -287,28 +287,8 @@ def node_state_probabilistic(i):
             f_i   += 0
             c_i_j += 0
 
-    fitness = float(f_i) / float(len(g.neighbors(i)))
-    #if i == 55:
-    #    print "f ",fitness
-
-    
-    # if fitness > 1:
-    #     fitness = 1
-
-    # if fitness < 0:
-    #     fitness = 0
-    
-    
-    trust   = float(c_i_j) / float(len(g.neighbors(i)))
-    #if i == 55:
-    #    print "t ",trust
-    
-    # if trust > 1:
-    #     trust = 1
-
-    # if trust < 0:
-    #     trust = 0
-
+    fitness   = float(f_i) / float(len(g.neighbors(i)))
+    trust     = float(c_i_j) / float(len(g.neighbors(i)))
     naiveness =  fitness + trust
 
     if naiveness > 1:
@@ -322,16 +302,7 @@ def node_state_probabilistic(i):
     else:
         state = C
 
-    #if i == 55:        
-    #    print "n=%s" % i, fitness, trust, naiveness, state
-
-    #sleep(0.1)
-
     return state
-    # if naiveness <= 0.1:
-    #     return D
-    # else:
-    #     return C
 
 
 
