@@ -81,6 +81,12 @@ def init_barabasi():
     g = reset_trust(g)
     return g
 
+def init_di_scale_free():
+    g = nx.scale_free_graph(500)
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
+    return g
 
 
 def reset_fitness(g, fitness=10):
