@@ -24,11 +24,14 @@ def init_simple():
 
 def init_real():
     #imports real network data
-    g = nx.read_edgelist('weightless_testing_case.csv')
+    g = nx.read_edgelist('giant_component.csv')
 
     g = reset_states(g)
     g = reset_fitness(g)
     g = reset_trust(g)
+
+    return g
+
 
 
 def init_full():
@@ -93,7 +96,10 @@ def init_di_scale_free():
     g = nx.scale_free_graph(50)
     g = reset_states(g)
     g = reset_fitness(g)
-    g = reset_trust(g)
+
+    for e in g.edges():
+        g.add_edge(e[0], e[1], attr_dict={'weight': 10})
+
     return g
 
 
