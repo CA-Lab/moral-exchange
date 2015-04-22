@@ -5,7 +5,7 @@ C = True
 D = False
 
 
-"""Generates a full connected network"""
+"""Generates a simple full connected network"""
 def init_simple():
     g = nx.Graph()
     g.add_nodes_from(['a','b','c'])
@@ -21,6 +21,14 @@ def init_simple():
     g = reset_trust(g)
 
     return g
+
+def init_real():
+    #imports real network data
+    g = nx.read_edgelist('weightless_testing_case.csv')
+
+    g = reset_states(g)
+    g = reset_fitness(g)
+    g = reset_trust(g)
 
 
 def init_full():
@@ -82,7 +90,7 @@ def init_barabasi():
     return g
 
 def init_di_scale_free():
-    g = nx.scale_free_graph(500)
+    g = nx.scale_free_graph(50)
     g = reset_states(g)
     g = reset_fitness(g)
     g = reset_trust(g)
