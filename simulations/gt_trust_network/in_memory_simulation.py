@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust net
 parser.add_argument('--runid', default="" )
 parser.add_argument('--iterations', type=int, default=50 )
 parser.add_argument('--optimize', default="probabilistic", choices=['fitness', 'trust', 'balance', 'majority', 'probabilistic'] )
-parser.add_argument('--init', default="erdos", choices=['simple', 'full', 'real', 'erdos', 'di_erdos', 'di_watts', 'watts', 'barabasi', 'di_scale_free'] )
+parser.add_argument('--init', default="erdos", choices=['simple', 'full', 'real', 'erdos', 'di_erdos', 'di_watts', 'watts', 'barabasi', 'di_scale_free', 'fosiss'] )
 parser.add_argument('--step', default="sync", choices=['async', 'sync'] )
 
 args = parser.parse_args()
@@ -450,6 +450,8 @@ elif args.init == 'di_scale_free':
     g = init_di_scale_free()
 elif args.init == 'real':
     g = init_real()
+elif args.init == 'fosiss':
+    g = init_fosiss()
 
 
 for n in g.nodes():

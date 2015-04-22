@@ -34,6 +34,20 @@ def init_real():
 
 
 
+def init_fosiss():
+    g = nx.Graph()
+    lineas = open('giant_component.csv', 'r').readlines()
+    for l in lineas:
+        (n1, n2, w) = l.split()
+        g.add_edge(n1, n2, w=int(w))
+    g = reset_states(g)
+    g = reset_fitness(g)
+
+    return g
+
+    
+
+
 def init_full():
     # complete graph
     g =  nx.complete_graph(20)
