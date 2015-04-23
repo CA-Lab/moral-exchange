@@ -5,7 +5,7 @@ C = True
 D = False
 
 
-"""Generates a full connected network"""
+"""Generates a simple full connected network"""
 def init_simple():
     g = nx.Graph()
     g.add_nodes_from(['a','b','c'])
@@ -21,6 +21,22 @@ def init_simple():
     g = reset_trust(g)
 
     return g
+
+
+
+
+def init_fosiss():
+    g = nx.Graph()
+    lineas = open('giant_component.csv', 'r').readlines()
+    for l in lineas:
+        (n1, n2, w) = l.split()
+        g.add_edge(n1, n2, w=int(w))
+    g = reset_states(g)
+    g = reset_fitness(g)
+
+    return g
+
+    
 
 
 def init_full():
@@ -81,6 +97,15 @@ def init_barabasi():
     g = reset_trust(g)
     return g
 
+def init_di_scale_free():
+    g = nx.scale_free_graph(50)
+    g = reset_states(g)
+    g = reset_fitness(g)
+
+    for e in g.edges():
+        g.add_edge(e[0], e[1], attr_dict={'weight': 10})
+
+    return g
 
 
 def reset_fitness(g, fitness=10):

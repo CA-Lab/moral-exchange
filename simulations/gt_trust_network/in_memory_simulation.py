@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust net
 parser.add_argument('--runid', default="" )
 parser.add_argument('--iterations', type=int, default=50 )
 parser.add_argument('--optimize', default="probabilistic", choices=['fitness', 'trust', 'balance', 'majority', 'probabilistic'] )
-parser.add_argument('--init', default="erdos", choices=['erdos', 'full', 'di_erdos', 'di_watts', 'watts', 'barabasi'] )
+parser.add_argument('--init', default="erdos", choices=['simple', 'full', 'real', 'erdos', 'di_erdos', 'di_watts', 'watts', 'barabasi', 'di_scale_free', 'fosiss'] )
 parser.add_argument('--step', default="sync", choices=['async', 'sync'] )
 
 args = parser.parse_args()
@@ -287,28 +287,8 @@ def node_state_probabilistic(i):
             f_i   += 0
             c_i_j += 0
 
-    fitness = float(f_i) / float(len(g.neighbors(i)))
-    #if i == 55:
-    #    print "f ",fitness
-
-    
-    # if fitness > 1:
-    #     fitness = 1
-
-    # if fitness < 0:
-    #     fitness = 0
-    
-    
-    trust   = float(c_i_j) / float(len(g.neighbors(i)))
-    #if i == 55:
-    #    print "t ",trust
-    
-    # if trust > 1:
-    #     trust = 1
-
-    # if trust < 0:
-    #     trust = 0
-
+    fitness   = float(f_i) / float(len(g.neighbors(i)))
+    trust     = float(c_i_j) / float(len(g.neighbors(i)))
     naiveness =  fitness + trust
 
     if naiveness > 1:
@@ -322,16 +302,7 @@ def node_state_probabilistic(i):
     else:
         state = C
 
-    #if i == 55:        
-    #    print "n=%s" % i, fitness, trust, naiveness, state
-
-    #sleep(0.1)
-
     return state
-    # if naiveness <= 0.1:
-    #     return D
-    # else:
-    #     return C
 
 
 
@@ -434,6 +405,8 @@ elif args.step == 'async':
 # initialize network
 if args.init == 'erdos':
     g = init_erdos()
+elif args.init == 'simple':
+    g = init_simple()
 elif args.init == 'full':
     g = init_full()
 elif args.init == 'di_erdos':
@@ -444,8 +417,12 @@ elif args.init == 'di_watts':
     g = init_directed_watts()
 elif args.init == 'barabasi':
     g = init_barabasi()
-
-
+elif args.init == 'di_scale_free':
+    g = init_di_scale_free()
+elif args.init == 'real':
+    g = init_real()
+elif args.init == 'fosiss':
+    g = init_fosiss()
 
 
 for n in g.nodes():
