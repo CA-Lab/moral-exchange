@@ -244,7 +244,7 @@ highest value goes to an edge when both agents cooperate, getting an
 $R$ for reward, if one of them defects, trust is negatively affected
 or $P$ for the trust being punished. If both agents defect, trust
 value doesn't change, which in a sense, it means that agents didn't
-interact or the interaction is $N$ nulliefied. \\
+interact or that the interaction gets nullified. \\
 
 {\bf Trust pay-off matrix}\\
 
@@ -257,15 +257,26 @@ interact or the interaction is $N$ nulliefied. \\
 \end{tabular}\\ \\
 
 
+After each game, the agent adds-up fitness ($w$), which is the sum of the
+pay-offs following the PD matrix. The agent also adds-up the amount of
+trust ($t_{ji}$) that shares with its neighbors. We measure global
+fitness and trust for the whole network. Global fitness is the sum of
+all individual fitness and trust is the sum of every pair of agents
+links trust. normalized. In order for the agent to choose to cooperate
+or defect, it is assigned a degree of na\"{i}vit\'e. Na\"{i}vit\'e is
+calculated as the sum of the agent's normalized averages of fitness
+and trust over the number of the agent's neighbors.\\
 
-In order for the agent to choose to cooperate or defect, we calculate
-a measure of na\"{i}vit\'e or confidence for each node. If the agents' confidence
-is below certain value then the agent will act suspiciously and will
-defect, othewise it will cooperate. We tested our simulation on an
-Erd\"{o}s-Reny\'i, a Watts-Strogatz small-world and Barab\'asi-Albert
-topologies, as well as on a real biomedical research network. Agents
-na\"{i}vit\'e or confidence, state, fitness and edge's trust is
-updated in a synchronous manner.  
+
+Na\"{i}vit\'e $= \langle w \rangle +  \langle t_{ji} \rangle$
+
+If the agents' na\"{i}vit\'e is below certain global confidence threshold then
+the agent will act suspiciously and will defect, othewise it will
+cooperate. We tested our simulation on an Erd\"{o}s-Reny\'i, a
+Watts-Strogatz small-world and Barab\'asi-Albert topologies, as well
+as on a real biomedical research network. Agents na\"{i}vit\'e or
+confidence, state, fitness and edge's trust is updated in a
+synchronous manner.   
 
 \subsection{Implementation of the model in different topologies}
 
