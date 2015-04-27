@@ -67,7 +67,7 @@ grestore
 
 %\subtitle{Do you have a subtitle?\\ If so, write it here}
 
-%\titlerunning{Short form of title}        % if too long for running head
+\titlerunning{Fitness \& trust in biomedical research networks}        % if too long for running head
 
 \author{J. Mario Siqueiros-Garc\'ia         \and      Rodrigo Garc\'ia-Herrera \and         Enrique Hern\'andez-Lemus \and
         Sergio Alcal\'a  %etc.
@@ -93,7 +93,48 @@ grestore
 \maketitle
 
 \begin{abstract}
-\textbf{Background:} In an ideal world, access to research resources should be fair and equitative according to the proposals relevance and the researcher's academic record. We know that this is not necessarily so, specially in places where access to some resources, e.g., biological samples, is not regulated. Other factors may come into play like social connections, political power or prestige. In this work we explore the distribution of fitness and trust in a biomedical researchers collaboration network when playing a variation of an iterative prisoner's dilemma in which agents are compromised in either defecting and increasing their individual fitness or cooperating and increase mutual fitness with their neighbors. \textbf{Methods:} Fitness is a property of the each agent and trust is a property of the link between two agents. According to a pay-off matrix and a mutual trust $A_{ij}$ matrix, we get a measure of na\"{i}vit\'e or confidence for each node. If the agents' confidence is below certain value then the agent will act suspiciously and will defect, othewise it will cooperate. We tested our simulation on an Erd\"{o}s-Reny\'i, a Watts-Strogatz small-world and Barab\'asi-Albert topologies, as well as on a real biomedical research network. Agents behavior is updated in a synchronous manner. \textbf{Results:} All networks find a point of equilibrium before the $50^{th}$ iteration. Different topologies display different fitness and trust distribution. Fitness in an Erd\"{o}s-Reny\'i netwok follows a normal distribution and trust is bimodal. For a Watts-Strogatz, small world networks, both fitness and trust distributions are strongly skewed to the right. Barab\'asi-Albert topology has a heavy left-skewed distribution (resembling to a power-law) and trust is bimodal. The biomedical researchers network has fitness distribution as in a Barab\'asi-Albert, but trust is distributed as in a Watts-Strogatz, small world topology. \textbf{Discussion:} 1) The distribution of fitness in the researchers network suggests that there are mechanisms governing the network that produces an asymetric access to resources. 2) Nevetheless, trust variables behaves as in the small-world model which might reflect some sort of subordination among researchers by which they are obliged to cooperate. 3) The range in the threshold that regulates the stringency to cooperate or defect according to the agent's na\"{i}vit\'e is small, suggesting that there is a region in which a phase transition takes place from a population full of defectors to a population of cooperators 4) Finally, we would like to propose that this sort of work may help to make visible the need to develop science policies to promote a better, small world-like, fair fitness distribution. 
+\textbf{Background:} In an ideal world, access to research resources
+should be fair and equitative according to the proposals relevance and
+the researcher's academic record. We know that this is not necessarily
+so, specially in places where access to some resources, e.g.,
+biological samples, is not regulated. Other factors may come into play
+like social connections, political power or prestige. In this work we
+explore the distribution of fitness and trust in a biomedical
+researchers collaboration network when playing a variation of an
+iterative prisoner's dilemma in which agents are compromised in either
+defecting and increasing their individual fitness or cooperating and
+increase mutual fitness with their neighbors. \textbf{Methods:}
+Fitness is a property of the each agent and trust is a property of the
+link between two agents. According to a pay-off matrix and a mutual
+trust $A_{ij}$ matrix, we get a measure of na\"{i}vit\'e or confidence
+for each node. If the agents' confidence is below certain value then
+the agent will act suspiciously and will defect, othewise it will
+cooperate. We tested our simulation on an Erd\"{o}s-Reny\'i, a
+Watts-Strogatz small-world and Barab\'asi-Albert topologies, as well
+as on a real biomedical research network. Agents behavior is updated
+in a synchronous manner. \textbf{Results:} All networks find a point
+of equilibrium before the $50^{th}$ iteration. Different topologies
+display different fitness and trust distribution. Fitness in an
+Erd\"{o}s-Reny\'i netwok follows a normal distribution and trust is
+bimodal. For a Watts-Strogatz, small world networks, both fitness and
+trust distributions are strongly skewed to the right.
+Barab\'asi-Albert topology has a heavy left-skewed distribution
+(resembling to a power-law) and trust is bimodal. The biomedical
+researchers network has fitness distribution as in a
+Barab\'asi-Albert, but trust is distributed as in a Watts-Strogatz,
+small world topology. \textbf{Discussion:} 1) The distribution of
+fitness in the researchers network suggests that there are mechanisms
+governing the network that produces an asymetric access to resources.
+2) Nevetheless, trust variables behaves as in the small-world model
+which might reflect some sort of subordination among researchers by
+which they are obliged to cooperate. 3) The range in the threshold
+that regulates the stringency to cooperate or defect according to the
+agent's na\"{i}vit\'e is small, suggesting that there is a region in
+which a phase transition takes place from a population full of
+defectors to a population of cooperators 4) Finally, we would like to
+propose that this sort of work may help to make visible the need to
+develop science policies to promote a better, small world-like, fair
+fitness distribution.  
 
 %% Insert your abstract here. Include keywords, PACS and mathematical
 %% subject classification numbers as needed.
@@ -111,28 +152,120 @@ Your text comes here. Separate text sections with
 
 \section{Biomedical research: CONACyT and FOSISS}
 \label{sec:1}
-CONACyT (Council of Science and Technology) is the Mexican government entity in charge of promoting the development of science and
+CONACyT (Council of Science and Technology) is the Mexican government
+entity in charge of promoting the development of science and 
 technology. It is also in charge of creating the country's scientific
-policies. In a way, CONACyT is equivalent to the National Science Foundation of the United States.\\
+policies. In a way, CONACyT is equivalent to the National Science
+Foundation of the United States.\\
 
 Among CONACyT's functions it is to develop science and technology
 policies according to national needs and demands, to offer
 assessorship to the different instances of the government on
 scientific and technological topics, to promote the creation of
 research networks among the scientific community, grant scholarships
-for masters and doctoral studies, and it also manages different trusts intended to fund individuals
-and groups for scientific and technological research. \\
+for masters and doctoral studies, and it also manages different trusts
+intended to fund individuals and groups for scientific and
+technological research.\\
 
-In the year 2002 CONACyT, along with other government agencies and entities have created sectorial funds or \emph{Fondos Sectoriales}. Sectorial funds are trusts for scientific and technological research. The objective of such funds is to cover and equally promote the research capacities of different areas such as energy, agriculture, or technological innovation by means of the generation of human resources and helping research groups to consolidate. It is expected that the knowledge generated under the sponsorship of \emph{Fondos Sectoriales} to be the product of applied research that attends national public needs, and promotes economic growth.\\
+In the year 2002 CONACyT, along with other government agencies and
+entities have created sectorial funds or \emph{Fondos Sectoriales}.
+Sectorial funds are trusts for scientific and technological research.
+The objective of such funds is to cover and equally promote the
+research capacities of different areas such as energy, agriculture, or
+technological innovation by means of the generation of human resources
+and helping research groups to consolidate. It is expected that the
+knowledge generated under the sponsorship of \emph{Fondos Sectoriales}
+to be the product of applied research that attends national public
+needs, and promotes economic growth.\\
 
-\emph{FOSISS} or Sectorial Fund for Health and Social Security Research (\emph{Fondo Sectorial en Investigaci\'on en Salud y Seguridad Social}) is among such funds. FOSISS is constituted by CONACyT, SSA, IMSS and ISSSTE \footnote{SSA is the acronym for Secretariat of Health \emph{Secretar\'ia de Salud}; IMSS is the acronym for Social Security Mexican Institute (\emph{Instituto Mexicano del Seguro Social}); ISSSTE stands for Institute for Social Security and Services for State Workers (\emph{Instituto de Seguridad y Servicios Sociales de los Trabajadores del Estado})}, being all of them the major public health providers and research institutions in the country. Every year CONACyT opens a call for funds constrained to a set the health areas previously defined by a group of experts. Elegibility is open to the public and private health research sectors, nevertheless, most applicants are public universities and research institutions. 
+\emph{FOSISS} or Sectorial Fund for Health and Social Security
+Research (\emph{Fondo Sectorial en Investigaci\'on en Salud y
+  Seguridad Social}) is among such funds. FOSISS is constituted by
+CONACyT, SSA, IMSS and ISSSTE \footnote{SSA is the acronym for
+  Secretariat of Health \emph{Secretar\'ia de Salud}; IMSS is the
+  acronym for Social Security Mexican Institute (\emph{Instituto
+    Mexicano del Seguro Social}); ISSSTE stands for Institute for
+  Social Security and Services for State Workers (\emph{Instituto de
+    Seguridad y Servicios Sociales de los Trabajadores del Estado})},
+being all of them the major public health providers and research
+institutions in the country. Every year CONACyT opens a call for funds
+constrained to a set the health areas previously defined by a group of
+experts. Elegibility is open to the public and private health research
+sectors, nevertheless, most applicants are public universities and
+research institutions.  
 
 \section{Methodology}
 \label{sec:2}
+In this work we developed a model in order to have a better
+understanding the distribution of fitness and trust in a biomedical
+researchers collaboration under certain social constrictions or
+topological properties of real collaborative networks of biomedical
+research.\\
 
-\subsection{General description of what we did}
+Our model is based on the iterative version of the prisoner's dilemma (PD)
+instantiated on networks. Implementing games on networks is not new
+and is an active area of research aimed to understand the evolution of
+cooperation in networks populated by selfish agents
+\cite{Nowak1992,Nowak2006}. In many network models on which some of game
+theory games are simulated, agents decision to cooperate or defect
+depends on a specific strategy, as the well known \textit{tit-for-tat}
+\cite{Axelrod2006,Nowak2011}. In some other cases, agents can modify the weight
+of the interactions with their neighbors \cite{Santos2006}. And even
+some others explore the effect of different topologies on the
+emergence of cooperation \cite{Santos2005}. In our case, agents decision
+to cooperate or defect is a probabilistic outcome that depends on the
+agent's confidence. Confidence, as it turns out, depends on how
+positive the agent's gains and relations towards its neighbors
+have been in the past. \\
 
-\subsection{Our fitness, trust and naivite model}
+In the model that we developed, agents are embedded in a network with
+varying number of neighbors. Following the traditional PD game, the
+strategy chosen by an agent and the strategy chosen by its neighbors
+will produce a pay-off. Pay-off follows the rule: $T > R > P > S$. $T$
+is for temptation to defect. It is the highest pay-off and it takes
+place when the player defects and the other cooperates. $R$ is for
+reward for when both players cooperate. $P$ is the punishment for when
+both players defect. And $S$ is for suckers pay-off. Fitness is a
+property of agents in which pay-off is accumulated.\\ 
+
+{\bf Prisoner's Dilemma fitness pay-off matrix}\\
+
+\begin{tabular}{| l | l | l |}
+\hline
+          & \bf{Cooperate} & \bf{Defect} \\ \hline
+\bf{Cooperate} &  $R,R$      &  $S,T$   \\ \hline
+\bf{Defect}    &  $T,S$      &  $P,P$   \\ \hline
+
+\end{tabular}\\ \\
+
+Trust is a property of the link between two agents and it is updated
+according to a mutual trust $A_{ij}$ matrix. In the trust matrix, the
+highest value goes to an edge when both agents cooperate, getting an
+$R$ for reward, if one of them defects, trust is negatively affected
+or $P$ for the trust being punished. If both agents defect, trust
+value doesn't change, which in a sense, it means that agents didn't
+interact or the interaction is $N$ nulliefied. \\
+
+{\bf Trust pay-off matrix}\\
+
+\begin{tabular}{| l | l | l |}
+\hline
+          & \bf{Cooperate} & \bf{Defect} \\ \hline
+\bf{Cooperate} &  $R$      &  $P$   \\ \hline
+\bf{Defect}    &  $P$      &  $N$   \\ \hline
+
+\end{tabular}\\ \\
+
+
+
+In order for the agent to choose to cooperate or defect, we calculate
+a measure of na\"{i}vit\'e or confidence for each node. If the agents' confidence
+is below certain value then the agent will act suspiciously and will
+defect, othewise it will cooperate. We tested our simulation on an
+Erd\"{o}s-Reny\'i, a Watts-Strogatz small-world and Barab\'asi-Albert
+topologies, as well as on a real biomedical research network. Agents
+na\"{i}vit\'e or confidence, state, fitness and edge's trust is
+updated in a synchronous manner.  
 
 \subsection{Implementation of the model in different topologies}
 
@@ -201,10 +334,16 @@ In the year 2002 CONACyT, along with other government agencies and entities have
 %\end{table}
 
 
-%\begin{acknowledgements}
+\begin{acknowledgements}
+The authors gratefully acknowledge support by grants:
+  CB-222220-R/2013 and CB-179431/2012 (Consejo Nacional de Ciencia y
+  Tecnolog\'ia). We would also like to aknowledge CONACyT for letting
+  heve access to their database. Finally, we aknowledge the help of Francisco
+  Allende for his work cleaning researchers databses.
+
 %If you'd like to thank anyone, place your comments here
 %and remove the percent signs.
-%\end{acknowledgements}
+\end{acknowledgements}
 
 % BibTeX users please use one of
 %\bibliographystyle{spbasic}      % basic style, author-year citations
@@ -213,18 +352,34 @@ In the year 2002 CONACyT, along with other government agencies and entities have
 %\bibliography{}   % name your BibTeX data base
 
 % Non-BibTeX users please use
-\begin{thebibliography}{}
-%
+\begin{thebibliography}{50}
+
+
+\bibitem{Nowak1992} Nowak, Martin A. \& May, Robert M, Evolutionary
+  Games and Spatial Chaos. \textit{Nature}, 359: 826-829, (1992)
+
+\bibitem{Hauert2004} Hauert, Christoph \& Doebeli, Michael, Spatial
+  structure often inhibits the evolution of cooperation in the
+  snowdrift game. \textit{Nature}, 428: 643-646,  (2004)
+
+\bibitem{Santos2005} Santos, F.C. \& Pacheco, J.M., Scale-Free
+  Networks Provide a Unifying Framework for the Emergence of
+  Cooperation. \textit{PRL}, 95: 098104-1 to 098104-4, (2005) 
+
+\bibitem{Nowak2011} Nowak, Martin A. \& Highfield, Roger,
+  \textit{Supercooperators. Altruism, Evolution, and Why We Need Each
+    Other to Succeed}. Free Press, New York, NY  (2011)
+  
 % and use \bibitem to create references. Consult the Instructions
 % for authors for reference list style.
 %
-\bibitem{RefJ}
-% Format for Journal Reference
-Author, Article title, Journal, Volume, page numbers (year)
-% Format for books
-\bibitem{RefB}
-Author, Book title, page numbers. Publisher, place (year)
-% etc
+%% \bibitem{RefJ}
+%% % Format for Journal Reference
+%% Author, Article title, Journal, Volume, page numbers (year)
+%% % Format for books
+%% \bibitem{RefB}
+%% Author, Book title, page numbers. Publisher, place (year)
+%% % etc
 \end{thebibliography}
 
 \end{document}
