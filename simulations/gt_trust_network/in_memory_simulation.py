@@ -7,6 +7,7 @@ import random as rd
 from initializators import *
 import argparse
 import numpy as np
+import os
 
 from pprint import pprint
 from time import sleep
@@ -14,14 +15,17 @@ from time import sleep
 parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust network simulation.')
 parser.add_argument('--runid', default="" )
 parser.add_argument('--iterations', type=int, default=50 )
+parser.add_argument('--nu', type=float, default=0.20 )
 parser.add_argument('--optimize', default="probabilistic", choices=['fitness', 'trust', 'balance', 'majority', 'probabilistic'] )
 parser.add_argument('--init', default="erdos", choices=['simple', 'full', 'real', 'erdos', 'di_erdos', 'di_watts', 'watts', 'barabasi', 'di_scale_free', 'fosiss'] )
+parser.add_argument('--reset', default="all", choices=['none', 'all'] )
 parser.add_argument('--step', default="sync", choices=['async', 'sync'] )
 parser.add_argument('--csv', type=argparse.FileType('r'))
 parser.add_argument('--pickle', type=argparse.FileType('r'))
 
 args = parser.parse_args()
 
+nu = args.nu
 
 # log keeping variables
 time = 0
@@ -307,6 +311,7 @@ def node_state_optimize_balance(node):
 
 
 def node_state_probabilistic(i):
+    global nu
     f_i   = 0
     c_i_j = 0
     for j in g.neighbors(i):
@@ -336,7 +341,7 @@ def node_state_probabilistic(i):
     if naiveness < 0:
         naiveness = 0
 
-    if naiveness <= 0.20:
+    if naiveness <= nu:
         state = D
     else:
         state = C
@@ -444,10 +449,10 @@ elif args.step == 'async':
 # initialize network
 if args.pickle:
     g = init_from_pickle(args.pickle)
-    args.init = args.pickle.name
+    args.init = os.path.basename(args.pickle.name)
 elif args.csv:
     g = init_from_csv(args.csv)
-    args.init = args.csv.name    
+    args.init = os.path.basename(args.csv.name )
 if args.init == 'erdos':
     g = init_erdos()
 elif args.init == 'simple':
@@ -469,6 +474,18 @@ elif args.init == 'real':
 elif args.init == 'fosiss':
     g = init_fosiss()
 
+
+
+# reset trust, states and fitness?
+if args.reset == 'all':
+    g = reset_trust(g)
+    g = reset_states(g)
+    g = reset_fitness(g)
+elif args.reset == 'none':
+    pass
+
+
+    
 
 for n in g.nodes():
     F_t0.append(g.node[n]['f'])
@@ -493,7 +510,7 @@ for time in range(0, args.iterations):
 # plot_histograms(histograms_plot)
 
 
-dynamics_prefix = "dynamics_%s_%s_%s_%s" % (args.init, args.optimize, args.step, args.runid)
-histograms_prefix = "histogram_%s_%s_%s_%s" % (args.init, args.optimize, args.step, args.runid)
+dynamics_prefix = "dynamics_%s_%s_%s_nu%s_%s" % (args.init, args.optimize, args.step, args.nu, args.runid)
+histograms_prefix = "histogram_%s_%s_%s_nu%s_%s" % (args.init, args.optimize, args.step, args.nu, args.runid)
 write_dynamics(dynamics_prefix)
 write_histograms(histograms_prefix)

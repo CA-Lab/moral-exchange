@@ -14,11 +14,6 @@ def init_simple():
     for i in g.node:
         for j in g.node:
             g.add_edge(i,j,w=10)
-            
-
-    g = reset_states(g)
-    g = reset_fitness(g)
-    g = reset_trust(g)
 
     return g
 
@@ -27,8 +22,6 @@ def init_simple():
 
 def init_from_pickle(pickle_file):
     g = nx.read_gpickle(pickle_file)
-    #g = reset_states(g)
-    #g = reset_fitness(g)
     return g
     
 
@@ -38,9 +31,6 @@ def init_from_csv(csv_file):
     for l in lineas:
         (n1, n2, w) = l.split()
         g.add_edge(n1, n2, w=int(w))
-    g = reset_states(g)
-    g = reset_fitness(g)
-
     return g
 
     
@@ -49,70 +39,42 @@ def init_from_csv(csv_file):
 def init_full():
     # complete graph
     g =  nx.complete_graph(20)
-
-    g = reset_states(g)
-    g = reset_fitness(g)
-    g = reset_trust(g)
-
     return g
 
 def init_erdos():
     g = nx.erdos_renyi_graph(4122, .003)
-
-    g = reset_states(g)
-    g = reset_fitness(g)
-    g = reset_trust(g)
-
     return g
         
 
 def init_erdos_directed():
     # directed erdos renyi
     g =  nx.erdos_renyi_graph( 100, .3, directed = True )
-
-    g = reset_states(g)
-    g = reset_fitness(g)
-    g = reset_trust(g)
-
     return g
 
 
 def init_watts():
     g = nx.watts_strogatz_graph(4122, 11, 0.003)
-
-    g = reset_states(g)
-    g = reset_fitness(g)
-    g = reset_trust(g)
-
     return g
 
 def init_directed_watts():
     h = nx.watts_strogatz_graph(500, 8, 0.1)
     g = h.to_directed()
-
-    g = reset_states(g)
-    g = reset_fitness(g)
-    g = reset_trust(g)
-
     return g
     
 
 def init_barabasi():
     g = nx.barabasi_albert_graph(4122, 45)
-    g = reset_states(g)
-    g = reset_fitness(g)
-    g = reset_trust(g)
     return g
 
 def init_di_scale_free():
     g = nx.scale_free_graph(50)
-    g = reset_states(g)
-    g = reset_fitness(g)
-
     for e in g.edges():
         g.add_edge(e[0], e[1], attr_dict={'weight': 10})
 
     return g
+
+
+
 
 
 def reset_fitness(g, fitness=10):
