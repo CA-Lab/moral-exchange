@@ -25,9 +25,16 @@ def init_simple():
 
 
 
-def init_fosiss():
+def init_from_pickle(pickle_file):
+    g = nx.read_gpickle(pickle_file)
+    #g = reset_states(g)
+    #g = reset_fitness(g)
+    return g
+    
+
+def init_from_csv(csv_file):
     g = nx.Graph()
-    lineas = open('giant_component.csv', 'r').readlines()
+    lineas = csv_file.readlines()
     for l in lineas:
         (n1, n2, w) = l.split()
         g.add_edge(n1, n2, w=int(w))
@@ -50,7 +57,7 @@ def init_full():
     return g
 
 def init_erdos():
-    g = nx.erdos_renyi_graph(100, .3)
+    g = nx.erdos_renyi_graph(4122, .003)
 
     g = reset_states(g)
     g = reset_fitness(g)
@@ -71,7 +78,7 @@ def init_erdos_directed():
 
 
 def init_watts():
-    g = nx.watts_strogatz_graph(500, 8, 0.1)
+    g = nx.watts_strogatz_graph(4122, 11, 0.003)
 
     g = reset_states(g)
     g = reset_fitness(g)
@@ -91,7 +98,7 @@ def init_directed_watts():
     
 
 def init_barabasi():
-    g = nx.barabasi_albert_graph(1200, 15)
+    g = nx.barabasi_albert_graph(4122, 45)
     g = reset_states(g)
     g = reset_fitness(g)
     g = reset_trust(g)

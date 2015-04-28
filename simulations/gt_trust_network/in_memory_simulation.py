@@ -17,6 +17,8 @@ parser.add_argument('--iterations', type=int, default=50 )
 parser.add_argument('--optimize', default="probabilistic", choices=['fitness', 'trust', 'balance', 'majority', 'probabilistic'] )
 parser.add_argument('--init', default="erdos", choices=['simple', 'full', 'real', 'erdos', 'di_erdos', 'di_watts', 'watts', 'barabasi', 'di_scale_free', 'fosiss'] )
 parser.add_argument('--step', default="sync", choices=['async', 'sync'] )
+parser.add_argument('--csv', type=argparse.FileType('r'))
+parser.add_argument('--pickle', type=argparse.FileType('r'))
 
 args = parser.parse_args()
 
@@ -153,6 +155,33 @@ def plot_dynamics(plotfile):
 
 
 
+def write_dynamics(prefix):
+    trustfile = open(prefix+'_trust.csv','w')
+    trustfile.writelines([str(e)+"\n" for e in energy_state])
+    trustfile.close()
+    
+    trustfileS = open(prefix+'_trustS.csv','w')
+    trustfileS.writelines([str(e)+"\n" for e in energy_state_S])    
+    trustfileS.close()
+
+    fitnessfile = open(prefix+'_fitness.csv', 'w')
+    fitnessfile.writelines([str(f)+"\n" for f in fitness_state])
+    fitnessfile.close()
+    
+    fitnessfileS = open(prefix+'_fitnessS.csv', 'w')
+    fitnessfileS.writelines([str(f)+"\n" for f in fitness_S])    
+    fitnessfileS.close()
+
+    statefile = open(prefix+'_state_changes.csv', 'w')
+    statefile.writelines([str(s)+"\n" for s in state_changes])
+    statefile.close()
+
+    dcfile = open(prefix+'_dc_ratio.csv', 'w')
+    dcfile.writelines([str(r)+"\n" for r in DC_ratio])
+    dcfile.close()
+    
+    
+
 def plot_histograms(plotfile):
 #    pprint(T_t0)
 
@@ -173,6 +202,16 @@ def plot_histograms(plotfile):
     
     plt.savefig(plotfile, dpi=300)
 
+
+
+def write_histograms(prefix):
+    tfile = open(prefix+'_trust.csv', 'w')
+    tfile.writelines([str(t)+"\n" for t in T_tn])
+    tfile.close()
+    
+    ffile = open(prefix+'_fitness.csv', 'w')
+    ffile.writelines([str(f)+"\n" for f in F_tn])
+    ffile.close()
     
     
 
@@ -403,6 +442,12 @@ elif args.step == 'async':
     
 
 # initialize network
+if args.pickle:
+    g = init_from_pickle(args.pickle)
+    args.init = args.pickle.name
+elif args.csv:
+    g = init_from_csv(args.csv)
+    args.init = args.csv.name    
 if args.init == 'erdos':
     g = init_erdos()
 elif args.init == 'simple':
@@ -442,7 +487,13 @@ for time in range(0, args.iterations):
 
     
 # write down a plot
-dynamics_plot = "%s_%s_%s_dynamics.png" % (args.init, args.optimize, args.step)
-histograms_plot = "%s_%s_%s_hist.png" % (args.init, args.optimize, args.step)
-plot_dynamics(dynamics_plot)
-plot_histograms(histograms_plot)
+# dynamics_plot = "%s_%s_%s_dynamics.png" % (args.init, args.optimize, args.step)
+# histograms_plot = "%s_%s_%s_hist.png" % (args.init, args.optimize, args.step)
+# plot_dynamics(dynamics_plot)
+# plot_histograms(histograms_plot)
+
+
+dynamics_prefix = "dynamics_%s_%s_%s_%s" % (args.init, args.optimize, args.step, args.runid)
+histograms_prefix = "histogram_%s_%s_%s_%s" % (args.init, args.optimize, args.step, args.runid)
+write_dynamics(dynamics_prefix)
+write_histograms(histograms_prefix)
