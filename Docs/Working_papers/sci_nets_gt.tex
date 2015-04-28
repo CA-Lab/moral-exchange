@@ -46,7 +46,7 @@ grestore
 \smartqed  % flush right qed marks, e.g. at end of proof
 %
 \usepackage{graphicx}
-%
+\usepackage{hyperref}
 % \usepackage{mathptmx}      % use Times fonts if available on your TeX system
 %
 % insert here the call for the packages your document requires
@@ -146,9 +146,11 @@ fitness distribution.
 \section{Introduction}
 \label{intro}
 
-Your text comes here. Separate text sections with
+Collaboration has become a corner stone in scientific research today. Though physics has a long history and experience in collaborative projects, biology has recently become an evermore collaborative discipline\cite{Vermeulen2013}. Biology has interesting record in such matters because scientific collaboration has been perceived differently depending on the branch of biology one is taking about. As molecular biology has traditionally been a research activity of small laboratories\cite{KnorrCetina1999,Strasser2006}. On the extreme, there is natural history exchanging data and samples since the $XVII^{th}$ century\cite{Muller2012,Strasser2012}.\\
 
+Despite the differences in culture and practices, the Human Genome Project made collaboration a central feature of biology. Now a day it is widely aknowledge that collaboration takes many forms, from biological samples and biobanking to international groups in charge of helping the bio-research communities to harmonize and share their data.\\
 
+As has been pointed by others, social research on scientific collaboration is mostly about physics and space research. Collaboration in biology has been studied to a lesser degree. The majority of work done on the subject has explored the quantiative aspects of it\cite{Newman2001}
 
 \section{Biomedical research: CONACyT and FOSISS}
 \label{sec:1}
@@ -181,12 +183,12 @@ needs, and promotes economic growth.\\
 \emph{FOSISS} or Sectorial Fund for Health and Social Security
 Research (\emph{Fondo Sectorial en Investigaci\'on en Salud y
   Seguridad Social}) is among such funds. FOSISS is constituted by
-CONACyT, SSA, IMSS and ISSSTE \footnote{SSA is the acronym for
+CONACyT, SSA, IMSS and ISSSTE,\footnote{SSA is the acronym for
   Secretariat of Health \emph{Secretar\'ia de Salud}; IMSS is the
   acronym for Social Security Mexican Institute (\emph{Instituto
     Mexicano del Seguro Social}); ISSSTE stands for Institute for
   Social Security and Services for State Workers (\emph{Instituto de
-    Seguridad y Servicios Sociales de los Trabajadores del Estado})},
+    Seguridad y Servicios Sociales de los Trabajadores del Estado})}
 being all of them the major public health providers and research
 institutions in the country. Every year CONACyT opens a call for funds
 constrained to a set the health areas previously defined by a group of
@@ -206,17 +208,17 @@ Our model is based on the iterative version of the prisoner's dilemma (PD)
 instantiated on networks. Implementing games on networks is not new
 and is an active area of research aimed to understand the evolution of
 cooperation in networks populated by selfish agents
-\cite{Nowak1992,Nowak2006}. In many network models on which some of game
+\cite{Szabo2007,Nowak1992,Nowak2006}. In many network models on which some of game
 theory games are simulated, agents decision to cooperate or defect
 depends on a specific strategy, as the well known \textit{tit-for-tat}
 \cite{Axelrod2006,Nowak2011}. In some other cases, agents can modify the weight
-of the interactions with their neighbors \cite{Santos2006}. And even
-some others explore the effect of different topologies on the
-emergence of cooperation \cite{Santos2005}. In our case, agents decision
+of the interactions with their neighbors \cite{Santos2006}. From a different perspective
+others have explored the effect of different topologies on the
+emergence of cooperation \cite{Santos2005,Hauert2004}. In our case, agents decision
 to cooperate or defect is a probabilistic outcome that depends on the
 agent's confidence. Confidence, as it turns out, depends on how
 positive the agent's gains and relations towards its neighbors
-have been in the past. \\
+have been in the past and we study the behavior of the system under different topologies, including a real-world network. \\
 
 In the model that we developed, agents are embedded in a network with
 varying number of neighbors. Following the traditional PD game, the
@@ -244,7 +246,7 @@ highest value goes to an edge when both agents cooperate, getting an
 $R$ for reward, if one of them defects, trust is negatively affected
 or $P$ for the trust being punished. If both agents defect, trust
 value doesn't change, which in a sense, it means that agents didn't
-interact or that the interaction gets nullified. \\
+interact or that the interaction gets nullified $N$. \\
 
 {\bf Trust pay-off matrix}\\
 
@@ -284,9 +286,40 @@ synchronous manner.
 
 \subsubsection{Small-World}
 
-\subsubsection{Barbási-Albert}
+\subsubsection{Barb\'asi-Albert}
 
 \subsubsection{Biomedical research community network}
+
+The biomedical research network on which we are running our model
+was generated with data from collaborative projects. Our data was
+obtained from CONACyT and includes information for twelve years of
+\textit{FOSISS} grants. Data included names of Principal
+Investigators, collaborators, research topics, etc. The network we are
+using here has researchers as nodes and edges represent the connection
+of two scientists when they participate in the same project. Edges are
+also weighted according to the number of projects shared by the pair
+of scientists. The complete network summed-up a total of 145
+components or subnetworks, but we are running the model on the only
+giant component made-up of 4122 researchers, and 23391 edges.\\
+
+The giant component is a well integrated network, with a clustering
+coefficient $\langle C \rangle = 0.870$, an average shortest path
+length of $\langle l \rangle = 5.493$ and a density of $p = 0.003$. Such
+properties recall a small-world topology \cite{Watts1998}, and a great
+deal of self-organization when compared to a random network with the
+same density and number of nodes.\footnote{Using networkx in Python we
+created a null model to test such properties of our network on a
+random graph. The results were the expected with a $\langle C
+\rangle = 0.00279$, and a $\langle l \rangle = 3.6$
+\cite{Watts1998}.} The network centralization is $0.023$, since there
+are no visible researchers that play as hubs in the network.
+Nevertheless the network heterogeneity is $0.873$, which means that
+the network is highly hierarchical. When the degree distribution is
+analyzed, degree deceases as a power-law with an exponent of $1.7$,
+similar to other social networks described as scale-free topology
+networks \cite{Barabasi1999}. Finally, the number of neighbors of each
+node is $11.39$.\\  
+
 
 
 \section{Results}
@@ -296,6 +329,8 @@ synchronous manner.
 
 \section{Discussion}
 \label{sec:4}
+
+
 
 
 %% Text with citations \cite{RefB} and \cite{RefJ}.
@@ -365,22 +400,55 @@ The authors gratefully acknowledge support by grants:
 % Non-BibTeX users please use
 \begin{thebibliography}{50}
 
+\bibitem{Vermeulen2013} Vermeulen, Nikki; Parker, John N \& Penders, Bart, Understanding life together: A brief history of collaboration in biology, \textit{Endeavour}, 37(3): 162-171 (2013)
+
+\bibitem{KnorrCetina1999} Knorr-Cetina, Karol; \textit{Epistemic cultures: how the sciences make knowledge}, MIT Press, Cambridge, MA (1999)
+
+\bibitem{Strasser2006} Strasser, B.J. Collecting and Experimenting: The Moral Economies of Biological Research, 1960s-1980s. \textit{Preprint no. 310.} Berlin: Max Planck Institute for the History of Science, (2006)
+
+\bibitem{Muller2012} M\"{u}ller-Wille, S. \& Charmantier. I.  Natural history and information overload: The case of Linnaeus. \textit{Studies in History and Philosophy of Biological and Biomedical Sciences.} 43:4-15, (2012)
+
+\bibitem{Strasser2012} Strasser, B.J. Data-driven sciences: From wonder cabinets to electronic databases. \textit{Studies in History and Philosophy of Biological and Biomedical Sciences} 43:85-87, (2012)
+
+\bibitem{Newman2001} Newman, Mark EJ, Clustering and preferential attachment in growing networks, \textit{Physical Review E}, 64:025102-1/025102-4, (2001)
+
+
+
+\bibitem{Szabo2007} Szab\'o, Gy\"{o}rgy \& F\'ath, G\'abor, Evolutionary games on graphs. \textit{Physics Reports}, 446: 97-216 (2007)
 
 \bibitem{Nowak1992} Nowak, Martin A. \& May, Robert M, Evolutionary
   Games and Spatial Chaos. \textit{Nature}, 359: 826-829, (1992)
 
-\bibitem{Hauert2004} Hauert, Christoph \& Doebeli, Michael, Spatial
-  structure often inhibits the evolution of cooperation in the
-  snowdrift game. \textit{Nature}, 428: 643-646,  (2004)
+\bibitem{Nowak2006} Oshtuki, Hisashi, Hauert, Christoph, Lieberman, Erez \& Nowak, Martin A, A simple rule for the evolution of cooperation on social graphs. \textit{Nature}, 441: 502-505 (2006)
+
+\bibitem{Axelrod2006} Axelrod, Robert, \textit{Evolution of cooperation: Revised edition}, Basic Books, Cambridge, MA (2006)
+
+\bibitem{Nowak2011} Nowak, Martin A. \& Highfield, Roger,
+  \textit{Supercooperators. Altruism, Evolution, and Why We Need Each
+    Other to Succeed}. Free Press, New York, NY  (2011)
+
+\bibitem{Santos2006} Santos, Francisco C., Pacheco, Jorge M., Lenaerts, Tom, Cooperation prevails when individuals adjust their social ties. \textit{PLoS Computational Biology}. 2(10): 1284-1291 (2006)
 
 \bibitem{Santos2005} Santos, F.C. \& Pacheco, J.M., Scale-Free
   Networks Provide a Unifying Framework for the Emergence of
   Cooperation. \textit{PRL}, 95: 098104-1 to 098104-4, (2005) 
 
-\bibitem{Nowak2011} Nowak, Martin A. \& Highfield, Roger,
-  \textit{Supercooperators. Altruism, Evolution, and Why We Need Each
-    Other to Succeed}. Free Press, New York, NY  (2011)
+\bibitem{Hauert2004} Hauert, Christoph \& Doebeli, Michael, Spatial
+  structure often inhibits the evolution of cooperation in the
+  snowdrift game. \textit{Nature}, 428: 643-646,  (2004)
   
+\bibitem{Watts1998} Watts, Duncan J. \& Strogatz, Steven H, Collective dynamics
+  of 'small-world' networks. \textit{Nature}, 393: 440-442 (1998)
+
+\bibitem{Barabasi1999} Barab\'asi, Albert-L\'aszl\'o. \& Albert, R\'eka, Emergence of
+  Scaling in Random Networks. \textit{Science}, 286: 509-512 (1999)
+
+
+%%Discusion references
+
+\bibitem{Merton1968} Merton, Robert K, The Matthew Effect in Science, \textit{Science}, 159(3810): 56-63 (1968)
+
+
 % and use \bibitem to create references. Consult the Instructions
 % for authors for reference list style.
 %
