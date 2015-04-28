@@ -1,0 +1,69 @@
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.18 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.19 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.20 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.21 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.22 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.23 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.24 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.25 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.26 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
+
+executable     = /usr/bin/python
+Arguments = ../in_memory_simulation.py --runid $(Cluster).$(Process) --nu 0.27 --reset none --pickle ../pickles/watts.pickle
+universe       = vanilla                  
+requirements = Machine == "notron.inmegen.gob.mx"
+Error = sim_$(Cluster).$(Process).Error
+queue 100
