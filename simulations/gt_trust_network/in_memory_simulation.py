@@ -1,7 +1,3 @@
-import matplotlib
-matplotlib.use('svg')
-import matplotlib.pyplot as plt
-import pylab as pl
 import operator
 import random as rd
 from initializators import *
@@ -9,8 +5,8 @@ import argparse
 import numpy as np
 import os
 
-from pprint import pprint
-from time import sleep
+#from pprint import pprint
+#from time import sleep
 
 parser = argparse.ArgumentParser(description='Prissoner\'s dilema with trust network simulation.')
 parser.add_argument('--runid', default="" )
@@ -37,10 +33,8 @@ fitness_S = []
 DC_ratio      = []
 state_changes = []
 
-# initial and final fitnesses and trusts
-F_t0 = []
+# fitnesses and trusts
 F_tn = []
-T_t0 = []
 T_tn = []
 
 # states: cooperate, detract
@@ -48,32 +42,6 @@ C = True
 D = False
 # threshold for state change
 theta = 1
-
-def normalize(g):
-
-    G = g.copy()
-    
-    # calculate global trust
-    trust = []
-    for i, j in G.edges():
-        trust.append( G.edge[i][j]['w']  )
-    T = float(sum(trust))
-
-    # normalize trust
-    for i, j in G.edges():
-        G.edge[i][j]['w'] = G.edge[i][j]['w'] / T
-
-        
-    # calculate global fitness
-    fitness = []
-    for i in G.nodes():
-        fitness.append( G.node[i]['f'] )
-    F = float(sum(fitness))
-
-    for i in G.nodes():
-        G.node[i]['f'] = G.node[i]['f'] / F
-
-    return G
 
 
 def report():
@@ -118,45 +86,13 @@ def report():
     for n in g.nodes():
         if g.node[n]['s'] != g_pre.node[n]['s']:
             changed+=1
-#            print time,g.node[n]['s'], g_pre.node[n]['s']
             
     state_changes.append(changed)
 
-                
-    if time == args.iterations - 1:
-        for n in g.nodes():
-            F_tn.append(g.node[n]['f'])
-        for e in g.edges():
-            T_tn.append(g.get_edge_data(*e)['w'])
+    F_tn.append([g.node[n]['f'] for n in g.nodes()])
+        
+    T_tn.append([g.get_edge_data(*e)['w'] for e in g.edges()])
     
-
-    
-def plot_dynamics(plotfile):
-    fig = plt.figure(figsize=(23.5, 13.0))
-    ax1 = fig.add_subplot(411)
-    ax1.plot(time_list, energy_state, 'b-') 
-    ax1.plot(time_list, energy_state_S, 'b--') 
-    ax1.set_xlabel('Time')
-    ax1.set_ylabel('mean trust states')
-
-    ax2 = fig.add_subplot(412)
-    ax2.plot(time_list, fitness_state, 'r-')
-    ax2.plot(time_list, fitness_S, 'r--')
-    ax2.set_xlabel('Time')
-    ax2.set_ylabel('mean fitness states')
-
-    ax3 = fig.add_subplot(413)
-    ax3.plot(time_list, state_changes, 'g-')
-    ax3.set_xlabel('Time')
-    ax3.set_ylabel('state changes per step')
-
-    ax4 = fig.add_subplot(414)
-    ax4.plot(time_list, DC_ratio, 'r-')
-    ax4.set_xlabel('Time')
-    ax4.set_ylabel('DC ratio')
-    
-    plt.savefig(plotfile, dpi=300)
-
 
 
 def write_dynamics(prefix):
@@ -184,50 +120,17 @@ def write_dynamics(prefix):
     dcfile.writelines([str(r)+"\n" for r in DC_ratio])
     dcfile.close()
     
-    
-
-def plot_histograms(plotfile):
-#    pprint(T_t0)
-
-    fig = plt.figure(figsize=(23.5, 13.0))
-
-    ax3 = fig.add_subplot(221)
-    ax3.hist(T_t0, 50, normed=0, facecolor='b', alpha=0.33)
-    
-    ax4 = fig.add_subplot(222)
-    ax4.hist(T_tn, 50, normed=0, facecolor='b', alpha=0.77)
-    
-    ax1 = fig.add_subplot(223)
-    ax1.hist(F_t0, 50, normed=0, facecolor='r', alpha=0.33)
-
-    ax2 = fig.add_subplot(224)
-    ax2.hist(F_tn, 50, normed=0, facecolor='r', alpha=0.77)
-
-    
-    plt.savefig(plotfile, dpi=300)
-
 
 
 def write_histograms(prefix):
-    tfilet0 = open(prefix+'_trustT0.csv', 'w')
-    tfilet0.writelines([str(t)+"\n" for t in T_t0])
-    tfilet0.close()
-
-
     tfile = open(prefix+'_trust.csv', 'w')
-    tfile.writelines([str(t)+"\n" for t in T_tn])
+    tfile.writelines([",".join([str(st) for st in t])+"\n" for t in T_tn])
     tfile.close()
 
-
-    ffileT0 = open(prefix+'_fitnessT0.csv', 'w')
-    ffileT0.writelines([str(f)+"\n" for f in F_t0])
-    ffileT0.close()
-
     ffile = open(prefix+'_fitness.csv', 'w')
-    ffile.writelines([str(f)+"\n" for f in F_tn])
+    ffile.writelines([",".join([str(sf) for sf in f])+"\n" for f in F_tn])
     ffile.close()
 
-    
 
 def node_state_optimize_trust(node):
     global g, theta
@@ -499,11 +402,9 @@ elif args.reset == 'none':
 
     
 
-for n in g.nodes():
-    F_t0.append(g.node[n]['f'])
-
-for e in g.edges():
-    T_t0.append(g.get_edge_data(*e)['w'])
+# register t=0
+F_tn.append([g.node[n]['f'] for n in g.nodes()])
+T_tn.append([g.get_edge_data(*e)['w'] for e in g.edges()])
 
     
     
@@ -513,14 +414,7 @@ for time in range(0, args.iterations):
     g_pre = g.copy()
     step()
     report() 
-
     
-# write down a plot
-# dynamics_plot = "%s_%s_%s_dynamics.png" % (args.init, args.optimize, args.step)
-# histograms_plot = "%s_%s_%s_hist.png" % (args.init, args.optimize, args.step)
-# plot_dynamics(dynamics_plot)
-# plot_histograms(histograms_plot)
-
 
 dynamics_prefix = "dynamics_%s_%s_%s_nu%s_%s" % (args.init, args.optimize, args.step, args.nu, args.runid)
 histograms_prefix = "histogram_%s_%s_%s_nu%s_%s" % (args.init, args.optimize, args.step, args.nu, args.runid)
