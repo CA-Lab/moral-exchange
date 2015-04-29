@@ -18,7 +18,7 @@ parser.add_argument('--iterations', type=int, default=50 )
 parser.add_argument('--nu', type=float, default=0.20 )
 parser.add_argument('--optimize', default="probabilistic", choices=['fitness', 'trust', 'balance', 'majority', 'probabilistic'] )
 parser.add_argument('--init', default="erdos", choices=['simple', 'full', 'real', 'erdos', 'di_erdos', 'di_watts', 'watts', 'barabasi', 'di_scale_free', 'fosiss'] )
-parser.add_argument('--reset', default="all", choices=['none', 'all'] )
+parser.add_argument('--reset', default="all", choices=['none', 'all', 'states'] )
 parser.add_argument('--step', default="sync", choices=['async', 'sync'] )
 parser.add_argument('--csv', type=argparse.FileType('r'))
 parser.add_argument('--pickle', type=argparse.FileType('r'))
@@ -209,14 +209,24 @@ def plot_histograms(plotfile):
 
 
 def write_histograms(prefix):
+    tfilet0 = open(prefix+'_trustT0.csv', 'w')
+    tfilet0.writelines([str(t)+"\n" for t in T_t0])
+    tfilet0.close()
+
+
     tfile = open(prefix+'_trust.csv', 'w')
     tfile.writelines([str(t)+"\n" for t in T_tn])
     tfile.close()
-    
+
+
+    ffileT0 = open(prefix+'_fitnessT0.csv', 'w')
+    ffileT0.writelines([str(f)+"\n" for f in F_t0])
+    ffileT0.close()
+
     ffile = open(prefix+'_fitness.csv', 'w')
     ffile.writelines([str(f)+"\n" for f in F_tn])
     ffile.close()
-    
+
     
 
 def node_state_optimize_trust(node):
@@ -481,6 +491,8 @@ if args.reset == 'all':
     g = reset_trust(g)
     g = reset_states(g)
     g = reset_fitness(g)
+if args.reset == 'states':
+    g = reset_states(g)
 elif args.reset == 'none':
     pass
 
