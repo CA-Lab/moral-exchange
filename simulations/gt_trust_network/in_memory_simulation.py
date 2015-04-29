@@ -1,5 +1,5 @@
 import matplotlib
-#matplotlib.use('svg')
+matplotlib.use('svg')
 import matplotlib.pyplot as plt
 import pylab as pl
 import operator
