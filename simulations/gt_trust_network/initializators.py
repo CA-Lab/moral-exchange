@@ -53,7 +53,7 @@ def init_erdos_directed():
 
 
 def init_watts():
-    g = nx.watts_strogatz_graph(4122, 11, 0.003)
+    g = nx.watts_strogatz_graph(4122, 100, 0.003)
     return g
 
 def init_directed_watts():
