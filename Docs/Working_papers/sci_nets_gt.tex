@@ -47,6 +47,7 @@ grestore
 %
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage[section]{placeins}
 % \usepackage{mathptmx}      % use Times fonts if available on your TeX system
 %
 % insert here the call for the packages your document requires
@@ -81,9 +82,13 @@ grestore
               Fax: +123-45-678910\\
               \email{jmario.siqueiros@iimas.unam.mx}           %  \\
 %             \emph{Present address:} of F. Author  %  if needed
-           \and
-           S. Author \at
-              second address
+              \and
+              Rodrigo Garc\'ia-Herrera,\\ Enrique Hern\'andez-Lemus, \\ Sergio Alcal\'a-Corona \at
+              National Institute of Genomic Medicine\\
+              Perif\'erico Sur 4809, Arenal Tepepan, Tlalpan, 14610, \\
+              Ciudad de M\'exico, D.F., M\'exico  
+           %% S. Author \at
+           %%    second address
 }
 
 \date{Received: date / Accepted: date}
@@ -106,7 +111,7 @@ defecting and increasing their individual fitness or cooperating and
 increase mutual fitness with their neighbors. \textbf{Methods:}
 Fitness is a property of the each agent and trust is a property of the
 link between two agents. According to a pay-off matrix and a mutual
-trust $A_{ij}$ matrix, we get a measure of na\"{i}vit\'e or confidence
+trust $A_{ij}$ matrix, we get a measure of distrust or confidence
 for each node. If the agents' confidence is below certain value then
 the agent will act suspiciously and will defect, othewise it will
 cooperate. We tested our simulation on an Erd\"{o}s-Reny\'i, a
@@ -129,7 +134,7 @@ governing the network that produces an asymetric access to resources.
 which might reflect some sort of subordination among researchers by
 which they are obliged to cooperate. 3) The range in the threshold
 that regulates the stringency to cooperate or defect according to the
-agent's na\"{i}vit\'e is small, suggesting that there is a region in
+agent's distrust is small, suggesting that there is a region in
 which a phase transition takes place from a population full of
 defectors to a population of cooperators 4) Finally, we would like to
 propose that this sort of work may help to make visible the need to
@@ -168,12 +173,69 @@ As has been pointed by others, social research on scientific
 collaboration is mostly about physics and space research\cite{Vermeulen2013}.
 Collaboration in biology has been studied to a lesser degree. The
 majority of work done on the subject has explored the quantiative
-aspects of it\cite{Newman2001,HernandezLemus2013} and not so much the
-qualitative aspects of collaboration. In our case,
-we explore the dynamics of trust and fitness (resources) distribution
-by means of a simulation. This approach is primarily quantitative,
-nevertheless and to a certain degree, the idea behind the model is
-ethnographically informed. 
+aspects of it\cite{Newman2001,Newman2004,Elango2012,HernandezLemus2013} and not so much the
+qualitative aspects of collaboration \cite{Strasser2006,Strasser2012}.\\
+
+
+As a quantitative methodology, simulating processes in science has its own history
+\cite{Gilbert1997,Edmonds2011}, but as in most social sciences, simulation has 
+been a tangential methodology. In our case, we explore the dynamics of
+trust and fitness (resources) distribution by means of a simulation.
+This approach is primarily quantitative, nevertheless and to a certain
+degree, the idea behind the model is ethnographically informed.
+Inspired by game theory models we implemented our simulation on a 
+real social network of biomedical researchers from M\'exico, in order
+to have a better understanding of the role of network topology on
+social dynamics. The dynamics of the system are explored following the
+distribution of fitness --as a proxy for resources-- and trust as
+agents on the network play the prisoner's dilemma while constrained by
+trust with their neighbors.\\ 
+
+
+Game theoretical approaches to cooperation have –of course– been
+studied for decades. However, taking into account the nature of social
+interaction among players by means of an undelying social network is a
+more recent area of research. Some 10 years ago, Lo and colleagues
+\cite{Lo2004} formulated a minority game model to connected population
+within a network and study the role of connectivity on such games.
+Later on, Buesser and Tomassini \cite{Buesser2012} studied the
+dynamics of cooperation for players located on a spatially embedded
+network in order to categorize the effect that different interaction
+structures may have in maintaning cooperation (or defection) domains.\\
+
+The impact that network topology may have in the robustness of
+cooperation was investigated in numerical experiments and simulations
+\cite{Ichinose2013} revealing that clusters of cooperating agents become robust by
+increasing the number of links to cooperators, with the possible
+implication that a large number of individuals is required to maintain
+global cooperation patterns.\\
+
+Regarding possible strategies to improve cooperation patterns, several mech-
+anisms such as inequity aversion \cite{Ahmed2014}, social imitation
+and strategic choice \cite{Vilone2014} have been explored. Inequity
+aversion is the condition in which individuals care about payoff
+equality in the outcomes. A kind of moral memory in past outcomes
+implies that inequity aversion promotes cooperation
+\cite{Ahmed2014}. Social imitation contrasts with strategic choices
+in such a way that social influence models may impact on background
+rationality in decision making. This balance mey be behind moody
+conditional cooperation within a social environment \cite{Vilone2014}.\\
+
+The analysis of cooperation in scientific research has been also the subject
+of a number of studies. This is not suprising since cooperation and competi-
+tion are quite important in today’s academic success. How do collaboration
+happens within a competitive academic environment and what kind of payoff
+is present in these settings were questions considered recently by Wardil and
+Hauert \cite{Wardil2015} in the context of cooperation in multiauthored
+publications.\\
+
+In spite of all these research efforts, cooperation in the context of scientific
+collaboration is still loosely defined and the long time dynamics of academic
+cooperation (and its consequences) are yet to be fully disclosed. In this context
+our work plans to contribute to further our current understanding on the
+matter.
+
+
 
 \section{Biomedical research: CONACyT and FOSISS}
 \label{sec:1}
@@ -246,7 +308,8 @@ emergence of cooperation \cite{Santos2005,Hauert2004}. In our case, agents decis
 to cooperate or defect is a probabilistic outcome that depends on the
 agent's confidence. Confidence, as it turns out, depends on how
 positive the agent's gains and relations towards its neighbors
-have been in the past and we study the behavior of the system under different topologies, including a real-world network. \\
+have been in the past and we study the behavior of the system under
+different topologies, including a real-world network.\\ 
 
 In the model that we developed, agents are embedded in a network with
 varying number of neighbors. Following the traditional PD game, the
@@ -293,20 +356,19 @@ trust ($t_{ji}$) that shares with its neighbors. We measure global
 fitness and trust for the whole network. Global fitness is the sum of
 all individual fitness and trust is the sum of every pair of agents
 links trust. normalized. In order for the agent to choose to cooperate
-or defect, it is assigned a degree of na\"{i}vit\'e. Na\"{i}vit\'e is
+or defect, it is assigned a degree of distrust. Distrust is
 calculated as the sum of the agent's normalized averages of fitness
 and trust over the number of the agent's neighbors.\\
 
 
-Na\"{i}vit\'e $= \langle w \rangle +  \langle t_{ji} \rangle$
+\textit{distrust} $= \langle w \rangle +  \langle t_{ji} \rangle$\\
 
-If the agents' na\"{i}vit\'e is below certain global confidence threshold then
+If the agents' distrust is below certain global confidence threshold then
 the agent will act suspiciously and will defect, othewise it will
 cooperate. We tested our simulation on an Erd\"{o}s-Reny\'i, a
 Watts-Strogatz small-world and Barab\'asi-Albert topologies, as well
-as on a real biomedical research network. Agents na\"{i}vit\'e or
-confidence, state, fitness and edge's trust is updated in a
-synchronous manner.   
+as on a real biomedical research network. Agents distrust, state,
+fitness and edge's trust is updated in a synchronous manner.   
 
 \subsection{Implementation of the model in different topologies}
 
@@ -352,6 +414,51 @@ node is $11.39$.\\
 
 \section{Results}
 \label{sec:3}
+
+
+\begin{figure}
+% Use the relevant command to insert your figure file.
+% For example, with the graphicx package use
+%\includegraphics[scale=0.6]{Trust.pdf}
+% figure caption is below the figure
+\caption{Evolution of trust as a function of time and \emph{selfishness} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
+\label{fig:1}       % Give a unique label
+\end{figure}
+
+\FloatBarrier
+
+\begin{figure}
+% Use the relevant command to insert your figure file.
+% For example, with the graphicx package use
+%\includegraphics[scale=0.6]{Fitness.pdf}
+% figure caption is below the figure
+\caption{Evolution of fitness as a function of time and \emph{selfishness} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
+\label{fig:2}       % Give a unique label
+\end{figure}
+
+\FloatBarrier
+
+\begin{figure}
+% Use the relevant command to insert your figure file.
+% For example, with the graphicx package use
+%\includegraphics[scale=0.6]{DC.pdf}
+% figure caption is below the figure
+\caption{Evolution of the proportion of cooperator/defector ratio as a function of time and \emph{selfishness} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
+\label{fig:3}       % Give a unique label
+\end{figure}
+
+\FloatBarrier
+
+\begin{figure}
+% Use the relevant command to insert your figure file.
+% For example, with the graphicx package use
+%\includegraphics[scale=0.6]{State.pdf}
+% figure caption is below the figure
+\caption{Evolution of the rate of state (cooperator/defector) flipping as a function of time and \emph{selfishness} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
+\label{fig:4}       % Give a unique label
+\end{figure}
+
+\FloatBarrier
 
 
 
@@ -446,21 +553,65 @@ The authors gratefully acknowledge support by grants:
   \textit{Studies in History and Philosophy of Biological and
     Biomedical Sciences.} 43:4-15, (2012) 
 
-\bibitem{Strasser2012} Strasser, B.J. Data-driven sciences: From
+\bibitem{Strasser2012} Strasser, BJ. Data-driven sciences: From
   wonder cabinets to electronic databases. \textit{Studies in History
     and Philosophy of Biological and Biomedical Sciences} 43:85-87,
   (2012) 
 
-\bibitem{Newman2001} Newman, Mark EJ, Clustering and preferential
-  attachment in growing networks, \textit{Physical Review E},
+\bibitem{Newman2001} Newman, MEJ. Clustering and preferential
+  attachment in growing networks. \textit{Physical Review E},
   64:025102-1/025102-4, (2001) 
 
+\bibitem{Newman2004} Newman, MEJ. Coauthorship networks and patterns
+  of scientific collaboration. \textit{PNAS}, 101, no. suppl 1,
+  5200-5205 (2004) 
+
+\bibitem{Elango2012} Elango, B. \& Rajendran, J. Authorship Trends and
+  Collaboration Pattern in the Marine Sciences Literature: A
+  Scientometric Study. \textit{International Journal of Information
+    Dissemination and Technology}, 2(3), 166-169, (2012)
+  
+  
 \bibitem{HernandezLemus2013} Hern\'andez-Lemus, Enrique \&
-  Siqueiros-Garc\'ia JM. Information theoretical methods for complex
+  Siqueiros-Garc\'ia JM, Information theoretical methods for complex
   network structure reconstruction. \textit{Complex Adaptive Systems
     Modeling}. 1: 8, doi:10.1186/2194-3206-1-8 (2013).
 
-\bibitem{Szabo2007} Szab\'o, Gy\"{o}rgy \& F\'ath, G\'abor, Evolutionary games on graphs. \textit{Physics Reports}, 446: 97-216 (2007)
+\bibitem{Gilbert1997} Gilbert, N. A Simulation of the Structure of
+  Academic Science. \textit{Sociological Research Online}, 2(2) 3,
+  http://www.socresonline.org.uk/2/2/3.html 
+  
+\bibitem{Edmonds2011} Edmonds, B., Gilbert, N., Ahrweiler, P., \&
+  Scharnhorst, A. Simulating the Social Processes of Science.
+  \textit{Journal of Artificial Societies and Social Simulation},
+  14(4) 14,  http://www.jasss.soc.surrey.ac.uk/14/4/14.html
+  
+\bibitem{Lo2004} Lo, T.S., Chan, H.Y., Hui, P.M., Johnson, N.F.,
+  Theory of networked minority games based on strategy pattern
+  dynamics, \textit{Physical Review E} 70, 056012 (2004) 
+
+\bibitem{Buesser2012} Buesser, P. and Tomassini, M., Evolution of
+  cooperation on spatially embedded networks, \textit{Physical Review E} 86,
+  066107 (2012)  
+
+\bibitem{Ichinose2013} Ichinose, G., Tenguishi, Y., and Tanizawa, T.,
+  Robustness of cooperation on scale-free networks under continuous
+  topological change, \textit{Physical Review E} 88, 052808 (2013) 
+
+\bibitem{Ahmed2014} Ahmed, A., Karlapalem, K., Inequity aversion and
+  the evolution of cooperation, \textit{Physical Review E} 89, 022802, (2014)
+
+\bibitem{Vilone2014} Vilone, D., Ramasco, J.J., S\'anchez, A., San
+  Miguel, M., Social imitation versus strategic choice, or consensus
+  versus cooperation, in the networked Prisoner’s Dilemma,
+  \textit{Physical Review E} 90, 022810, (2014) 
+ 
+\bibitem{Wardil2015} Wardil, L., Hauert, C., Cooperation and coauthorship in
+  scientific publishing, Physical Review E 91, 012825, (2015)
+  
+\bibitem{Szabo2007} Szab\'o, Gy\"{o}rgy \& F\'ath, G\'abor,
+  Evolutionary games on graphs. \textit{Physics Reports}, 446: 97-216
+  (2007) 
 
 \bibitem{Nowak1992} Nowak, Martin A. \& May, Robert M, Evolutionary
   Games and Spatial Chaos. \textit{Nature}, 359: 826-829, (1992)
