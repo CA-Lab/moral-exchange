@@ -179,13 +179,13 @@ qualitative aspects of collaboration \cite{Strasser2006,Strasser2012}.\\
 
 As a quantitative methodology, simulating processes in science has its own history
 \cite{Gilbert1997,Edmonds2011}, but as in most social sciences, simulation has 
-been a tangential methodology. In our case, we explore the dynamics of
+been a tangential methodology. In this article, we explore the dynamics of
 trust and fitness (resources) distribution by means of a simulation.
 This approach is primarily quantitative, nevertheless and to a certain
 degree, the idea behind the model is ethnographically informed.
 Inspired by game theory models we implemented our simulation on a 
-real social network of biomedical researchers from M\'exico, in order
-to have a better understanding of the role of network topology on
+real social network of biomedical researchers from M\'exico. Our main objective is
+to achieve a better understanding of the role of network topology on
 social dynamics. The dynamics of the system are explored following the
 distribution of fitness --as a proxy for resources-- and trust as
 agents on the network play the prisoner's dilemma while constrained by
@@ -235,7 +235,7 @@ cooperation (and its consequences) are yet to be fully disclosed. In this contex
 our work plans to contribute to further our current understanding on the
 matter.
 
-
+The manuscript is structured in four sections. The following section we will present \textit{FOSISS}, the main program for grants destined for biomedical applied research in M\'exico. To describe \textit{FOSISS} is important because that is the source of our database for creating the researchers collaboration network. In the next section we describe our model, we also introduce the different network topologies on which we explored the model. In the fourth part of the manuscritp we present the results and discuss them. In the last part we will draw some final remarks.
 
 \section{Biomedical research: CONACyT and FOSISS}
 \label{sec:1}
@@ -355,15 +355,15 @@ pay-offs following the PD matrix. The agent also adds-up the amount of
 trust ($t_{ji}$) that shares with its neighbors. We measure global
 fitness and trust for the whole network. Global fitness is the sum of
 all individual fitness and trust is the sum of every pair of agents
-links trust. normalized. In order for the agent to choose to cooperate
-or defect, it is assigned a degree of distrust. Distrust is
+links trust. In order for the agent to choose to cooperate
+or defect, it is assigned a degree of credulity. Credulity is
 calculated as the sum of the agent's normalized averages of fitness
 and trust over the number of the agent's neighbors.\\
 
 
-\textit{distrust} $= \langle w \rangle +  \langle t_{ji} \rangle$\\
+\textit{credulity} $= \langle w \rangle +  \langle t_{ji} \rangle$\\
 
-If the agents' distrust is below certain global confidence threshold then
+If the agents' credulity is below certain global threshold of distrust, then
 the agent will act suspiciously and will defect, othewise it will
 cooperate. We tested our simulation on an Erd\"{o}s-Reny\'i, a
 Watts-Strogatz small-world and Barab\'asi-Albert topologies, as well
@@ -412,17 +412,20 @@ node is $11.39$.\\
 
 
 
-\section{Results}
+\section{Results and Discussions}
 \label{sec:3}
 
+There are several results to report. Among the most relevant, we found that between $0.19$ and $0.24$ of the \textit{distrust} parameter, there is a phase transition in all different topologies and for the different variables. Nevertheless, it is worth noticing that the phase transition is different accoring to the topology of the network at stake. When \textit{distrust} is between $0.2$ and $0.0$, that is, when there is no space for suspiciousness, all agents cooperate, when \textit{distrust} is above $0.25$, all agents defect. \textit{Fitness}, \textit{trust}, and \textit{changing state population} replicate that  same behavior for the same limits. \\
+
+Another result, central to our argument is the differences in \textit{fitness} and \textit{trust} distribution at the end of the simulation, for every topology. \textit{Fitness} distribution is similar to the \textit{degree} distribution of each topologoy. Most of all, we found that \textit{fitness} distribution for the \textit{FOSISS} network, resambles quite accurately to the distribution of \textit{fitness} in the \textit{Barab\'asi-Albert} network.
 
 \begin{figure}
 % Use the relevant command to insert your figure file.
 % For example, with the graphicx package use
-%\includegraphics[scale=0.6]{Trust.pdf}
+%\includegraphics[scale=0.6]{DC.pdf}
 % figure caption is below the figure
-\caption{Evolution of trust as a function of time and \emph{selfishness} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
-\label{fig:1}       % Give a unique label
+\caption{Evolution of the proportion of cooperator/defector ratio as a function of time and \emph{distrust} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
+\label{fig:3}       % Give a unique label
 \end{figure}
 
 \FloatBarrier
@@ -432,7 +435,7 @@ node is $11.39$.\\
 % For example, with the graphicx package use
 %\includegraphics[scale=0.6]{Fitness.pdf}
 % figure caption is below the figure
-\caption{Evolution of fitness as a function of time and \emph{selfishness} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
+\caption{Evolution of fitness as a function of time and \emph{distrust} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
 \label{fig:2}       % Give a unique label
 \end{figure}
 
@@ -441,20 +444,21 @@ node is $11.39$.\\
 \begin{figure}
 % Use the relevant command to insert your figure file.
 % For example, with the graphicx package use
-%\includegraphics[scale=0.6]{DC.pdf}
+%\includegraphics[scale=0.6]{Trust.pdf}
 % figure caption is below the figure
-\caption{Evolution of the proportion of cooperator/defector ratio as a function of time and \emph{selfishness} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
-\label{fig:3}       % Give a unique label
+\caption{Evolution of trust as a function of time and \emph{distrust} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
+\label{fig:1}       % Give a unique label
 \end{figure}
 
 \FloatBarrier
+
 
 \begin{figure}
 % Use the relevant command to insert your figure file.
 % For example, with the graphicx package use
 %\includegraphics[scale=0.6]{State.pdf}
 % figure caption is below the figure
-\caption{Evolution of the rate of state (cooperator/defector) flipping as a function of time and \emph{selfishness} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
+\caption{Evolution of the rate of state (cooperator/defector) flipping as a function of time and \emph{distrust} for different network topologies. Panel A: Erd\"os-Reny\'i, Panel B: Watts-Strogatz, Panel C: Barabasi-Alberts, Panel D: Real FOSISS network.}
 \label{fig:4}       % Give a unique label
 \end{figure}
 
