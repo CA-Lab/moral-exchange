@@ -45,8 +45,20 @@ def edge_weight():
             weight_2.append( g.edge[i][j]['sim'] )
     weight = weight_1 + weight_2
     #print weight_1
+    #Podría darle un valor fijo al grosor del vínculo: if sim < 0.3
+    #and sim > 0, then weight = 1; if sim < 0.6 and sim >= 0.3, then
+    #weight = 2; if sim < 1.0 and sim >= 0.6, then weight = 3
     return weight
-    
+
+# def edge_color():
+#     Edges will have different colors according to the intensity of
+#     their discourse.
+     # if g.node[n]['i'] > 10 and g.node[m]['i'] > 10:
+     #     g.edge[n][m] = red
+     # elif g.node[n]['i'] < 10 and g.node[m]['i'] < 10:
+     #     g.edge[n][m] = orange
+     # elif g.node[n]['i'] < 5 and g.node[m]['i'] < 5:
+     #    g.edge[n][m] = blue
 
 def draw():
     nx.draw_networkx_nodes(g, pos = positions,
@@ -57,6 +69,7 @@ def draw():
     nx.draw_networkx_labels(g, pos = positions,fontsize=14)
     nx.draw_networkx_edges(g, pos = positions, 
                   with_labels = True, edge_color = 'c',
+                           #edge_color = edge_color(),
                   #width = [g.edge[i][j]['sim']+1 for (i,j) in g.edges_iter()],
                   width = edge_weight(),
                   cmap = pl.cm.autumn, vmin = 0, vmax = 1)
