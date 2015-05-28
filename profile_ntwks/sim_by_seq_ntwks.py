@@ -20,6 +20,10 @@ infile = json.load(args.infile)
 
 def creating_weighted_network(g):
     h = nx.Graph()
+    for n in g.nodes():
+        nd = g.node[n]
+        h.add_node(n, nd)
+        
     for pair in combinations( g.nodes(), 2 ):
         dm = difflib.SequenceMatcher(None, g.node[pair[0]]['p'], g.node[pair[1]]['p'])
         if dm.ratio() > args.sim_ratio:
@@ -43,8 +47,22 @@ def edge_weight(g):
 
     return weight
 
+def node_alphas(g):
+    intensities = []
+    for n in g.nodes():
+        intensities.append(g.node[n]['i'])
 
+    counts, bins = np.histogram( intensities, bins=10 )
 
+    alphas = []
+    for n in g.nodes():
+        for b in bins:
+            if g.node[n]['i'] >= b:
+                alphas.append( float(bins.tolist().index(b)+1)/11.0)
+
+    return alphas
+
+                           
 # def node_color():
 #     #Nodes transparency will characterize the intensity of the
 #     #discourse of the interviewee, the more opaque the more intense
@@ -63,7 +81,7 @@ def draw():
     nx.draw_networkx_nodes(g, pos     = positions,
                            node_color = [g.degree(n) for n in nx.nodes(g)],
                            node_size  = [g.degree(n)**float(3) for n in nx.nodes(g)],
-                           alpha      = 1)
+                           alpha      = 0.4) #node_alphas(g))
             
     nx.draw_networkx_labels(g, pos = positions,fontsize=14)
     nx.draw_networkx_edges(g, pos      = positions, 
@@ -79,7 +97,7 @@ g = nx.Graph()
 g.add_nodes_from( infile )
 g = creating_weighted_network(g)
 
-print edge_weight(g)
+print node_alphas(g)
 
 positions = nx.circular_layout(g)
 #positions = nx.spring_layout(g)
