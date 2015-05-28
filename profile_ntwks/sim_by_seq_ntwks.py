@@ -12,11 +12,6 @@ parser.add_argument('--sim_ratio', type=float, required=True)
 args    = parser.parse_args()
 
 
-
-weight_1 = []
-weight_2 = []
-weight = []
-
 #infile = open( args.infile, 'r' )
 
 #infile = args.infile.read()
@@ -36,15 +31,16 @@ def creating_weighted_network(g):
     return h
 
 def edge_weight():
-    weight_1 = []
-    weight_2 = []
+    weight = []
     for i,j in g.edges():
         #print g.edges()
-        if g.edge[i][j]['sim'] >= .73:
-            weight_1.append(g.edge[i][j]['sim']+2 )
+        if g.edge[i][j]['sim'] >= .7:
+            weight.append(g.edge[i][j]['sim']+3 )
+        elif g.edge[i][j]['sim'] >= .35 and g.edge[i][j]['sim'] < .7:
+            weight.append(g.edge[i][j]['sim']+2 )
         else:
-            weight_2.append( g.edge[i][j]['sim'] )
-    weight = weight_1 + weight_2
+            weight.append( g.edge[i][j]['sim'] )
+    
     #print weight_1
     return weight
 
