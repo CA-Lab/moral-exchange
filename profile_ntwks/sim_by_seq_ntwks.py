@@ -33,11 +33,6 @@ def creating_weighted_network(g):
     return h
 
 
-
-
-
-
-
 def edge_weight(g):
     weights = []
     for e in g.edges():
@@ -69,23 +64,6 @@ def node_alphas(g):
             
     return alphas
 
-                           
-# def node_color():
-#     nodelist_1 = []
-#     nodelist_2 = []
-#     nodelist_3 = []
-#     nodelist_4 = []
-#     #Nodes transparency will characterize the intensity of the
-#     #discourse of the interviewee, the more opaque the more intense
-#     for n in g.nodes():
-#         if g.node[n]['i'] >= 80:
-#             nodelist_1.append(g.node[n])
-#         elif g.node[n]['i'] >= 54 and g.node[n]['i'] < 80:
-#             nodelist_2.append(g.node[n])
-#         elif g.node[n]['i'] >= 27 and g.node[n]['i'] < 54:
-#             nodelist_3.append(g.node[n])
-#         elif g.node[n]['i'] < 27:
-#             nodelist_4.append(g.node[n])
 
 
 def draw():
@@ -94,33 +72,49 @@ def draw():
     alpha = 0.1 
     node_list = na[0]
     print node_list
-    nx.draw_networkx_nodes(g, pos     = positions,
-                           node_list  = [1,2,3,4,5],
-                           node_color = [g.degree(n) for n in nx.nodes(g)],
-                           node_size  = [g.degree(n)**float(3) for n in nx.nodes(g)],
+    nx.draw_networkx_nodes(g, pos,
+                           nodelist  = na[0],
+                           node_color = 'g',#[g.degree(n) for n in nx.nodes(g)],
+                           node_size  = 500,#[g.degree(n)**float(3) for n in nx.nodes(g)],
                            alpha      = 0.1)
 
     alpha = 0.5
     node_list = na[1]
     print node_list
-    nx.draw_networkx_nodes(g, pos     = positions,
-                           node_list  = [6,7,8,9,10],
-                           node_color = [g.degree(n) for n in nx.nodes(g)],
-                           node_size  = [g.degree(n)**float(3) for n in nx.nodes(g)],
-                           alpha      = 0.5)
+    nx.draw_networkx_nodes(g, pos,
+                           nodelist  = na[1],
+                           node_color = 'c',#[g.degree(n) for n in nx.nodes(g)],
+                           node_size  = 500,#[g.degree(n)**float(3) for n in nx.nodes(g)],
+                           alpha      = 0.25)
 
     alpha = 0.2
     node_list = na[2]
     print node_list
-    nx.draw_networkx_nodes(g, pos     = positions,
-                           node_list  = [11,12,13,14,15,16,17,18,19],
-                           node_color = [g.degree(n) for n in nx.nodes(g)],
-                           node_size  = [g.degree(n)**float(3) for n in nx.nodes(g)],
-                           alpha      = 0.2)
+    nx.draw_networkx_nodes(g, pos,
+                           nodelist  = na[2],
+                           node_color = 'b',#[g.degree(n) for n in nx.nodes(g)],
+                           node_size  = 500,#[g.degree(n)**float(3) for n in nx.nodes(g)],
+                           alpha      = 0.5)
+
+    node_list = na[3]
+    print node_list
+    nx.draw_networkx_nodes(g, pos,
+                           nodelist  = na[3],
+                           node_color = 'g',#[g.degree(n) for n in nx.nodes(g)],
+                           node_size  = 500,#[g.degree(n)**float(3) for n in nx.nodes(g)],
+                           alpha      = 0.75)
+
+    node_list = na[4]
+    print node_list
+    nx.draw_networkx_nodes(g, pos,
+                           nodelist  = na[4],
+                           node_color = 'r',#[g.degree(n) for n in nx.nodes(g)],
+                           node_size  = 500,#[g.degree(n)**float(3) for n in nx.nodes(g)],
+                           alpha      = 1.0)
 
             
-    nx.draw_networkx_labels(g, pos = positions,fontsize=14)
-    nx.draw_networkx_edges(g, pos      = positions, 
+    nx.draw_networkx_labels(g, pos,fontsize=14)
+    nx.draw_networkx_edges(g, pos, 
                            with_labels = True,
                            edge_color  = 'c',
                            width       = edge_weight(g),
@@ -133,14 +127,14 @@ g = nx.Graph()
 g.add_nodes_from( infile )
 g = creating_weighted_network(g)
 
-positions = nx.circular_layout(g)
-#positions = nx.spring_layout(g)
-#positions = nx.random_layout(g)
+pos = nx.circular_layout(g)
+#pos = nx.spring_layout(g)
+#pos = nx.random_layout(g)
 
 #print weight
 draw()
 #pl.savefig('55_pc_circular_similarity.png')
-#pl.show()
+pl.show()
 
 
 
