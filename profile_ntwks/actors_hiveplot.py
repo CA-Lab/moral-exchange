@@ -32,14 +32,25 @@ the_axes = [ axis0,
              axis2, ]
 
 
-civil = ['Col_Vereda_Cerrito', 'Docentes','UniPamplona', 'Universidades', 'MAFRACOL', 'APPA', 'ARTELANA', 'ARTEPAJA', 'ASOCAPRISER', 'ASOGANACER', 'ASOMATE', 'ASOMOARCE', 'ASOPAGAR', 'ASOPIGAR', 'Campesinos', 'CDS', 'CEI', 'Comunidad', 'DC', 'Estudiantes', 'Finquero', 'Gloria_Calderon', 'Gps_Armados', 'Gps_Conservacion', 'Gps_Ecologistas', 'Jose_Florez_(Historico)', 'Lideres_Comunales', 'Maria_Florez_(Historico)', 'Normal_Pie_de_Cuesta', 'Normal', 'ONGs', 'Organizaciones', 'Padre_(historico_1954)', 'Padres_de_Familia', 'Serafito_Calderon', 'UAK/UWA', 'UIS', 'William_Bastos']
+civil = ['Col_Vereda_Cerrito', 'Docentes','UniPamplona', 'Universidades', 'APPA', 'ARTELANA', 'ARTEPAJA', 'ASOCAPRISER', 'ASOGANACER', 'ASOMATE', 'ASOMOARCE', 'ASOPAGAR', 'ASOPIGAR', 'Campesinos', 'CDS', 'CEI', 'Comunidad', 'DC', 'Estudiantes', 'Finquero', 'Gloria_Calderon', 'Gps_Armados', 'Gps_Conservacion', 'Gps_Ecologistas', 'Jose_Florez_(Historico)', 'Lideres_Comunales', 'Maria_Florez_(Historico)', 'Normal_Pie_de_Cuesta', 'Normal', 'ONGs', 'Organizaciones', 'Padre_(historico_1954)', 'Padres_de_Familia', 'Serafito_Calderon', 'UAK/UWA', 'UIS', 'William_Bastos']
 
 gobierno = ['Ceres', 'CGR', 'Hospital', 'ICA', 'SENA', 'Admon_Mpal', 'Alcalde', 'Alcaldia', 'ASOJUNTAS', 'BanAgrario', 'Bomberos', 'Camacho_(Historico)', 'CAS', 'COANDIS_(Asoc_Mpal)', 'Comisaria_Familia', 'COMULDESPA', 'Concejo_Mpal', 'Gob_Arauca', 'Gob_Boyaca', 'Gob_Casanare', 'Gob_Cundinamarca', 'Gobernacion', 'Gobierno', 'Gob_Santander', 'Ing_Planeacion', 'Inspeccion_de_policia', 'MinAgricultura', 'MinAmbiente', 'Of_Saneamiento_Ambiental', 'Personeria', 'Policia', 'Presidencia', 'Prov_Garcia_Rovira', 'Sec_Gobierno', 'Uribe']
 
-empresas = ['CARBORIENTE', 'Empresas', 'Empresas-RQ', 'FRESCALECHE', 'Mineras', 'Multinacionales', 'Queserias']
+empresas = ['CARBORIENTE', 'Empresas', 'Empresas-RQ', 'FRESCALECHE', 'MAFRACOL', 'Mineras', 'Multinacionales', 'Queserias']
 
+
+interviews = { 'ASOMOARCE': 'E1',
+               'Bomberos':  'E2',
+               'FRESCALECHE': 'E3',
+               'Normal':    'E4',
+               'Policia':   'E5',
+               'MAFRACOL': 'E6',
+               'Col_Vereda_Cerrito': 'E7',
+               'Sec_Gobierno': 'E8'}
 
 #for node in g.nodes():
+
+
 
 offset = 0.0255
 for n in gobierno:
@@ -47,28 +58,33 @@ for n in gobierno:
     nd = Node(n)
     axis0.add_node(nd, offset)
     offset += 0.0255
-    nd.dwg = nd.dwg.circle(center = (nd.x, nd.y),
+    nd.dwg.add(nd.dwg.circle(center = (nd.x, nd.y),
                                #r      = 3,
                                r      = nx.degree(g, n),
                                fill   = 'yellow',
                                fill_opacity = 0.5,
                                stroke = 'black',
-                               stroke_width = 0.5)
-        
+                               stroke_width = 0.5))
+
+    if n in interviews:
+        nd.dwg.add(nd.dwg.text(interviews[n], insert=(nd.x, nd.y)))
+
+    
 offset = 0.024
 for n in civil:
     #print nx.degree(g, n), n
     nd = Node(n)
     axis1.add_node(nd, offset)
     offset += 0.024
-    nd.dwg = nd.dwg.circle(center = (nd.x, nd.y),
+    nd.dwg.add(nd.dwg.circle(center = (nd.x, nd.y),
                                 #r      = 3,
                                 r      = nx.degree(g, n),
                                 fill   = 'blue',
                                 fill_opacity = 0.5,
                                 stroke = 'black',
-                                stroke_width = 0.5)
-    
+                                stroke_width = 0.5))
+    if n in interviews:
+        nd.dwg.add(nd.dwg.text(interviews[n], insert=(nd.x, nd.y)))
     
 offset = 0.1
 for n in empresas:
@@ -76,14 +92,16 @@ for n in empresas:
     nd = Node(n)
     axis2.add_node(nd, offset)
     offset += 0.1
-    nd.dwg = nd.dwg.circle(center = (nd.x, nd.y),
+    nd.dwg.add(nd.dwg.circle(center = (nd.x, nd.y),
                                 #r      = 3,
                                 r      = nx.degree(g, n),
                                 fill   = 'red',
                                 fill_opacity = 0.5,
                                 stroke = 'black',
-                                stroke_width = 0.5)
-
+                                stroke_width = 0.5))
+    if n in interviews:
+        nd.dwg.add(nd.dwg.text(interviews[n], insert=(nd.x, nd.y)))
+    
 # for n in g.nodes():
 #     nd = Node(n)
 #     a = random.choice(the_axes)
