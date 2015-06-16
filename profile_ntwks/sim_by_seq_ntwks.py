@@ -1,6 +1,6 @@
 import networkx as nx
 import difflib
-import pylab as pl
+import matplotlib.pyplot as plt
 from math import *
 import argparse
 from itertools import combinations
@@ -8,6 +8,7 @@ import numpy as np
 import json
 from pprint import pprint
 from pyveplot import *
+import pickle
 ###p stands for profile###
 
 parser = argparse.ArgumentParser(description='Creates a network based on agent profile similarities, according to their sequence of characteristics.')
@@ -118,7 +119,7 @@ def draw():
                            with_labels = True,
                            edge_color  = 'c',
                            width       = edge_weight(g),
-                           cmap        = pl.cm.autumn, vmin = 0, vmax = 1)
+                           cmap        = plt.cm.autumn, vmin = 0, vmax = 1)
 
 
 
@@ -126,6 +127,7 @@ def draw():
 g = nx.Graph()
 g.add_nodes_from( infile )
 g = creating_weighted_network(g)
+pickle.dump( g, open('cerrito.p', 'wb' ) )
 
 pos = nx.circular_layout(g)
 #pos = nx.spring_layout(g)
@@ -134,20 +136,20 @@ pos = nx.circular_layout(g)
 #print weight
 draw()
 #pl.savefig('55_pc_circular_similarity.png')
-pl.show()
+plt.show()
 
 
 
 
 
-h = Hiveplot( 'almorzadero.svg')
+h = Hiveplot( 'cerrito.svg')
 
 
-axis0 = Axis( (200,200), # start
+axis0 = Axis( (200,195), # start
               (200,100), # end
               stroke="grey", stroke_opacity="0.3") # pass SVG attributes of axes
-axis1 = Axis( (200,200), (300,300), stroke="grey", stroke_opacity="0.3")
-axis2 = Axis( (200,200), (100,300), stroke="grey", stroke_opacity="0.3")
+axis1 = Axis( (205,200), (300,300), stroke="grey", stroke_opacity="0.3")
+axis2 = Axis( (195,200), (100,300), stroke="grey", stroke_opacity="0.3")
 
 h.axes.append( axis0 )
 h.axes.append( axis1 )
@@ -163,8 +165,8 @@ for n in c1:
     axis0.add_node(nd, offset)
     offset += 0.2
     nd.dwg = nd.dwg.circle(center = (nd.x, nd.y),
-                           r      = 2,
-                           fill   = 'orange',
+                           r      = 6,
+                           fill   = 'red',
                            stroke = 'blue',
                            stroke_width = 0.1)
 
@@ -174,7 +176,7 @@ for n in c2:
     axis1.add_node(nd, offset)
     offset += 0.2
     nd.dwg = nd.dwg.circle(center = (nd.x, nd.y),
-                           r      = 2,
+                           r      = 6,
                            fill   = 'orange',
                            stroke = 'blue',
                            stroke_width = 0.1)
@@ -186,8 +188,8 @@ for n in c3:
     axis2.add_node(nd, offset)
     offset += 0.2
     nd.dwg = nd.dwg.circle(center = (nd.x, nd.y),
-                           r      = 2,
-                           fill   = 'orange',
+                           r      = 6,
+                           fill   = 'black',
                            stroke = 'blue',
                            stroke_width = 0.1)
 
@@ -203,8 +205,8 @@ for e in g.edges():
                   stroke='purple',
                   fill='none')
     elif (e[0] in axis0.nodes) and (e[1] in axis2.nodes): # edges from axis0 to axis2
-        h.connect(axis0, e[0], -20,
-                  axis2, e[1], 20,
+        h.connect(axis0, e[0], -45,
+                  axis2, e[1], 45,
                   stroke_width='0.34',
                   stroke_opacity='0.4',
                   stroke='red',
