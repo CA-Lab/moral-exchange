@@ -1,0 +1,37 @@
+
+# agentes se inicializan con behaviours
+agentes         = [0, 1, 2, 3, 4, 5, 6]
+agent_behaviour = [A, B, A, B, B, B, A]
+agent_fitness   = [0, 0, 0, 0, 0, 0, 0]
+
+
+def utilidad_global():
+    return sum( [agent_fitness[i] for i in agentes] )
+
+
+def update_behavior(i):
+    local_utility_a = adopta behavior A, juega con todos los vecinos
+    local_utility_b = adopta behavior B, juega con vecinos
+
+    if local_utility_a == local_utility_b:
+        pass  # no behavior update
+    elif local_utility_a > local_utility_b:
+        update agent behavior to A
+    else:
+        update agent behavior to B
+    
+
+
+def outcome(i, j):
+    # del payoff matrix
+    if agent_behavior[i] == agent_behavior[j]:
+        return 1
+    else:
+        return 0
+
+
+
+def play(i):
+    update_behavior(i)
+    agent_fitness[i] = sum( [outcome(i, j) for j in i.vecinos()] )
+       
