@@ -1,10 +1,16 @@
+from random import choice, randint
+import matplotlib
+matplotlib.use('svg')
+import matplotlib.pyplot as plt
+
+
 A = True
 B = False
 
 # agentes se inicializan con behaviours
-agentes        = [0, 1, 2, 3, 4, 5, 6]
-agent_behavior = [A, B, A, B, B, B, A]
-agent_fitness  = [0, 0, 0, 0, 0, 0, 0]
+agentes        = range(100)
+agent_behavior = [choice([A,B]) for n in range(100)]
+agent_fitness  = [0 for n in range(100)]
 
 
 def utilidad_global():
@@ -50,3 +56,19 @@ def play(i):
     update_behavior(i)
     agent_fitness[i] = sum( [outcome(i, j) for j in vecinos(i)] )
        
+
+
+
+u = []
+
+for t in range(1000):
+    play(randint(0,99))
+    u.append(utilidad_global())
+
+
+
+plt.cla()
+plt.scatter( range(1000), u, c=u'r', marker=u'D' )
+plt.xlabel('Time')
+plt.ylabel('Global Utility')
+plt.savefig('default_agents.svg')
