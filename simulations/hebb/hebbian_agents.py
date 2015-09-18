@@ -8,7 +8,7 @@ import networkx as nx
 A = True
 B = False
 
-nodes = 500
+nodes = 100
 
 
 # agentes se inicializan con behaviours
@@ -92,7 +92,7 @@ def learn(i):
     current_w_L = list(adj_matrix_L)
     r = 0.005
     for j in vecinos(i):
-        current_w_L[j] = current_w_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
+        current_w_L[i][j] = current_w_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
 
     local_utility_A = sum( [outcome(i, j) * capping_theta(adj_matrix[i][j] + current_w_L[i][j]) for j in vecinos(i)] )
 
@@ -100,7 +100,7 @@ def learn(i):
     current_w_L = list(adj_matrix_L)
     r = - 0.005
     for j in vecinos(i):
-        current_w_L[j] = current_w_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
+        current_w_L[i][j] = current_w_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
 
     local_utility_B = sum( [outcome(i, j) * capping_theta(adj_matrix[i][j] + current_w_L[i][j]) for j in vecinos(i)] )
 
@@ -111,11 +111,12 @@ def learn(i):
         r = 0.005
         for j in vecinos(i):        
             adj_matrix_L[i][j] = adj_matrix_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
+            adj_matrix_L[j][i] = adj_matrix_L[j][i] + (r * agent_behavior[i] * agent_behavior[j])
     else:
         r = - 0.005
         for j in vecinos(i):        
             adj_matrix_L[i][j] = adj_matrix_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
-
+            adj_matrix_L[j][i] = adj_matrix_L[j][i] + (r * agent_behavior[i] * agent_behavior[j])
 
             
 
