@@ -88,18 +88,19 @@ def update_behavior(i):
 
 
 def learn(i):
+    # compute local utility A
     current_w_L = list(adj_matrix_L)
-
     r = 0.005
     for j in vecinos(i):
-        current_w_L[j] = current_w_L[i][j] + (r * agent_behavior[j])
+        current_w_L[j] = current_w_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
 
     local_utility_A = sum( [outcome(i, j) * capping_theta(adj_matrix[i][j] + current_w_L[i][j]) for j in vecinos(i)] )
 
+    # compute local utility B    
     current_w_L = list(adj_matrix_L)
     r = - 0.005
     for j in vecinos(i):
-        current_w_L[j] = current_w_L[i][j] + (r * agent_behavior[j])
+        current_w_L[j] = current_w_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
 
     local_utility_B = sum( [outcome(i, j) * capping_theta(adj_matrix[i][j] + current_w_L[i][j]) for j in vecinos(i)] )
 
@@ -109,19 +110,14 @@ def learn(i):
     elif local_utility_A > local_utility_B:
         r = 0.005
         for j in vecinos(i):        
-            adj_matrix_L[i][j] = adj_matrix_L[i][j] + (r * agent_behavior[j])
+            adj_matrix_L[i][j] = adj_matrix_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
     else:
         r = - 0.005
         for j in vecinos(i):        
-            adj_matrix_L[i][j] = adj_matrix_L[i][j] + (r * agent_behavior[j])
+            adj_matrix_L[i][j] = adj_matrix_L[i][j] + (r * agent_behavior[i] * agent_behavior[j])
 
 
-    # r = 0.005
-    # for j in vecinos(i):
-    #     adj_matrix_L[i][j] = adj_matrix_L[i][j] + (r * outcome(i,j))
-
-    #print adj_matrix_L[0]    
-        
+            
 
 def outcome(i, j):
     # del payoff matrix
@@ -138,32 +134,48 @@ def play(i):
        
 
 
+def play_and_learn(i):
+    update_behavior(i)
+    learn(i)
+    agent_fitness[i] = sum( [outcome(i, j) for j in vecinos(i)] )
+
 
     
 u = []
 
-for t in range(1000):
-    play(randint(0,nodes-1))
+def period(length):
+    for t in range(length):
+        play(randint(0,nodes-1))
     u.append(utilidad_global())
 
 
-# for t in range(1000):
-#     node =randint(0,nodes-1)
-#     play(node)
-#     learn(node)
-#     u.append(utilidad_global())
-
-for t in range(1000):
-    play(randint(0,nodes-1))
+def learn_period(length):
+    for t in range(length):
+        play_and_learn(randint(0,nodes-1))
     u.append(utilidad_global())
 
 
-    
+# no learning loop
+for n in range(1000):
+    period(1000)    
+    agent_behavior = [choice([A,B]) for n in range(nodes)]
 
-    
 
+
+# learning loop
+for n in range(1000):
+    learn_period(1000)    
+    agent_behavior = [choice([A,B]) for n in range(nodes)]
+
+
+# no learning loop
+for n in range(1000):
+    period(1000)    
+    agent_behavior = [choice([A,B]) for n in range(nodes)]
+    
+    
 plt.cla()
-plt.scatter( range(2000), u, c=u'r', marker=u'D' )
+plt.scatter( range(3000), u, c=u'r', marker=u'D' )
 plt.xlabel('Time')
 plt.ylabel('Global Utility')
 plt.savefig('hebbian_agents.svg')
