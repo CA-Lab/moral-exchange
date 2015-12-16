@@ -30,36 +30,33 @@ prior time step.
 
 Agents do onto their acomplice as their acomplice in average did to them in all prior time steps.
 
-<img width="220" src="plots/proportional_tit_for_tat_multi.png">
+<img width="220" src="plots/single_runs/proportional_tit_for_tat_multi.png">
 
 # altruist_differential_fitness
 
-<img width="220" src="plots/altruist_differential_fitness.png">
+<img width="220" src="plots/single_runs/altruist_differential_fitness.png">
 
 # selfish_memory
 
-<img width="220" src="plots/selfish_memory.png">
+<img width="220" src="plots/single_runs/selfish_memory.png">
 
 # different_memories_tit_for_tat
 
-<img width="220" src="plots/different_memories_tit_for_tat.png">
+<img width="220" src="plots/single_runs/different_memories_tit_for_tat.png">
 
 # selfish_perfect_memory
 
-<img width="220" src="plots/selfish_perfect_memory.png">
+<img width="220" src="plots/single_runs/selfish_perfect_memory.png">
 
 # proportional_tit_for_tat
 
-<img width="220" src="plots/proportional_tit_for_tat.png">
+<img width="220" src="plots/single_runs/proportional_tit_for_tat.png">
 
 # tit_for_tat
 
-<img width="220" src="plots/tit_for_tat.png">
+<img width="220" src="plots/single_runs/tit_for_tat.png">
 
 # random_strategy
 
-<img width="220" src="plots/random_strategy.png">
-=======
-<img src="plots/proportional_tit_for_tat_multi.png" width="92%">
->>>>>>> 76c825f8fcfb2f55e5cd9f185671d74a14872620
+<img width="220" src="plots/single_runs/random_strategy.png">
 
