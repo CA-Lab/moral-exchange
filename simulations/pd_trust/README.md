@@ -23,11 +23,11 @@ plotting, the pd_trust library implements agent logic. Run them thusly:
 Agents do onto their acomplice as their acomplice did to them in the
 prior time step.
 
-<img src="plots/tit_for_tat_multi.png">
+<img src="plots/tit_for_tat_multi.png" width="92%">
 
 # Proportional Tit for Tat
 
 Agents do onto their acomplice as their acomplice in average did to them in all prior time steps.
 
-<img src="plots/proportional_tit_for_tat_multi.png">
+<img src="plots/proportional_tit_for_tat_multi.png" width="92%">
 
