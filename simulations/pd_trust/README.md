@@ -60,26 +60,22 @@ Agents do onto their acomplice as their acomplice in average did to them in all 
 <table>
 <tr><td><img width="200" src="plots/single_runs/memory_10_1.png"></td>
              <td><img width="200" src="plots/single_runs/memory_10_2_venganza.png"></td>
-             </tr>
-<tr><td><img width="200" src="plots/single_runs/memory_20_1.png"></td>
+    <td><img width="200" src="plots/single_runs/memory_20_1.png"></td>
              <td><img width="200" src="plots/single_runs/memory_5_1.png"></td>
-             </tr>
+</tr>
 <tr><td><img width="200" src="plots/single_runs/memory_5_2.png"></td>
              <td><img width="200" src="plots/single_runs/memory_5_3.png"></td>
-             </tr>
-<tr><td><img width="200" src="plots/single_runs/memory_5_4.png"></td>
+    <td><img width="200" src="plots/single_runs/memory_5_4.png"></td>
              <td><img width="200" src="plots/single_runs/memory_5_5.png"></td>
-             </tr>
+</tr>
 <tr><td><img width="200" src="plots/single_runs/memory_5_6_trivialoide.png"></td>
              <td><img width="200" src="plots/single_runs/memory_5_7.png"></td>
-             </tr>
-<tr><td><img width="200" src="plots/single_runs/proportional_2.png"></td>
+    <td><img width="200" src="plots/single_runs/proportional_2.png"></td>
              <td><img width="200" src="plots/single_runs/proportional_3.png"></td>
-             </tr>
+</tr>
 <tr><td><img width="200" src="plots/single_runs/proportional_4.png"></td>
              <td><img width="200" src="plots/single_runs/proportional_5.png"></td>
-             </tr>
-<tr><td><img width="200" src="plots/single_runs/proportional.png"></td>
+    <td><img width="200" src="plots/single_runs/proportional.png"></td>
              <td></td>
-             </tr>
+</tr>
 </table>
