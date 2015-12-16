@@ -23,6 +23,7 @@ plotting, the pd_trust library implements agent logic. Run them thusly:
 Agents do onto their acomplice as their acomplice did to them in the
 prior time step.
 
+
 <img width="220" src="plots/tit_for_tat_multi.png">
 
 # Proportional Tit for Tat
@@ -30,7 +31,6 @@ prior time step.
 Agents do onto their acomplice as their acomplice in average did to them in all prior time steps.
 
 <img width="220" src="plots/proportional_tit_for_tat_multi.png">
-
 
 # altruist_differential_fitness
 
@@ -59,4 +59,7 @@ Agents do onto their acomplice as their acomplice in average did to them in all 
 # random_strategy
 
 <img width="220" src="plots/random_strategy.png">
+=======
+<img src="plots/proportional_tit_for_tat_multi.png" width="92%">
+>>>>>>> 76c825f8fcfb2f55e5cd9f185671d74a14872620
 
