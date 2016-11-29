@@ -2,6 +2,7 @@
 
 We're modeling networks of prisoner's dilema players.
 
+A freeze of this development project [here](https://github.com/CA-Lab/biomedical-social-networks).
 
 ### Async vs sync
 
